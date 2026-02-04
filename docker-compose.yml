@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: snacks-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: snacks_user
+      POSTGRES_PASSWORD: snacks_password
+      POSTGRES_DB: snacks_db
+    ports:
+      - '5432:5432'
+    volumes:
+      - snacks_pgdata:/var/lib/postgresql/data
+
+volumes:
+  snacks_pgdata:

@@ -6,8 +6,224 @@ datasource db {
   provider = "postgresql"
 }
 
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  customer
+  admin
+}
+
+enum PaymentMethod {
+  credit_card
+  debit_card
+  cash_on_delivery
+  bank_transfer
+}
+
+enum OrderStatus {
+  pending
+  confirmed
+  processing
+  shipped
+  delivered
+  cancelled
+}
+
+// ============================================
+// MODELS
+// ============================================
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id              String   @id @default(uuid())
+  email           String   @unique
+  password        String
+  firstName       String
+  lastName        String
+  phone           String?
+  role            UserRole @default(customer)
+  shippingAddress Json?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  orders Order[]
+  cart   Cart?
+
+  @@index([email])
+  @@index([role])
+}
+
+model Category {
+  id          String      @id @default(uuid())
+  name        String
+  slug        String      @unique
+  description String?
+  parentId    String?
+  parent      Category?   @relation("CategoryChildren", fields: [parentId], references: [id])
+  children    Category[]  @relation("CategoryChildren")
+  image       String?
+  order       Int         @default(0)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  products Product[]
+
+  @@index([slug])
+  @@index([parentId])
+  @@index([isActive])
+}
+
+model Product {
+  id                 String           @id @default(uuid())
+  name               String
+  slug               String           @unique
+  description        String
+  shortDescription   String?
+  sku                String           @unique
+  price              Decimal          @db.Decimal(10, 2)
+  discountPrice      Decimal?         @db.Decimal(10, 2)
+  discountPercentage Int?
+  stock              Int              @default(0)
+  categoryId         String
+  category           Category         @relation(fields: [categoryId], references: [id])
+  specifications     Json?
+  isActive           Boolean          @default(true)
+  isFeatured         Boolean          @default(false)
+  tags               String[]
+  weight             Decimal?         @db.Decimal(10, 2)
+  dimensions         Json?
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+
+  images        ProductImage[]
+  variants      ProductVariant[]
+  cartItems     CartItem[]
+  orderItems    OrderItem[]
+  stockHistory  StockHistory[]
+
+  @@index([slug])
+  @@index([sku])
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([isFeatured])
+}
+
+model ProductImage {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  isPrimary Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([productId, isPrimary])
+}
+
+model ProductVariant {
+  id        String          @id @default(uuid())
+  productId String
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name      String
+  createdAt DateTime        @default(now())
+
+  options VariantOption[]
+
+  @@index([productId])
+}
+
+model VariantOption {
+  id            String         @id @default(uuid())
+  variantId     String
+  variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  value         String
+  priceModifier Decimal?       @db.Decimal(10, 2)
+  stock         Int            @default(0)
+  sku           String?        @unique
+  createdAt     DateTime       @default(now())
+
+  @@index([variantId])
+  @@index([sku])
+}
+
+model Cart {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  items CartItem[]
+
+  @@index([userId])
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String
+  cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  quantity  Int      @default(1)
+  addedAt   DateTime @default(now())
+
+  @@unique([cartId, productId])
+  @@index([cartId])
+  @@index([productId])
+}
+
+model Order {
+  id              String        @id @default(uuid())
+  orderNumber     String        @unique
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  shippingAddress Json
+  paymentMethod   PaymentMethod
+  subtotal        Decimal       @db.Decimal(10, 2)
+  shipping        Decimal       @db.Decimal(10, 2)
+  total           Decimal       @db.Decimal(10, 2)
+  status          OrderStatus   @default(pending)
+  notes           String?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items OrderItem[]
+
+  @@index([orderNumber])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Decimal  @db.Decimal(10, 2)
+  subtotal  Decimal  @db.Decimal(10, 2)
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model StockHistory {
+  id            String   @id @default(uuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  productName   String
+  previousStock Int
+  newStock      Int
+  reason        String?
+  createdAt     DateTime @default(now())
+
+  @@index([productId])
+  @@index([createdAt])
 }

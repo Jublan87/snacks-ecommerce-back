@@ -247,25 +247,25 @@
 ### Tareas
 
 #### 1.1 Creación del Esquema Prisma
-- [ ] Definir modelo `User` en `prisma/schema.prisma`
-- [ ] Definir modelo `Category` con auto-relación (jerarquía)
-- [ ] Definir modelo `Product` con todas sus propiedades
-- [ ] Definir modelo `ProductImage`
-- [ ] Definir modelo `ProductVariant` y `VariantOption`
-- [ ] Definir modelo `Cart` y `CartItem`
-- [ ] Definir modelo `Order` y `OrderItem`
-- [ ] Definir modelo `StockHistory`
-- [ ] Definir enums: `UserRole`, `PaymentMethod`, `OrderStatus`
-- [ ] Agregar índices según especificación
-- [ ] Agregar relaciones entre modelos
+- [x] Definir modelo `User` en `prisma/schema.prisma`
+- [x] Definir modelo `Category` con auto-relación (jerarquía)
+- [x] Definir modelo `Product` con todas sus propiedades
+- [x] Definir modelo `ProductImage`
+- [x] Definir modelo `ProductVariant` y `VariantOption`
+- [x] Definir modelo `Cart` y `CartItem`
+- [x] Definir modelo `Order` y `OrderItem`
+- [x] Definir modelo `StockHistory`
+- [x] Definir enums: `UserRole`, `PaymentMethod`, `OrderStatus`
+- [x] Agregar índices según especificación
+- [x] Agregar relaciones entre modelos
 
 #### 1.2 Migraciones de Base de Datos
-- [ ] Crear primera migración
+- [x] Crear primera migración
   ```bash
   npx prisma migrate dev --name init
   ```
-- [ ] Verificar que todas las tablas se crearon correctamente
-- [ ] Generar Prisma Client
+- [x] Verificar que todas las tablas se crearon correctamente
+- [x] Generar Prisma Client
   ```bash
   npx prisma generate
   ```

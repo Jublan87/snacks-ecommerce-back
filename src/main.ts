@@ -4,6 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
+import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -37,6 +40,13 @@ async function bootstrap() {
         enableImplicitConversion: true,
       },
     }),
+  );
+
+  // Interceptores globales: logging → timeout → transform
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(),
+    new TimeoutInterceptor(),
+    new TransformInterceptor(),
   );
 
   const port = configService.get<number>('app.port') || 4000;

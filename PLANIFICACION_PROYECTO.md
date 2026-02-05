@@ -173,15 +173,15 @@
 - [x] **Configurar prefijo global de rutas (`/api`)**
 
 #### 0.5 **NUEVO:** Configuración de Interceptores Globales
-- [ ] Crear `src/common/interceptors/logging.interceptor.ts`
+- [x] Crear `src/common/interceptors/logging.interceptor.ts`
   - Loggear método, ruta, duración, status code
   - Loggear en formato estructurado
-- [ ] Crear `src/common/interceptors/transform.interceptor.ts`
+- [x] Crear `src/common/interceptors/transform.interceptor.ts`
   - Transformar todas las respuestas a formato estándar
   - Estructura: `{ success: true, data: any, timestamp: string }`
-- [ ] Crear `src/common/interceptors/timeout.interceptor.ts`
+- [x] Crear `src/common/interceptors/timeout.interceptor.ts`
   - Configurar timeout de 30 segundos para requests
-- [ ] Registrar interceptores globales en `main.ts`
+- [x] Registrar interceptores globales en `main.ts`
 
 #### 0.6 **NUEVO:** Configuración de Filtros de Excepciones Globales
 - [ ] Crear `src/common/filters/all-exceptions.filter.ts`

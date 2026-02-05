@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { THROTTLE_MODULE_LIMITS } from './common/constants/throttler.constants';
 import { PrismaModule } from './database/prisma.module';
+import { LoggerModule } from './shared/logger/logger.module';
 import { validationSchema } from './config/validation.schema';
 import configuration from './config/configuration';
 
@@ -27,6 +28,7 @@ import configuration from './config/configuration';
       delimiter: '.',
     }),
     ThrottlerModule.forRoot(THROTTLE_MODULE_LIMITS),
+    LoggerModule,
     PrismaModule,
   ],
   controllers: [AppController],

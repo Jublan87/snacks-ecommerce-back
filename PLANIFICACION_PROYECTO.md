@@ -217,12 +217,12 @@
 - [x] Documentar convención de nombres de eventos (ej: `order.created`, `stock.updated`)
 
 #### 0.10 **NUEVO:** Configuración de Logger Personalizado
-- [ ] Crear `src/shared/logger/logger.module.ts`
-- [ ] Crear `src/shared/logger/logger.service.ts`
+- [x] Crear `src/shared/logger/logger.module.ts`
+- [x] Crear `src/shared/logger/logger.service.ts`
   - Niveles: error, warn, info, debug
   - Formato estructurado (JSON en producción)
   - Incluir contexto y timestamp
-- [ ] Inyectar Logger en módulos principales
+- [x] Inyectar Logger en módulos principales
 
 ### Hitos de la Fase 0
 ✅ **Hito 0.1**: Proyecto NestJS creado y servidor levantado en `http://localhost:4000`  

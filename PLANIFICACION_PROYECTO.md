@@ -271,21 +271,21 @@
   ```
 
 #### 1.3 Configuración de Prisma Service
-- [ ] Crear módulo Prisma (`src/database/prisma.module.ts`)
-- [ ] Crear servicio Prisma (`src/database/prisma.service.ts`)
-- [ ] Configurar `onModuleInit` y `onModuleDestroy` para conexiones
-- [ ] Configurar logging de queries en desarrollo
-- [ ] Exportar `PrismaService` globalmente
+- [x] Crear módulo Prisma (`src/database/prisma.module.ts`)
+- [x] Crear servicio Prisma (`src/database/prisma.service.ts`)
+- [x] Configurar `onModuleInit` y `onModuleDestroy` para conexiones
+- [x] Configurar logging de queries en desarrollo
+- [x] Exportar `PrismaService` globalmente
 
 #### 1.4 **NUEVO:** Creación de Capa de Repositorios Base
-- [ ] Crear `src/database/repositories/interfaces/base-repository.interface.ts`
+- [x] Crear `src/database/repositories/interfaces/base-repository.interface.ts`
   - Definir interfaz genérica con operaciones CRUD
-  - Métodos: findById, findAll, create, update, delete, findOne
-- [ ] Crear `src/database/repositories/base.repository.ts`
+  - Métodos: findById, findAll, create, update, delete, findOne, count, exists
+- [x] Crear `src/database/repositories/base.repository.ts`
   - Implementar clase abstracta base
   - Proporcionar métodos comunes reutilizables
-  - Incluir manejo de errores estándar
-- [ ] Documentar patrón de uso de repositorios
+  - Incluir manejo de errores estándar (P2002, P2025, P2003)
+- [x] Documentar patrón de uso de repositorios (README.md con ejemplos)
 
 #### 1.5 Seeds de Datos Iniciales
 - [ ] Crear archivo `prisma/seed.ts`

@@ -288,24 +288,23 @@
 - [x] Documentar patrón de uso de repositorios (README.md con ejemplos)
 
 #### 1.5 Seeds de Datos Iniciales
-- [ ] Crear archivo `prisma/seed.ts`
-- [ ] Agregar usuario admin por defecto:
+- [x] Crear archivo `prisma/seed.ts`
+- [x] Agregar usuario admin por defecto:
   - Email: `admin@snacks.com`
   - Password: `Admin-123` (hasheado)
   - Role: `admin`
-- [ ] Agregar categorías iniciales:
-  - Dulces
-  - Salados
+- [x] Agregar categorías iniciales:
+  - Snacks Salados (con subcategorías: Papas Fritas, Nachos)
+  - Golosinas (con subcategoría: Chocolates)
   - Bebidas
-  - Chocolates
-- [ ] (Opcional) Agregar 3-5 productos de ejemplo con imágenes
-- [ ] Configurar script de seed en `package.json`
+- [x] (Opcional) Agregar 3-5 productos de ejemplo con imágenes (✅ 7 productos creados)
+- [x] Configurar script de seed en `package.json` y `prisma.config.ts`
   ```json
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
   }
   ```
-- [ ] Ejecutar seed
+- [x] Ejecutar seed
   ```bash
   npx prisma db seed
   ```

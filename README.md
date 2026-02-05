@@ -2,6 +2,11 @@
 
 API REST para el e-commerce de snacks (NestJS + Prisma + PostgreSQL).
 
+# Usuario admin
+
+Email: admin@snacks.com
+Password: Admin-123
+
 ## Hitos 0.1–0.4 (Configuración inicial)
 
 ### Requisitos

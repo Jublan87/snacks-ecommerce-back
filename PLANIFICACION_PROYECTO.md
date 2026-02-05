@@ -196,13 +196,13 @@
 - [x] Registrar filtros globales en `main.ts`
 
 #### 0.7 **NUEVO:** Configuración de Rate Limiting
-- [ ] Configurar ThrottlerModule globalmente
+- [x] Configurar ThrottlerModule globalmente
   - Default: 100 requests por 15 minutos
-- [ ] Crear configuración específica para endpoints sensibles:
+- [x] Crear configuración específica para endpoints sensibles:
   - Login: 5 intentos por 15 minutos
   - Registro: 3 intentos por hora
   - Admin: 200 requests por 15 minutos
-- [ ] Aplicar ThrottlerGuard globalmente
+- [x] Aplicar ThrottlerGuard globalmente
 
 #### 0.8 Configuración de Base de Datos
 - [x] Crear base de datos PostgreSQL local (docker-compose)

@@ -7,6 +7,8 @@ import { AppModule } from './app.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { TimeoutInterceptor } from './common/interceptors/timeout.interceptor';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +16,7 @@ async function bootstrap() {
 
   // Configurar CORS
   const corsOrigin = configService.get<string>('cors.origin');
+
   app.enableCors({
     origin: corsOrigin,
     credentials: true,
@@ -49,6 +52,10 @@ async function bootstrap() {
     new TransformInterceptor(),
   );
 
+  // Filtros de excepciones (el último registrado se ejecuta primero: Prisma → All)
+  const isProduction = configService.get<string>('app.nodeEnv') === 'production';
+  app.useGlobalFilters(new AllExceptionsFilter(isProduction), new PrismaExceptionFilter());
+
   const port = configService.get<number>('app.port') || 4000;
   const nodeEnv = configService.get<string>('app.nodeEnv');
 
@@ -57,4 +64,5 @@ async function bootstrap() {
   console.log(`📦 Entorno: ${nodeEnv}`);
   console.log(`🌐 CORS habilitado para: ${corsOrigin}`);
 }
+
 bootstrap();

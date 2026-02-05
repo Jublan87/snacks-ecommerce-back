@@ -184,16 +184,16 @@
 - [x] Registrar interceptores globales en `main.ts`
 
 #### 0.6 **NUEVO:** Configuración de Filtros de Excepciones Globales
-- [ ] Crear `src/common/filters/all-exceptions.filter.ts`
+- [x] Crear `src/common/filters/all-exceptions.filter.ts`
   - Capturar todas las excepciones
   - Formatear respuestas de error consistentes
   - Loggear errores 500 con stack trace
   - Sanitizar errores en producción
-- [ ] Crear `src/common/filters/prisma-exception.filter.ts`
+- [x] Crear `src/common/filters/prisma-exception.filter.ts`
   - Mapear excepciones de Prisma a HTTP status apropiados
   - Códigos de error específicos de BD
-- [ ] Crear códigos de error internos en `src/common/constants/error-codes.ts`
-- [ ] Registrar filtros globales en `main.ts`
+- [x] Crear códigos de error internos en `src/common/constants/error-codes.ts`
+- [x] Registrar filtros globales en `main.ts`
 
 #### 0.7 **NUEVO:** Configuración de Rate Limiting
 - [ ] Configurar ThrottlerModule globalmente

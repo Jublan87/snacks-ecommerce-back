@@ -210,11 +210,11 @@
 - [x] Verificar conexión a la base de datos (PrismaService.$connect en onModuleInit)
 
 #### 0.9 **NUEVO:** Configuración de Event Emitter
-- [ ] Configurar EventEmitterModule globalmente
+- [x] Configurar EventEmitterModule globalmente
   - Configurar wildcard: true
   - Configurar delimiter: '.'
-- [ ] Crear tipos de eventos en `src/common/events/event-types.ts`
-- [ ] Documentar convención de nombres de eventos (ej: `order.created`, `stock.updated`)
+- [x] Crear tipos de eventos en `src/common/events/event-types.ts`
+- [x] Documentar convención de nombres de eventos (ej: `order.created`, `stock.updated`)
 
 #### 0.10 **NUEVO:** Configuración de Logger Personalizado
 - [ ] Crear `src/shared/logger/logger.module.ts`

@@ -54,6 +54,26 @@ Si la conexión es correcta, la app arranca sin error. `PrismaService` se conect
    ```
    - API disponible en: **http://localhost:4000/api**
 
+### Base de datos: Migraciones y Seeds
+
+1. **Generar migraciones**
+   ```bash
+   npm run prisma:migrate
+   ```
+
+2. **Ejecutar seeds (datos iniciales)**
+   ```bash
+   npx prisma db seed
+   ```
+   - Crea 1 usuario admin, 6 categorías y 28 productos con imágenes
+
+3. **Abrir Prisma Studio (visualizador de BD)**
+   ```bash
+   npm run prisma:studio
+   ```
+   - Se abre automáticamente en: **http://localhost:5555**
+   - Permite ver y editar datos de la base de datos visualmente
+
 ### Verificación de hitos
 
 - **0.1** Proyecto NestJS creado y servidor en `http://localhost:4000`

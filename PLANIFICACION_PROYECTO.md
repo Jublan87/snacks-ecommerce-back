@@ -310,13 +310,24 @@
   ```
 
 #### 1.6 Verificación de Base de Datos
-- [ ] Usar Prisma Studio para verificar datos
+- [x] Usar Prisma Studio para verificar datos
   ```bash
   npx prisma studio
   ```
-- [ ] Verificar que el usuario admin existe
-- [ ] Verificar que las categorías existen
-- [ ] Verificar relaciones entre tablas
+- [x] Verificar que el usuario admin existe
+  - ✅ Email: admin@snacks.com
+  - ✅ Role: admin
+  - ✅ Password hasheado correctamente
+- [x] Verificar que las categorías existen
+  - ✅ 6 categorías (3 padres + 3 hijas)
+  - ✅ Jerarquía correcta: Snacks Salados → Papas Fritas, Nachos
+  - ✅ Jerarquía correcta: Golosinas → Chocolates
+  - ✅ Categoría simple: Bebidas
+- [x] Verificar relaciones entre tablas
+  - ✅ Todos los productos tienen categoría asignada
+  - ✅ Todos los productos tienen al menos una imagen (29 imágenes totales)
+  - ✅ Todas las subcategorías tienen un padre válido
+  - ✅ 28 productos distribuidos correctamente en categorías
 
 ### Hitos de la Fase 1
 ✅ **Hito 1.1**: Esquema Prisma completo con todos los modelos  

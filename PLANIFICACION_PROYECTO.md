@@ -347,103 +347,136 @@
 
 ### Tareas
 
-#### 2.1 Configuración de Autenticación
-- [ ] Crear módulo `AuthModule`
-- [ ] Crear servicio `AuthService`
-- [ ] Crear módulo `UsersModule`
-- [ ] **NUEVO:** Crear `UsersRepository` extendiendo `BaseRepository`
-  - Métodos: findByEmail, findById, create, update
+#### 2.1 Configuración Base (Módulos, Repositorios y Servicios)
+- [x] Crear módulo `UsersModule`
+- [x] **Crear `UsersRepository` extendiendo `BaseRepository`**
+  - Métodos: findByEmail (con overloads), findByIdWithoutPassword, createAndReturnWithoutPassword, updateAndReturnWithoutPassword
   - Implementar queries específicas de usuarios
-- [ ] Crear servicio `UsersService` para operaciones CRUD de usuarios
+  - Mapear interfaces de dominio a tipos de Prisma
+- [x] **Crear interfaces de dominio en `users/interfaces/`**
+  - `CreateUserInput` - datos para crear usuario (sin Prisma)
+  - `UpdateUserInput` - datos para actualizar usuario (sin Prisma)
+  - `UserWithoutPassword` - usuario sin password (sin Prisma)
+  - `UserWithPasswordForAuth` - usuario con password para login
+- [x] Crear servicio `UsersService` para operaciones CRUD de usuarios
   - **Inyectar UsersRepository** (no PrismaService directamente)
+  - Usar solo interfaces de dominio (sin tipos de Prisma)
+- [x] Crear módulo `AuthModule`
+- [x] Crear servicio `AuthService`
+  - Usar interfaces de dominio (sin tipos de Prisma)
 
-#### 2.2 Utilidades de Autenticación
-- [ ] Crear `src/common/utils/password.util.ts`
+#### 2.2 Utilidades y Códigos de Error
+- [x] Crear `src/common/utils/password.util.ts`
   - Función de hash de passwords con bcrypt (10 rounds)
   - Función de comparación de passwords
   - Función de validación de formato de password
-- [ ] Crear `src/modules/auth/utils/jwt.util.ts`
+- [x] Crear `src/modules/auth/utils/jwt.util.ts`
   - Función de generación de JWT
   - Función de verificación de JWT
+  - Constante `JWT_COOKIE_NAME`
+- [x] **Crear interfaces de auth en `auth/interfaces/`**
+  - `JwtPayload` - payload del token JWT
+  - `AuthResponse` - respuesta de registro/login
+  - `AuthCookieOptions` - opciones para la cookie
+- [x] **Agregar códigos de error** en `error-codes.ts`:
+  - `INVALID_CREDENTIALS`
+  - `EMAIL_EXISTS`
+  - `INVALID_PASSWORD`
+  - `INVALID_TOKEN`
 
-#### 2.3 Guards y Decorators
-- [ ] Crear `JwtAuthGuard` (Guard de autenticación)
-- [ ] Crear `RolesGuard` (Guard de roles - admin/customer)
-- [ ] Crear decorator `@Public()` para rutas públicas
-- [ ] Crear decorator `@Roles()` para rutas con roles específicos
-- [ ] Crear decorator `@CurrentUser()` para obtener usuario actual
-- [ ] Configurar `JwtStrategy` para Passport
+#### 2.3 DTOs de Validación
+- [x] Crear `RegisterDto` con validaciones
+  - Email válido
+  - Password con requisitos (8+ caracteres, mayúscula, minúscula, número)
+  - firstName, lastName, phone (opcional)
+- [ ] Crear `LoginDto` con validaciones
+  - Email y password requeridos
+- [ ] Crear `UpdateProfileDto` con validaciones
+  - firstName, lastName, phone, shippingAddress (opcionales)
+- [ ] Crear `ChangePasswordDto` con validaciones
+  - currentPassword, newPassword con requisitos
 
-#### 2.4 Endpoints de Autenticación
-- [ ] **POST /api/auth/register**
-  - Validar datos de entrada con DTOs
+#### 2.4 Endpoints Públicos de Autenticación
+- [x] **POST /api/auth/register**
+  - Validar datos de entrada con `RegisterDto`
   - Verificar que email no exista
-  - Validar formato de password (8+ caracteres, mayúscula, minúscula, número)
+  - Validar formato de password
   - Hashear password
   - Crear usuario con role `customer`
   - Generar JWT
   - Establecer cookie HttpOnly
   - Retornar usuario y token
+  - Aplicar rate limiting (3 intentos/hora)
 - [ ] **POST /api/auth/login**
-  - Validar email y password
-  - Buscar usuario por email
+  - Validar datos con `LoginDto`
+  - Buscar usuario por email (con password)
   - Comparar password
   - Generar JWT
   - Establecer cookie HttpOnly
   - Retornar usuario y token
+  - Aplicar rate limiting (5 intentos/15 min)
 - [ ] **POST /api/auth/logout**
   - Limpiar cookie de autenticación
   - Retornar mensaje de éxito
+
+#### 2.5 Guards, Decorators y Estrategias
+- [ ] Configurar `JwtStrategy` para Passport
+  - Validar token desde cookie o header
+  - Buscar usuario por ID del payload
+  - Retornar usuario en request
+- [ ] Crear `JwtAuthGuard` (Guard de autenticación)
+  - Usar JwtStrategy
+  - Lanzar UnauthorizedException si falla
+- [ ] Crear `RolesGuard` (Guard de roles - admin/customer)
+  - Verificar roles del usuario
+  - Lanzar ForbiddenException si no tiene permisos
+- [ ] Crear decorator `@Public()` para rutas públicas
+  - Marcar rutas que no requieren autenticación
+- [ ] Crear decorator `@Roles()` para rutas con roles específicos
+  - Especificar roles permitidos (admin, customer)
+- [ ] Crear decorator `@CurrentUser()` para obtener usuario actual
+  - Extraer usuario del request
+
+#### 2.6 Endpoints Protegidos de Autenticación
 - [ ] **GET /api/auth/me**
   - Proteger con `JwtAuthGuard`
-  - Retornar usuario autenticado
+  - Retornar usuario autenticado (sin password)
 - [ ] **GET /api/auth/verify**
   - Proteger con `JwtAuthGuard`
   - Verificar validez del token
   - Retornar información básica del usuario
 
-#### 2.5 Endpoints de Perfil de Usuario
+#### 2.7 Endpoints de Perfil de Usuario
 - [ ] **PUT /api/auth/profile**
   - Proteger con `JwtAuthGuard`
-  - Validar datos con DTOs
+  - Validar datos con `UpdateProfileDto`
   - Actualizar firstName, lastName, phone, shippingAddress
   - No permitir cambiar email ni role
   - Retornar usuario actualizado
 - [ ] **PUT /api/auth/password**
   - Proteger con `JwtAuthGuard`
-  - Validar password actual
+  - Validar datos con `ChangePasswordDto`
+  - Verificar password actual
   - Validar nuevo password (requisitos)
   - Hashear nuevo password
   - Actualizar password
   - Retornar mensaje de éxito
 
-#### 2.6 DTOs de Validación
-- [ ] Crear `RegisterDto` con validaciones
-- [ ] Crear `LoginDto` con validaciones
-- [ ] Crear `UpdateProfileDto` con validaciones
-- [ ] Crear `ChangePasswordDto` con validaciones
-
-#### 2.7 Manejo de Errores de Autenticación
-- [ ] Implementar filtros de excepciones personalizados
-- [ ] Códigos de error específicos:
-  - `INVALID_CREDENTIALS`
-  - `EMAIL_EXISTS`
-  - `INVALID_PASSWORD`
-  - `INVALID_TOKEN`
-  - `VALIDATION_ERROR`
-
 ### Hitos de la Fase 2
-✅ **Hito 2.1**: Usuario puede registrarse exitosamente  
-✅ **Hito 2.2**: Usuario puede hacer login y recibir JWT en cookie  
-✅ **Hito 2.3**: Usuario puede obtener su perfil con token válido  
-✅ **Hito 2.4**: Usuario puede actualizar su perfil  
-✅ **Hito 2.5**: Usuario puede cambiar su password  
-✅ **Hito 2.6**: Sistema rechaza tokens inválidos correctamente  
-✅ **Hito 2.7**: Guards de autenticación y roles funcionan  
-✅ **Hito 2.8**: UsersRepository implementado correctamente  
-✅ **Hito 2.9**: Rate limiting funciona en login y registro
+✅ **Hito 2.1**: Configuración base completada (módulos, repositorios, servicios con patrón Repository e interfaces de dominio sin Prisma)  
+✅ **Hito 2.2**: Utilidades y códigos de error listos (password, JWT, interfaces de auth)  
+✅ **Hito 2.3**: DTOs de validación para registro creados  
+✅ **Hito 2.4**: Usuario puede registrarse exitosamente con rate limiting  
+**Hito 2.5**: DTOs de login, profile y password creados  
+**Hito 2.6**: Usuario puede hacer login y recibir JWT en cookie  
+**Hito 2.7**: Usuario puede cerrar sesión (logout)  
+**Hito 2.8**: Guards, decorators y JwtStrategy configurados  
+**Hito 2.9**: Endpoints protegidos funcionando (me, verify)  
+**Hito 2.10**: Usuario puede actualizar su perfil  
+**Hito 2.11**: Usuario puede cambiar su password  
+**Hito 2.12**: Sistema rechaza tokens inválidos correctamente
 
-**Criterio de Finalización**: Sistema de autenticación completo con patrón Repository, funcional con todos los endpoints probados manualmente.
+**Criterio de Finalización**: Sistema de autenticación completo con patrón Repository desacoplado de Prisma, funcional con todos los endpoints probados manualmente.
 
 ---
 
@@ -453,39 +486,27 @@
 
 ### Tareas
 
-#### 3.1 Módulo de Categorías (Público)
+#### 3.1 Configuración Base - Categorías
 - [ ] Crear módulo `CategoriesModule`
-- [ ] **NUEVO:** Crear `CategoriesRepository` extendiendo `BaseRepository`
+- [ ] **Crear `CategoriesRepository` extendiendo `BaseRepository`**
   - Método `findAllWithHierarchy()` - retornar estructura de árbol
   - Método `findAllFlat()` - retornar lista plana
   - Método `findByIdWithChildren()` - incluir hijos
   - Método `findBySlug()`
   - Implementar queries optimizadas con eager loading
+  - Usar interfaces de dominio (sin exponer Prisma)
+- [ ] **Crear interfaces de dominio en `categories/interfaces/`**
+  - `CategoryWithChildren` - categoría con jerarquía
+  - `CategoryFlat` - categoría sin hijos
+  - `CategoryQueryFilters` - filtros de búsqueda
 - [ ] Crear servicio `CategoriesService`
   - Inyectar `CategoriesRepository`
   - Lógica de construcción de jerarquía
-- [ ] Crear controlador `CategoriesController`
+  - Usar solo interfaces de dominio
 
-#### 3.2 Endpoints de Categorías
-- [ ] **GET /api/categories**
-  - Implementar listado con jerarquía (estructura de árbol)
-  - Implementar listado plano (flat=true)
-  - Filtrar solo categorías activas por defecto
-  - Permitir incluir inactivas con query param
-  - Ordenar por campo `order`
-  - Retornar con relación `children` recursiva
-- [ ] **GET /api/categories/:id**
-  - Buscar categoría por ID
-  - Incluir categorías hijas
-  - Retornar 404 si no existe
-
-#### 3.3 DTOs de Categorías
-- [ ] Crear `CategoryDto` para respuestas
-- [ ] Crear `CategoryQueryDto` para query params
-
-#### 3.4 Módulo de Productos (Público)
+#### 3.2 Configuración Base - Productos
 - [ ] Crear módulo `ProductsModule`
-- [ ] **NUEVO:** Crear `ProductsRepository` extendiendo `BaseRepository`
+- [ ] **Crear `ProductsRepository` extendiendo `BaseRepository`**
   - Método `findAllWithFilters(filters)` - búsqueda avanzada
   - Método `findByIdWithRelations()` - incluir images, category, variants
   - Método `findBySlug()`
@@ -493,66 +514,91 @@
   - Método `findByCategory(categoryId)`
   - Implementar queries optimizadas (N+1 prevention)
   - Método privado `buildWhereClause(filters)` - construcción dinámica de queries
-- [ ] **NUEVO:** Crear domain services para lógica compleja
+  - Usar interfaces de dominio
+- [ ] **Crear interfaces de dominio en `products/interfaces/`**
+  - `ProductWithRelations` - producto completo
+  - `ProductListItem` - producto para listados
+  - `ProductFilters` - filtros de búsqueda
+  - `ProductSortOptions` - opciones de ordenamiento
+  - `PaginatedProducts` - respuesta paginada
+- [ ] **Crear domain services para lógica compleja**
   - `ProductSearchService` - lógica de búsqueda y filtrado
   - `ProductPricingService` - cálculo de precios con descuento
 - [ ] Crear servicio `ProductsService`
   - Inyectar `ProductsRepository` y domain services
   - Orquestar lógica de negocio
-- [ ] Crear controlador `ProductsController`
+  - Usar solo interfaces de dominio
 
-#### 3.5 Endpoints de Productos
-- [ ] **GET /api/products**
-  - Implementar paginación (default: page=1, limit=12)
-  - Implementar búsqueda por texto en name, description, shortDescription
-  - Implementar filtros:
-    - `category` (puede ser múltiple, separado por comas)
-    - `minPrice`, `maxPrice`
-    - `inStock` (boolean)
-    - `isFeatured` (boolean)
-    - `hasDiscount` (boolean)
-  - Implementar ordenamiento:
-    - `name-asc`, `name-desc`
-    - `price-asc`, `price-desc`
-    - `newest`, `oldest`
-  - Solo productos con `isActive = true`
-  - Incluir relaciones: `images`, `category`, `variants` con `options`
-  - Retornar con metadata de paginación
-- [ ] **GET /api/products/:id**
-  - Buscar producto por ID
-  - Incluir todas las relaciones (images, category, variants)
-  - Ordenar imágenes por `order`
-  - Retornar 404 si no existe
-- [ ] **GET /api/products/slug/:slug**
-  - Buscar producto por slug
-  - Incluir todas las relaciones
-  - Retornar 404 si no existe
+#### 3.3 DTOs de Validación
+- [ ] **DTOs de Categorías**
+  - `CategoryQueryDto` - query params (flat?, includeInactive?)
+- [ ] **DTOs de Productos**
+  - `ProductQueryDto` - query params y filtros
+    - Paginación (page, limit)
+    - Búsqueda (search)
+    - Filtros (category, minPrice, maxPrice, inStock, isFeatured, hasDiscount)
+    - Ordenamiento (sortBy: name-asc, price-desc, etc.)
+  - `PaginationMetaDto` - metadatos de paginación
 
-#### 3.6 DTOs de Productos
-- [ ] Crear `ProductDto` para respuestas
-- [ ] Crear `ProductQueryDto` para query params y filtros
-- [ ] Crear `PaginationDto` para metadatos de paginación
+#### 3.4 Utilidades
+- [ ] Crear `src/common/utils/query-builder.util.ts`
+  - Función para construir query de búsqueda con Prisma
+  - Función para aplicar filtros dinámicamente
+- [ ] Crear `src/common/utils/pagination.util.ts`
+  - Función para calcular metadata de paginación
+  - Función para construir respuesta paginada
+- [ ] Crear `src/common/interceptors/pagination.interceptor.ts` (opcional)
+  - Transformar respuestas paginadas a estructura estándar
 
-#### 3.7 Utilidades
-- [ ] Crear función para construir query de búsqueda con Prisma
-- [ ] Crear función para aplicar filtros dinámicamente
-- [ ] Crear función para calcular metadata de paginación
-- [ ] Crear interceptor para transformar respuestas con estructura estándar
+#### 3.5 Controladores y Endpoints
+- [ ] **Crear `CategoriesController`**
+  - **GET /api/categories**
+    - Implementar listado con jerarquía (estructura de árbol)
+    - Implementar listado plano (flat=true)
+    - Filtrar solo categorías activas por defecto
+    - Permitir incluir inactivas con query param
+    - Ordenar por campo `order`
+    - Retornar con relación `children` recursiva
+  - **GET /api/categories/:id**
+    - Buscar categoría por ID
+    - Incluir categorías hijas
+    - Retornar 404 si no existe
+- [ ] **Crear `ProductsController`**
+  - **GET /api/products**
+    - Validar con `ProductQueryDto`
+    - Implementar paginación (default: page=1, limit=12)
+    - Implementar búsqueda por texto en name, description, shortDescription
+    - Aplicar filtros (category, precio, stock, featured, descuento)
+    - Aplicar ordenamiento
+    - Solo productos con `isActive = true`
+    - Incluir relaciones: `images`, `category`, `variants` con `options`
+    - Retornar con metadata de paginación
+  - **GET /api/products/:id**
+    - Buscar producto por ID
+    - Incluir todas las relaciones (images, category, variants)
+    - Ordenar imágenes por `order`
+    - Retornar 404 si no existe
+  - **GET /api/products/slug/:slug**
+    - Buscar producto por slug
+    - Incluir todas las relaciones
+    - Retornar 404 si no existe
 
 ### Hitos de la Fase 3
-✅ **Hito 3.1**: Categorías se listan correctamente con jerarquía  
-✅ **Hito 3.2**: Categoría individual se obtiene por ID  
-✅ **Hito 3.3**: Productos se listan con paginación funcionando  
-✅ **Hito 3.4**: Búsqueda de productos por texto funciona  
-✅ **Hito 3.5**: Filtros de productos (categoría, precio, stock) funcionan  
-✅ **Hito 3.6**: Ordenamiento de productos funciona  
-✅ **Hito 3.7**: Producto individual se obtiene por ID y por slug  
-✅ **Hito 3.8**: Imágenes y relaciones se incluyen correctamente  
-✅ **Hito 3.9**: ProductsRepository y CategoriesRepository implementados  
-✅ **Hito 3.10**: Domain services funcionando correctamente  
-✅ **Hito 3.11**: Queries optimizadas sin N+1 problems
+**Hito 3.1**: Configuración base de categorías completada (módulo, repositorio, servicio, interfaces de dominio)  
+**Hito 3.2**: Configuración base de productos completada (módulo, repositorio, domain services, interfaces de dominio)  
+**Hito 3.3**: DTOs de validación creados (query params, filtros, paginación)  
+**Hito 3.4**: Utilidades de paginación y query builder implementadas  
+**Hito 3.5**: Categorías se listan correctamente con jerarquía y planas  
+**Hito 3.6**: Categoría individual se obtiene por ID  
+**Hito 3.7**: Productos se listan con paginación funcionando  
+**Hito 3.8**: Búsqueda de productos por texto funciona  
+**Hito 3.9**: Filtros de productos (categoría, precio, stock, featured, descuento) funcionan  
+**Hito 3.10**: Ordenamiento de productos funciona  
+**Hito 3.11**: Producto individual se obtiene por ID y por slug  
+**Hito 3.12**: Imágenes y relaciones se incluyen correctamente  
+**Hito 3.13**: Queries optimizadas sin N+1 problems
 
-**Criterio de Finalización**: Endpoints públicos de productos y categorías funcionando con patrón Repository y Domain Services, queries optimizadas.
+**Criterio de Finalización**: Endpoints públicos de productos y categorías funcionando con filtros, búsqueda, paginación y patrón Repository desacoplado de Prisma.
 
 ---
 
@@ -562,82 +608,84 @@
 
 ### Tareas
 
-#### 4.1 Configuración del Módulo
+#### 4.1 Configuración Base
 - [ ] Crear módulo `CartModule`
-- [ ] **NUEVO:** Crear `CartRepository` extendiendo `BaseRepository`
+- [ ] **Crear `CartRepository` extendiendo `BaseRepository`**
   - Método `findByUserId(userId)` - incluir items con productos
   - Método `findOrCreate(userId)` - obtener o crear carrito
   - Método `addItem(cartId, productId, quantity)`
   - Método `updateItemQuantity(itemId, quantity)`
   - Método `removeItem(itemId)`
   - Método `clearCart(cartId)`
-- [ ] **NUEVO:** Crear domain service `CartValidationService`
+  - Usar interfaces de dominio
+- [ ] **Crear interfaces de dominio en `cart/interfaces/`**
+  - `CartWithItems` - carrito con items y productos
+  - `CartItem` - item del carrito
+  - `AddItemInput` - datos para agregar item
+  - `UpdateItemInput` - datos para actualizar item
+- [ ] **Crear domain service `CartValidationService`**
   - Validar stock antes de agregar
   - Validar producto activo
   - Validar que item pertenezca al usuario
 - [ ] Crear servicio `CartService`
   - Inyectar `CartRepository` y `CartValidationService`
-- [ ] Crear controlador `CartController`
+  - Usar solo interfaces de dominio
 
-#### 4.3 Endpoints de Carrito
-- [ ] **GET /api/cart**
-  - Proteger con `JwtAuthGuard`
-  - Obtener carrito del usuario autenticado
-  - Si no existe, crear uno vacío
-  - Incluir items con relación a productos e imágenes
-  - Retornar carrito completo
-- [ ] **POST /api/cart/items**
-  - Proteger con `JwtAuthGuard`
-  - Validar que producto exista y esté activo
-  - Validar stock disponible
-  - Si item ya existe en carrito, incrementar cantidad
-  - Si no existe, crear nuevo item
-  - Retornar item creado/actualizado
-- [ ] **PUT /api/cart/items/:itemId**
-  - Proteger con `JwtAuthGuard`
-  - Validar que item pertenezca al carrito del usuario
-  - Validar nueva cantidad > 0
-  - Validar stock disponible
-  - Actualizar cantidad
-  - Retornar item actualizado
-- [ ] **DELETE /api/cart/items/:itemId**
-  - Proteger con `JwtAuthGuard`
-  - Validar que item pertenezca al carrito del usuario
-  - Eliminar item del carrito
-  - Retornar mensaje de éxito
-- [ ] **DELETE /api/cart**
-  - Proteger con `JwtAuthGuard`
-  - Eliminar todos los items del carrito
-  - Retornar mensaje de éxito
+#### 4.2 DTOs y Códigos de Error
+- [ ] **DTOs de Carrito**
+  - `AddToCartDto` - validar productId, quantity (min: 1)
+  - `UpdateCartItemDto` - validar quantity (min: 1)
+- [ ] **Códigos de error** en `error-codes.ts`:
+  - `INSUFFICIENT_STOCK` - stock insuficiente
+  - `PRODUCT_NOT_FOUND` - producto no encontrado
+  - `PRODUCT_INACTIVE` - producto inactivo
+  - `CART_ITEM_NOT_FOUND` - item no encontrado
 
-#### 4.4 DTOs de Carrito
-- [ ] Crear `AddToCartDto` para agregar items
-- [ ] Crear `UpdateCartItemDto` para actualizar cantidad
-- [ ] Crear `CartDto` para respuestas
-
-#### 4.5 Validaciones Específicas
-- [ ] Validar que cantidad no exceda stock disponible
-- [ ] Validar que producto esté activo
-- [ ] Validar que item pertenezca al usuario actual (seguridad)
-
-#### 4.6 Manejo de Errores
-- [ ] Implementar error `INSUFFICIENT_STOCK` con detalles
-- [ ] Implementar error `PRODUCT_NOT_FOUND`
-- [ ] Implementar error `PRODUCT_INACTIVE`
-- [ ] Implementar error `CART_ITEM_NOT_FOUND`
+#### 4.3 Controlador y Endpoints
+- [ ] **Crear `CartController`**
+  - **GET /api/cart**
+    - Proteger con `JwtAuthGuard`
+    - Obtener carrito del usuario autenticado
+    - Si no existe, crear uno vacío
+    - Incluir items con relación a productos e imágenes
+    - Retornar carrito completo
+  - **POST /api/cart/items**
+    - Proteger con `JwtAuthGuard`
+    - Validar con `AddToCartDto`
+    - Validar que producto exista y esté activo
+    - Validar stock disponible
+    - Si item ya existe en carrito, incrementar cantidad
+    - Si no existe, crear nuevo item
+    - Retornar item creado/actualizado
+  - **PUT /api/cart/items/:itemId**
+    - Proteger con `JwtAuthGuard`
+    - Validar con `UpdateCartItemDto`
+    - Validar que item pertenezca al carrito del usuario
+    - Validar stock disponible
+    - Actualizar cantidad
+    - Retornar item actualizado
+  - **DELETE /api/cart/items/:itemId**
+    - Proteger con `JwtAuthGuard`
+    - Validar que item pertenezca al carrito del usuario
+    - Eliminar item del carrito
+    - Retornar mensaje de éxito
+  - **DELETE /api/cart**
+    - Proteger con `JwtAuthGuard`
+    - Eliminar todos los items del carrito
+    - Retornar mensaje de éxito
 
 ### Hitos de la Fase 4
-✅ **Hito 4.1**: Usuario puede obtener su carrito (o crear uno nuevo)  
-✅ **Hito 4.2**: Usuario puede agregar producto al carrito  
-✅ **Hito 4.3**: Sistema valida stock antes de agregar  
-✅ **Hito 4.4**: Usuario puede actualizar cantidad de un item  
-✅ **Hito 4.5**: Usuario puede eliminar item del carrito  
-✅ **Hito 4.6**: Usuario puede vaciar su carrito completamente  
-✅ **Hito 4.7**: Carrito incluye información completa del producto  
-✅ **Hito 4.8**: CartRepository implementado correctamente  
-✅ **Hito 4.9**: CartValidationService separa lógica de validación
+**Hito 4.1**: Configuración base completada (módulo, repositorio, domain service, interfaces de dominio)  
+**Hito 4.2**: DTOs y códigos de error creados  
+**Hito 4.3**: Usuario puede obtener su carrito (o crear uno nuevo)  
+**Hito 4.4**: Usuario puede agregar producto al carrito  
+**Hito 4.5**: Sistema valida stock antes de agregar  
+**Hito 4.6**: Usuario puede actualizar cantidad de un item  
+**Hito 4.7**: Usuario puede eliminar item del carrito  
+**Hito 4.8**: Usuario puede vaciar su carrito completamente  
+**Hito 4.9**: Carrito incluye información completa del producto
 
-**Criterio de Finalización**: Sistema de carrito con patrón Repository y Domain Services, todas las validaciones funcionando.
+**Criterio de Finalización**: Sistema de carrito con patrón Repository y Domain Services desacoplado de Prisma, todas las validaciones funcionando.
 
 ---
 

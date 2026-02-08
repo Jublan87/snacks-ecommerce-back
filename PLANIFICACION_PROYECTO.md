@@ -428,25 +428,24 @@
   - Retornar mensaje de éxito ({ message: 'Sesión cerrada' })
 
 #### 2.6 Guards, Decorators y Estrategias (para endpoints protegidos)
-- [ ] **Configurar `JwtStrategy`** para Passport
+- [x] **Configurar `JwtStrategy`** para Passport
   - Validar token desde cookie o header Authorization
   - Extraer payload (sub, email, role)
   - Buscar usuario por ID del payload
   - Retornar usuario en request.user
-- [ ] **Crear `JwtAuthGuard`** (Guard de autenticación)
+- [x] **Crear `JwtAuthGuard`** (Guard de autenticación)
   - Usar JwtStrategy
+  - Respetar @Public() para rutas públicas
   - Lanzar UnauthorizedException si falla
-- [ ] **Crear `RolesGuard`** (Guard de roles - admin/customer)
+- [x] **Crear `RolesGuard`** (Guard de roles - admin/customer)
   - Verificar roles del usuario con metadata de @Roles()
   - Lanzar ForbiddenException si no tiene permisos
-- [ ] **Crear decorator `@Public()`** para rutas públicas
-  - Marcar rutas que no requieren autenticación
-  - Usar SetMetadata('isPublic', true)
-- [ ] **Crear decorator `@Roles()`** para rutas con roles específicos
-  - Especificar roles permitidos (admin, customer)
-  - Usar SetMetadata('roles', roles)
-- [ ] **Crear decorator `@CurrentUser()`** para obtener usuario actual
-  - Extraer usuario del request (createParamDecorator)
+- [x] **Crear decorator `@Public()`** para rutas públicas
+  - Marcar rutas que no requieren autenticación (common/decorators)
+- [x] **Crear decorator `@Roles()`** para rutas con roles específicos
+  - Especificar roles permitidos (admin, customer) (common/decorators)
+- [x] **Crear decorator `@CurrentUser()`** para obtener usuario actual
+  - Extraer usuario del request (common/decorators, createParamDecorator)
 
 #### 2.7 Endpoint: GET /api/auth/me
 - [ ] **Implementar en `AuthController`**
@@ -500,7 +499,7 @@
 ✅ **Hito 2.3**: Endpoint POST /api/auth/register funcionando (RegisterDto + controller + service + cookie)  
 ✅ **Hito 2.4**: Endpoint POST /api/auth/login funcionando (LoginDto + validación de credenciales + cookie)  
 ✅ **Hito 2.5**: Endpoint POST /api/auth/logout funcionando (limpia cookie)  
-**Hito 2.6**: Guards, decorators y JwtStrategy configurados  
+✅ **Hito 2.6**: Guards, decorators y JwtStrategy configurados  
 **Hito 2.7**: Endpoint GET /api/auth/me funcionando (protegido, retorna usuario)  
 **Hito 2.8**: Endpoint GET /api/auth/verify funcionando (protegido, valida token)  
 **Hito 2.9**: Endpoint PUT /api/auth/profile funcionando (UpdateProfileDto + actualiza datos)  

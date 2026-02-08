@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { THROTTLE_OPTIONS } from '../../common/constants/throttler.constants';
+import { Public } from '../../common/decorators/public.decorator';
 import { AuthService } from './auth.service';
 import { AuthResponse } from './interfaces/auth-response.interface';
 import { RegisterDto } from './dto/register.dto';
@@ -13,6 +14,7 @@ import { LoginDto } from './dto/login.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('register')
   @Throttle({ register: THROTTLE_OPTIONS.register })
   @ApiOperation({ summary: 'Registro de nuevo usuario' })
@@ -29,6 +31,7 @@ export class AuthController {
     return { user };
   }
 
+  @Public()
   @Post('login')
   @Throttle({ login: THROTTLE_OPTIONS.login })
   @ApiOperation({ summary: 'Iniciar sesión' })
@@ -45,6 +48,7 @@ export class AuthController {
     return { user };
   }
 
+  @Public()
   @Post('logout')
   @ApiOperation({ summary: 'Cerrar sesión' })
   @ApiResponse({ status: 200, description: 'Sesión cerrada correctamente' })

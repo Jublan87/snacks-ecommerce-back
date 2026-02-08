@@ -1,4 +1,5 @@
 import { SessionUser } from './session-user.interface';
+import { UserWithoutPassword } from '../../users/interfaces/user-without-password.interface';
 
 /**
  * Respuesta de login y register en el body de la API.
@@ -6,6 +7,14 @@ import { SessionUser } from './session-user.interface';
  */
 export interface AuthResponse {
   user: SessionUser;
+}
+
+/**
+ * Respuesta de GET /api/auth/me.
+ * Usuario completo sin password (id, email, firstName, lastName, phone, role, shippingAddress, createdAt, updatedAt).
+ */
+export interface MeResponse {
+  user: UserWithoutPassword;
 }
 
 /**

@@ -1,11 +1,14 @@
-import { Controller, Post, Body, Res } from '@nestjs/common';
+import { Controller, Get, Post, Body, Res, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { THROTTLE_OPTIONS } from '../../common/constants/throttler.constants';
 import { Public } from '../../common/decorators/public.decorator';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
+import { UserWithoutPassword } from '../users/interfaces/user-without-password.interface';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
-import { AuthResponse } from './interfaces/auth-response.interface';
+import { AuthResponse, MeResponse } from './interfaces/auth-response.interface';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -61,5 +64,14 @@ export class AuthController {
       secure: options.secure,
     });
     return { message: 'Sesión cerrada' };
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Usuario completo sin password' })
+  @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
+  async me(@CurrentUser() currentUser: UserWithoutPassword): Promise<MeResponse> {
+    return { user: currentUser };
   }
 }

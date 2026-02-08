@@ -448,12 +448,12 @@
   - Extraer usuario del request (common/decorators, createParamDecorator)
 
 #### 2.7 Endpoint: GET /api/auth/me
-- [ ] **Implementar en `AuthController`**
+- [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener usuario
   - No requiere DTO
-- [ ] **Implementar en `AuthService.getProfile()`** (opcional, puede ser directo desde controller)
-  - Retornar el usuario sin password (ya viene de JwtStrategy)
+- [x] **Implementar en `AuthService.getProfile()`**
+  - Recibe usuario (de request) y retorna SessionUser para respuesta consistente
 
 #### 2.8 Endpoint: GET /api/auth/verify
 - [ ] **Implementar en `AuthController`**
@@ -500,7 +500,7 @@
 ✅ **Hito 2.4**: Endpoint POST /api/auth/login funcionando (LoginDto + validación de credenciales + cookie)  
 ✅ **Hito 2.5**: Endpoint POST /api/auth/logout funcionando (limpia cookie)  
 ✅ **Hito 2.6**: Guards, decorators y JwtStrategy configurados  
-**Hito 2.7**: Endpoint GET /api/auth/me funcionando (protegido, retorna usuario)  
+✅ **Hito 2.7**: Endpoint GET /api/auth/me funcionando (protegido, retorna usuario)  
 **Hito 2.8**: Endpoint GET /api/auth/verify funcionando (protegido, valida token)  
 **Hito 2.9**: Endpoint PUT /api/auth/profile funcionando (UpdateProfileDto + actualiza datos)  
 **Hito 2.10**: Endpoint PUT /api/auth/password funcionando (ChangePasswordDto + valida y actualiza)

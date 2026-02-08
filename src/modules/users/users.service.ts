@@ -16,12 +16,7 @@ export class UsersService {
   async findByEmailWithPassword(email: string): Promise<UserWithPasswordForAuth | null> {
     const user = await this.usersRepository.findByEmail(email, true);
     if (!user || !('password' in user)) return null;
-    return {
-      id: user.id,
-      email: user.email,
-      password: user.password,
-      role: user.role,
-    };
+    return user as UserWithPasswordForAuth;
   }
 
   async findById(id: string): Promise<UserWithoutPassword | null> {

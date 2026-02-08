@@ -13,7 +13,7 @@ export function generateToken(
   email: string,
   role: string,
 ): string {
-  return jwtService.sign({ sub: userId, email, role }, { subject: userId });
+  return jwtService.sign({ sub: userId, email, role });
 }
 
 /**

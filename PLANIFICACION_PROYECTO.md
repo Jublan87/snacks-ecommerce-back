@@ -384,99 +384,129 @@
   - `INVALID_PASSWORD`
   - `INVALID_TOKEN`
 
-#### 2.3 DTOs de Validación
-- [x] Crear `RegisterDto` con validaciones
-  - Email válido
-  - Password con requisitos (8+ caracteres, mayúscula, minúscula, número)
-  - firstName, lastName, phone (opcional)
-- [ ] Crear `LoginDto` con validaciones
-  - Email y password requeridos
-- [ ] Crear `UpdateProfileDto` con validaciones
-  - firstName, lastName, phone, shippingAddress (opcionales)
-- [ ] Crear `ChangePasswordDto` con validaciones
-  - currentPassword, newPassword con requisitos
-
-#### 2.4 Endpoints Públicos de Autenticación
-- [x] **POST /api/auth/register**
+#### 2.3 Endpoint: POST /api/auth/register
+- [x] **Crear `RegisterDto`** con validaciones
+  - Email válido (IsEmail)
+  - Password con requisitos (8+ chars, mayúscula, minúscula, número)
+  - firstName, lastName (requeridos)
+  - phone (opcional)
+- [x] **Implementar en `AuthController`**
   - Validar datos de entrada con `RegisterDto`
+  - Aplicar rate limiting (3 intentos/hora)
+- [x] **Implementar en `AuthService.register()`**
   - Verificar que email no exista
   - Validar formato de password
   - Hashear password
   - Crear usuario con role `customer`
   - Generar JWT
-  - Establecer cookie HttpOnly
+  - Retornar `AuthResponse`
+- [x] **Configurar respuesta en controller**
+  - Establecer cookie HttpOnly con el token
   - Retornar usuario y token
-  - Aplicar rate limiting (3 intentos/hora)
-- [ ] **POST /api/auth/login**
-  - Validar datos con `LoginDto`
-  - Buscar usuario por email (con password)
-  - Comparar password
-  - Generar JWT
-  - Establecer cookie HttpOnly
-  - Retornar usuario y token
-  - Aplicar rate limiting (5 intentos/15 min)
-- [ ] **POST /api/auth/logout**
-  - Limpiar cookie de autenticación
-  - Retornar mensaje de éxito
 
-#### 2.5 Guards, Decorators y Estrategias
-- [ ] Configurar `JwtStrategy` para Passport
-  - Validar token desde cookie o header
+#### 2.4 Endpoint: POST /api/auth/login
+- [x] **Crear `LoginDto`** con validaciones
+  - Email (requerido, IsEmail)
+  - Password (requerido, MinLength 1)
+- [x] **Implementar en `AuthController`**
+  - Validar datos con `LoginDto`
+  - Aplicar rate limiting (5 intentos/15 min)
+- [x] **Implementar en `AuthService.login()`**
+  - Buscar usuario por email (con password)
+  - Comparar password con bcrypt
+  - Si falla, lanzar UnauthorizedException con INVALID_CREDENTIALS
+  - Generar JWT
+  - Retornar `AuthResponse`
+- [x] **Configurar respuesta en controller**
+  - Establecer cookie HttpOnly con el token
+  - Retornar usuario y token
+
+#### 2.5 Endpoint: POST /api/auth/logout
+- [x] **Implementar en `AuthController`**
+  - No requiere DTO
+  - Limpiar cookie de autenticación (res.clearCookie con mismas opciones path, httpOnly, sameSite, secure)
+  - Retornar mensaje de éxito ({ message: 'Sesión cerrada' })
+
+#### 2.6 Guards, Decorators y Estrategias (para endpoints protegidos)
+- [ ] **Configurar `JwtStrategy`** para Passport
+  - Validar token desde cookie o header Authorization
+  - Extraer payload (sub, email, role)
   - Buscar usuario por ID del payload
-  - Retornar usuario en request
-- [ ] Crear `JwtAuthGuard` (Guard de autenticación)
+  - Retornar usuario en request.user
+- [ ] **Crear `JwtAuthGuard`** (Guard de autenticación)
   - Usar JwtStrategy
   - Lanzar UnauthorizedException si falla
-- [ ] Crear `RolesGuard` (Guard de roles - admin/customer)
-  - Verificar roles del usuario
+- [ ] **Crear `RolesGuard`** (Guard de roles - admin/customer)
+  - Verificar roles del usuario con metadata de @Roles()
   - Lanzar ForbiddenException si no tiene permisos
-- [ ] Crear decorator `@Public()` para rutas públicas
+- [ ] **Crear decorator `@Public()`** para rutas públicas
   - Marcar rutas que no requieren autenticación
-- [ ] Crear decorator `@Roles()` para rutas con roles específicos
+  - Usar SetMetadata('isPublic', true)
+- [ ] **Crear decorator `@Roles()`** para rutas con roles específicos
   - Especificar roles permitidos (admin, customer)
-- [ ] Crear decorator `@CurrentUser()` para obtener usuario actual
-  - Extraer usuario del request
+  - Usar SetMetadata('roles', roles)
+- [ ] **Crear decorator `@CurrentUser()`** para obtener usuario actual
+  - Extraer usuario del request (createParamDecorator)
 
-#### 2.6 Endpoints Protegidos de Autenticación
-- [ ] **GET /api/auth/me**
-  - Proteger con `JwtAuthGuard`
-  - Retornar usuario autenticado (sin password)
-- [ ] **GET /api/auth/verify**
-  - Proteger con `JwtAuthGuard`
-  - Verificar validez del token
-  - Retornar información básica del usuario
+#### 2.7 Endpoint: GET /api/auth/me
+- [ ] **Implementar en `AuthController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Usar `@CurrentUser()` para obtener usuario
+  - No requiere DTO
+- [ ] **Implementar en `AuthService.getProfile()`** (opcional, puede ser directo desde controller)
+  - Retornar el usuario sin password (ya viene de JwtStrategy)
 
-#### 2.7 Endpoints de Perfil de Usuario
-- [ ] **PUT /api/auth/profile**
-  - Proteger con `JwtAuthGuard`
+#### 2.8 Endpoint: GET /api/auth/verify
+- [ ] **Implementar en `AuthController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Usar `@CurrentUser()` para obtener usuario
+  - Retornar { valid: true, user: { id, email, role } }
+
+#### 2.9 Endpoint: PUT /api/auth/profile
+- [ ] **Crear `UpdateProfileDto`** con validaciones
+  - firstName (opcional, IsString, MinLength 1)
+  - lastName (opcional, IsString, MinLength 1)
+  - phone (opcional, IsString)
+  - shippingAddress (opcional, IsObject o custom validator)
+- [ ] **Implementar en `AuthController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar datos con `UpdateProfileDto`
-  - Actualizar firstName, lastName, phone, shippingAddress
-  - No permitir cambiar email ni role
+  - Usar `@CurrentUser()` para obtener userId
+- [ ] **Implementar en `AuthService.updateProfile()`**
+  - Llamar a `usersService.update(userId, data)`
+  - No permitir cambiar email ni role (esos campos no están en UpdateUserInput)
   - Retornar usuario actualizado
-- [ ] **PUT /api/auth/password**
-  - Proteger con `JwtAuthGuard`
+
+#### 2.10 Endpoint: PUT /api/auth/password
+- [ ] **Crear `ChangePasswordDto`** con validaciones
+  - currentPassword (requerido, IsString)
+  - newPassword (requerido, matches PASSWORD_REGEX, MinLength 8)
+- [ ] **Implementar en `AuthController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar datos con `ChangePasswordDto`
-  - Verificar password actual
-  - Validar nuevo password (requisitos)
-  - Hashear nuevo password
-  - Actualizar password
-  - Retornar mensaje de éxito
+  - Usar `@CurrentUser()` para obtener userId
+- [ ] **Implementar en `AuthService.changePassword()`**
+  - Buscar usuario por ID (con password)
+  - Verificar currentPassword con comparePassword
+  - Si falla, lanzar BadRequestException con INVALID_PASSWORD
+  - Validar formato de newPassword
+  - Hashear newPassword
+  - Actualizar password en BD
+  - Retornar { message: 'Contraseña actualizada correctamente' }
 
 ### Hitos de la Fase 2
 ✅ **Hito 2.1**: Configuración base completada (módulos, repositorios, servicios con patrón Repository e interfaces de dominio sin Prisma)  
 ✅ **Hito 2.2**: Utilidades y códigos de error listos (password, JWT, interfaces de auth)  
-✅ **Hito 2.3**: DTOs de validación para registro creados  
-✅ **Hito 2.4**: Usuario puede registrarse exitosamente con rate limiting  
-**Hito 2.5**: DTOs de login, profile y password creados  
-**Hito 2.6**: Usuario puede hacer login y recibir JWT en cookie  
-**Hito 2.7**: Usuario puede cerrar sesión (logout)  
-**Hito 2.8**: Guards, decorators y JwtStrategy configurados  
-**Hito 2.9**: Endpoints protegidos funcionando (me, verify)  
-**Hito 2.10**: Usuario puede actualizar su perfil  
-**Hito 2.11**: Usuario puede cambiar su password  
-**Hito 2.12**: Sistema rechaza tokens inválidos correctamente
+✅ **Hito 2.3**: Endpoint POST /api/auth/register funcionando (RegisterDto + controller + service + cookie)  
+✅ **Hito 2.4**: Endpoint POST /api/auth/login funcionando (LoginDto + validación de credenciales + cookie)  
+✅ **Hito 2.5**: Endpoint POST /api/auth/logout funcionando (limpia cookie)  
+**Hito 2.6**: Guards, decorators y JwtStrategy configurados  
+**Hito 2.7**: Endpoint GET /api/auth/me funcionando (protegido, retorna usuario)  
+**Hito 2.8**: Endpoint GET /api/auth/verify funcionando (protegido, valida token)  
+**Hito 2.9**: Endpoint PUT /api/auth/profile funcionando (UpdateProfileDto + actualiza datos)  
+**Hito 2.10**: Endpoint PUT /api/auth/password funcionando (ChangePasswordDto + valida y actualiza)
 
-**Criterio de Finalización**: Sistema de autenticación completo con patrón Repository desacoplado de Prisma, funcional con todos los endpoints probados manualmente.
+**Criterio de Finalización**: Sistema de autenticación completo con patrón Repository desacoplado de Prisma, todos los endpoints funcionando.
 
 ---
 
@@ -529,74 +559,95 @@
   - Orquestar lógica de negocio
   - Usar solo interfaces de dominio
 
-#### 3.3 DTOs de Validación
-- [ ] **DTOs de Categorías**
-  - `CategoryQueryDto` - query params (flat?, includeInactive?)
-- [ ] **DTOs de Productos**
-  - `ProductQueryDto` - query params y filtros
-    - Paginación (page, limit)
-    - Búsqueda (search)
-    - Filtros (category, minPrice, maxPrice, inStock, isFeatured, hasDiscount)
-    - Ordenamiento (sortBy: name-asc, price-desc, etc.)
-  - `PaginationMetaDto` - metadatos de paginación
+#### 3.3 Utilidades Comunes (para paginación y búsqueda)
+- [ ] **Crear `src/common/utils/pagination.util.ts`**
+  - Función `calculatePaginationMeta(total, page, limit)` - calcular metadata
+  - Función `buildPaginatedResponse(data, meta)` - construir respuesta
+  - Interface `PaginationMeta` (total, page, limit, totalPages, hasNext, hasPrev)
+- [ ] **Crear `src/common/utils/query-builder.util.ts`** (opcional)
+  - Helpers para construir queries dinámicas de búsqueda con Prisma
 
-#### 3.4 Utilidades
-- [ ] Crear `src/common/utils/query-builder.util.ts`
-  - Función para construir query de búsqueda con Prisma
-  - Función para aplicar filtros dinámicamente
-- [ ] Crear `src/common/utils/pagination.util.ts`
-  - Función para calcular metadata de paginación
-  - Función para construir respuesta paginada
-- [ ] Crear `src/common/interceptors/pagination.interceptor.ts` (opcional)
-  - Transformar respuestas paginadas a estructura estándar
-
-#### 3.5 Controladores y Endpoints
+#### 3.4 Endpoint: GET /api/categories
+- [ ] **Crear `CategoryQueryDto`** con validaciones
+  - flat (opcional, IsBoolean, Transform) - lista plana o jerárquica
+  - includeInactive (opcional, IsBoolean) - incluir inactivas
 - [ ] **Crear `CategoriesController`**
-  - **GET /api/categories**
-    - Implementar listado con jerarquía (estructura de árbol)
-    - Implementar listado plano (flat=true)
-    - Filtrar solo categorías activas por defecto
-    - Permitir incluir inactivas con query param
-    - Ordenar por campo `order`
-    - Retornar con relación `children` recursiva
-  - **GET /api/categories/:id**
-    - Buscar categoría por ID
-    - Incluir categorías hijas
-    - Retornar 404 si no existe
+- [ ] **Implementar en controller**
+  - Validar con `CategoryQueryDto`
+  - Llamar a `categoriesService.findAll(filters)`
+- [ ] **Implementar en `CategoriesService.findAll()`**
+  - Si flat=true, llamar a `repository.findAllFlat()`
+  - Si flat=false, llamar a `repository.findAllWithHierarchy()`
+  - Filtrar por isActive (solo activas por defecto)
+  - Ordenar por campo `order`
+  - Retornar categorías
+
+#### 3.5 Endpoint: GET /api/categories/:id
+- [ ] **Implementar en `CategoriesController`**
+  - Validar id (ParseUUIDPipe)
+  - Llamar a `categoriesService.findById(id)`
+- [ ] **Implementar en `CategoriesService.findById()`**
+  - Llamar a `repository.findByIdWithChildren(id)`
+  - Si no existe, lanzar NotFoundException
+  - Retornar categoría con hijos
+
+#### 3.6 Endpoint: GET /api/products
+- [ ] **Crear `ProductQueryDto`** con validaciones
+  - page (opcional, IsInt, Min 1, Default 1)
+  - limit (opcional, IsInt, Min 1, Max 100, Default 12)
+  - search (opcional, IsString, MinLength 2)
+  - category (opcional, IsString - puede ser múltiple separado por comas)
+  - minPrice (opcional, IsNumber, Min 0)
+  - maxPrice (opcional, IsNumber, Min 0)
+  - inStock (opcional, IsBoolean)
+  - isFeatured (opcional, IsBoolean)
+  - hasDiscount (opcional, IsBoolean)
+  - sortBy (opcional, IsEnum: 'name-asc', 'name-desc', 'price-asc', 'price-desc', 'newest', 'oldest')
 - [ ] **Crear `ProductsController`**
-  - **GET /api/products**
-    - Validar con `ProductQueryDto`
-    - Implementar paginación (default: page=1, limit=12)
-    - Implementar búsqueda por texto en name, description, shortDescription
-    - Aplicar filtros (category, precio, stock, featured, descuento)
-    - Aplicar ordenamiento
-    - Solo productos con `isActive = true`
-    - Incluir relaciones: `images`, `category`, `variants` con `options`
-    - Retornar con metadata de paginación
-  - **GET /api/products/:id**
-    - Buscar producto por ID
-    - Incluir todas las relaciones (images, category, variants)
-    - Ordenar imágenes por `order`
-    - Retornar 404 si no existe
-  - **GET /api/products/slug/:slug**
-    - Buscar producto por slug
-    - Incluir todas las relaciones
-    - Retornar 404 si no existe
+- [ ] **Implementar en controller**
+  - Validar con `ProductQueryDto`
+  - Llamar a `productsService.findAll(filters)`
+- [ ] **Implementar en `ProductsService.findAll()`**
+  - Construir filtros desde DTO
+  - Llamar a `repository.findAllWithFilters(filters, page, limit)`
+  - Solo productos con `isActive = true`
+  - Incluir relaciones: `images`, `category`, `variants`
+  - Calcular metadata de paginación con `pagination.util`
+  - Retornar respuesta paginada
+
+#### 3.7 Endpoint: GET /api/products/:id
+- [ ] **Implementar en `ProductsController`**
+  - Validar id (ParseUUIDPipe)
+  - Llamar a `productsService.findById(id)`
+- [ ] **Implementar en `ProductsService.findById()`**
+  - Llamar a `repository.findByIdWithRelations(id)`
+  - Si no existe, lanzar NotFoundException
+  - Incluir todas las relaciones (images ordenadas, category, variants)
+  - Retornar producto
+
+#### 3.8 Endpoint: GET /api/products/slug/:slug
+- [ ] **Implementar en `ProductsController`**
+  - Validar slug (string)
+  - Llamar a `productsService.findBySlug(slug)`
+- [ ] **Implementar en `ProductsService.findBySlug()`**
+  - Llamar a `repository.findBySlug(slug)`
+  - Si no existe, lanzar NotFoundException
+  - Incluir todas las relaciones
+  - Retornar producto
 
 ### Hitos de la Fase 3
 **Hito 3.1**: Configuración base de categorías completada (módulo, repositorio, servicio, interfaces de dominio)  
 **Hito 3.2**: Configuración base de productos completada (módulo, repositorio, domain services, interfaces de dominio)  
-**Hito 3.3**: DTOs de validación creados (query params, filtros, paginación)  
-**Hito 3.4**: Utilidades de paginación y query builder implementadas  
-**Hito 3.5**: Categorías se listan correctamente con jerarquía y planas  
-**Hito 3.6**: Categoría individual se obtiene por ID  
-**Hito 3.7**: Productos se listan con paginación funcionando  
-**Hito 3.8**: Búsqueda de productos por texto funciona  
-**Hito 3.9**: Filtros de productos (categoría, precio, stock, featured, descuento) funcionan  
-**Hito 3.10**: Ordenamiento de productos funciona  
-**Hito 3.11**: Producto individual se obtiene por ID y por slug  
-**Hito 3.12**: Imágenes y relaciones se incluyen correctamente  
-**Hito 3.13**: Queries optimizadas sin N+1 problems
+**Hito 3.3**: Utilidades de paginación y query builder implementadas  
+**Hito 3.4**: Endpoint GET /api/categories funcionando (CategoryQueryDto + jerarquía/flat)  
+**Hito 3.5**: Endpoint GET /api/categories/:id funcionando (retorna categoría con hijos)  
+**Hito 3.6**: Endpoint GET /api/products funcionando (ProductQueryDto + paginación + filtros básicos)  
+**Hito 3.7**: Búsqueda de productos por texto funciona  
+**Hito 3.8**: Filtros de productos (categoría, precio, stock, featured, descuento) funcionan  
+**Hito 3.9**: Ordenamiento de productos funciona  
+**Hito 3.10**: Endpoint GET /api/products/:id funcionando (con todas las relaciones)  
+**Hito 3.11**: Endpoint GET /api/products/slug/:slug funcionando  
+**Hito 3.12**: Queries optimizadas sin N+1 problems
 
 **Criterio de Finalización**: Endpoints públicos de productos y categorías funcionando con filtros, búsqueda, paginación y patrón Repository desacoplado de Prisma.
 
@@ -631,59 +682,91 @@
   - Inyectar `CartRepository` y `CartValidationService`
   - Usar solo interfaces de dominio
 
-#### 4.2 DTOs y Códigos de Error
-- [ ] **DTOs de Carrito**
-  - `AddToCartDto` - validar productId, quantity (min: 1)
-  - `UpdateCartItemDto` - validar quantity (min: 1)
-- [ ] **Códigos de error** en `error-codes.ts`:
+#### 4.2 Códigos de Error
+- [ ] **Agregar códigos de error** en `error-codes.ts`:
   - `INSUFFICIENT_STOCK` - stock insuficiente
   - `PRODUCT_NOT_FOUND` - producto no encontrado
   - `PRODUCT_INACTIVE` - producto inactivo
   - `CART_ITEM_NOT_FOUND` - item no encontrado
 
-#### 4.3 Controlador y Endpoints
+#### 4.3 Endpoint: GET /api/cart
 - [ ] **Crear `CartController`**
-  - **GET /api/cart**
-    - Proteger con `JwtAuthGuard`
-    - Obtener carrito del usuario autenticado
-    - Si no existe, crear uno vacío
-    - Incluir items con relación a productos e imágenes
-    - Retornar carrito completo
-  - **POST /api/cart/items**
-    - Proteger con `JwtAuthGuard`
-    - Validar con `AddToCartDto`
-    - Validar que producto exista y esté activo
-    - Validar stock disponible
-    - Si item ya existe en carrito, incrementar cantidad
-    - Si no existe, crear nuevo item
-    - Retornar item creado/actualizado
-  - **PUT /api/cart/items/:itemId**
-    - Proteger con `JwtAuthGuard`
-    - Validar con `UpdateCartItemDto`
-    - Validar que item pertenezca al carrito del usuario
-    - Validar stock disponible
-    - Actualizar cantidad
-    - Retornar item actualizado
-  - **DELETE /api/cart/items/:itemId**
-    - Proteger con `JwtAuthGuard`
-    - Validar que item pertenezca al carrito del usuario
-    - Eliminar item del carrito
-    - Retornar mensaje de éxito
-  - **DELETE /api/cart**
-    - Proteger con `JwtAuthGuard`
-    - Eliminar todos los items del carrito
-    - Retornar mensaje de éxito
+- [ ] **Implementar en controller**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Usar `@CurrentUser()` para obtener userId
+  - Llamar a `cartService.getCart(userId)`
+  - No requiere DTO
+- [ ] **Implementar en `CartService.getCart()`**
+  - Llamar a `repository.findOrCreate(userId)`
+  - Si no existe, crear carrito vacío
+  - Incluir items con relación a productos e imágenes
+  - Retornar carrito completo
+
+#### 4.4 Endpoint: POST /api/cart/items
+- [ ] **Crear `AddToCartDto`** con validaciones
+  - productId (requerido, IsUUID)
+  - quantity (requerido, IsInt, Min 1)
+- [ ] **Implementar en `CartController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Validar con `AddToCartDto`
+  - Usar `@CurrentUser()` para obtener userId
+  - Llamar a `cartService.addItem(userId, dto)`
+- [ ] **Implementar en `CartService.addItem()`**
+  - Validar que producto exista con `cartValidationService`
+  - Validar que producto esté activo
+  - Validar stock disponible
+  - Obtener o crear carrito del usuario
+  - Si item ya existe, incrementar cantidad
+  - Si no existe, crear nuevo item
+  - Retornar item creado/actualizado
+
+#### 4.5 Endpoint: PUT /api/cart/items/:itemId
+- [ ] **Crear `UpdateCartItemDto`** con validaciones
+  - quantity (requerido, IsInt, Min 1)
+- [ ] **Implementar en `CartController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Validar itemId (ParseUUIDPipe)
+  - Validar con `UpdateCartItemDto`
+  - Usar `@CurrentUser()` para obtener userId
+  - Llamar a `cartService.updateItem(userId, itemId, dto)`
+- [ ] **Implementar en `CartService.updateItem()`**
+  - Validar que item pertenezca al carrito del usuario
+  - Validar stock disponible para la nueva cantidad
+  - Actualizar cantidad
+  - Retornar item actualizado
+
+#### 4.6 Endpoint: DELETE /api/cart/items/:itemId
+- [ ] **Implementar en `CartController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Validar itemId (ParseUUIDPipe)
+  - Usar `@CurrentUser()` para obtener userId
+  - Llamar a `cartService.removeItem(userId, itemId)`
+  - No requiere DTO
+- [ ] **Implementar en `CartService.removeItem()`**
+  - Validar que item pertenezca al carrito del usuario
+  - Eliminar item del carrito
+  - Retornar { message: 'Item eliminado del carrito' }
+
+#### 4.7 Endpoint: DELETE /api/cart
+- [ ] **Implementar en `CartController`**
+  - Proteger con `@UseGuards(JwtAuthGuard)`
+  - Usar `@CurrentUser()` para obtener userId
+  - Llamar a `cartService.clearCart(userId)`
+  - No requiere DTO
+- [ ] **Implementar en `CartService.clearCart()`**
+  - Obtener carrito del usuario
+  - Eliminar todos los items del carrito
+  - Retornar { message: 'Carrito vaciado' }
 
 ### Hitos de la Fase 4
 **Hito 4.1**: Configuración base completada (módulo, repositorio, domain service, interfaces de dominio)  
-**Hito 4.2**: DTOs y códigos de error creados  
-**Hito 4.3**: Usuario puede obtener su carrito (o crear uno nuevo)  
-**Hito 4.4**: Usuario puede agregar producto al carrito  
-**Hito 4.5**: Sistema valida stock antes de agregar  
-**Hito 4.6**: Usuario puede actualizar cantidad de un item  
-**Hito 4.7**: Usuario puede eliminar item del carrito  
-**Hito 4.8**: Usuario puede vaciar su carrito completamente  
-**Hito 4.9**: Carrito incluye información completa del producto
+**Hito 4.2**: Códigos de error creados  
+**Hito 4.3**: Endpoint GET /api/cart funcionando (obtiene o crea carrito del usuario)  
+**Hito 4.4**: Endpoint POST /api/cart/items funcionando (AddToCartDto + validaciones de stock)  
+**Hito 4.5**: Endpoint PUT /api/cart/items/:itemId funcionando (UpdateCartItemDto + actualiza cantidad)  
+**Hito 4.6**: Endpoint DELETE /api/cart/items/:itemId funcionando (elimina item)  
+**Hito 4.7**: Endpoint DELETE /api/cart funcionando (vacía carrito)  
+**Hito 4.8**: Carrito incluye información completa del producto
 
 **Criterio de Finalización**: Sistema de carrito con patrón Repository y Domain Services desacoplado de Prisma, todas las validaciones funcionando.
 

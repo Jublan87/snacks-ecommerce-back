@@ -8,7 +8,7 @@ import {
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, timeout } from 'rxjs/operators';
 
-const DEFAULT_TIMEOUT_MS = 30_000; // 30 segundos
+const DEFAULT_TIMEOUT_MS = 500_000; //TODO: CAMBIAR A 30 SEGUNDOS AL TERMINAR
 
 /**
  * Interceptor que aplica un timeout de 30 segundos a cada request.

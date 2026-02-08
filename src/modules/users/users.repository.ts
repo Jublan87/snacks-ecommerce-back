@@ -1,3 +1,4 @@
+import { Injectable } from '@nestjs/common';
 import { User, UserRole } from '@prisma/client';
 import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
@@ -18,6 +19,7 @@ export const USER_SELECT_NO_PASSWORD = {
   updatedAt: true,
 } as const;
 
+@Injectable()
 export class UsersRepository extends BaseRepository<
   User,
   Prisma.UserCreateInput,

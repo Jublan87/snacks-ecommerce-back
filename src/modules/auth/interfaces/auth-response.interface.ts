@@ -18,6 +18,15 @@ export interface MeResponse {
 }
 
 /**
+ * Respuesta de GET /api/auth/verify.
+ * Indica que el token es válido y devuelve datos mínimos del usuario (id, email, role).
+ */
+export interface VerifyResponse {
+  valid: true;
+  user: Pick<UserWithoutPassword, 'id' | 'email' | 'role'>;
+}
+
+/**
  * Resultado interno de login/register (servicio).
  * Incluye accessToken para que el controller lo ponga en la cookie; no se expone en el body.
  */

@@ -8,7 +8,7 @@ import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { UserWithoutPassword } from '../users/interfaces/user-without-password.interface';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthService } from './auth.service';
-import { AuthResponse, MeResponse } from './interfaces/auth-response.interface';
+import { AuthResponse, MeResponse, VerifyResponse } from './interfaces/auth-response.interface';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 
@@ -73,5 +73,21 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
   async me(@CurrentUser() currentUser: UserWithoutPassword): Promise<MeResponse> {
     return { user: currentUser };
+  }
+
+  @Get('verify')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Verificar si el token JWT es válido' })
+  @ApiResponse({ status: 200, description: 'Token válido' })
+  @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
+  async verify(@CurrentUser() currentUser: UserWithoutPassword): Promise<VerifyResponse> {
+    return {
+      valid: true,
+      user: {
+        id: currentUser.id,
+        email: currentUser.email,
+        role: currentUser.role,
+      },
+    };
   }
 }

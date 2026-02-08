@@ -456,7 +456,7 @@
   - Recibe usuario (de request) y retorna SessionUser para respuesta consistente
 
 #### 2.8 Endpoint: GET /api/auth/verify
-- [ ] **Implementar en `AuthController`**
+- [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener usuario
   - Retornar { valid: true, user: { id, email, role } }

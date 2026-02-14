@@ -10,9 +10,12 @@ import {
 import { generateToken, JWT_COOKIE_NAME } from './utils/jwt.util';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 import { AuthResult } from './interfaces/auth-response.interface';
 import { SessionUser } from './interfaces/session-user.interface';
 import { AuthCookieOptions } from './interfaces/auth-cookie-options.interface';
+import { UpdateUserInput } from '../users/interfaces/update-user-input.interface';
+import { UserWithoutPassword } from '../users/interfaces/user-without-password.interface';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -92,6 +95,19 @@ export class AuthService {
       user: this.toSessionUser(userWithPassword),
       accessToken,
     };
+  }
+
+  /**
+   * Actualiza el perfil del usuario. Solo permite firstName, lastName, phone y shippingAddress.
+   * No permite cambiar email ni role.
+   */
+  async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserWithoutPassword> {
+    const data: UpdateUserInput = {};
+    if (dto.firstName !== undefined) data.firstName = dto.firstName;
+    if (dto.lastName !== undefined) data.lastName = dto.lastName;
+    if (dto.phone !== undefined) data.phone = dto.phone;
+    if (dto.shippingAddress !== undefined) data.shippingAddress = dto.shippingAddress;
+    return this.usersService.update(userId, data);
   }
 
   /**

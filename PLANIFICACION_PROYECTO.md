@@ -462,16 +462,16 @@
   - Retornar { valid: true, user: { id, email, role } }
 
 #### 2.9 Endpoint: PUT /api/auth/profile
-- [ ] **Crear `UpdateProfileDto`** con validaciones
+- [x] **Crear `UpdateProfileDto`** con validaciones
   - firstName (opcional, IsString, MinLength 1)
   - lastName (opcional, IsString, MinLength 1)
   - phone (opcional, IsString)
   - shippingAddress (opcional, IsObject o custom validator)
-- [ ] **Implementar en `AuthController`**
+- [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar datos con `UpdateProfileDto`
   - Usar `@CurrentUser()` para obtener userId
-- [ ] **Implementar en `AuthService.updateProfile()`**
+- [x] **Implementar en `AuthService.updateProfile()`**
   - Llamar a `usersService.update(userId, data)`
   - No permitir cambiar email ni role (esos campos no están en UpdateUserInput)
   - Retornar usuario actualizado

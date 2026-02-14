@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as compression from 'compression';
 import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
@@ -56,11 +57,33 @@ async function bootstrap() {
   const isProduction = configService.get<string>('app.nodeEnv') === 'production';
   app.useGlobalFilters(new AllExceptionsFilter(isProduction), new PrismaExceptionFilter());
 
+  // Swagger (ruta por defecto recomendada por NestJS: 'api')
+  const config = new DocumentBuilder()
+    .setTitle('Snacks E-commerce API')
+    .setDescription(
+      'API REST para el backend del e-commerce de snacks. Autenticación por JWT (cookie o Bearer).',
+    )
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+        name: 'Authorization',
+      },
+      'JWT',
+    )
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/swagger', app, document);
+
   const port = configService.get<number>('app.port') || 4000;
   const nodeEnv = configService.get<string>('app.nodeEnv');
 
   await app.listen(port);
   console.log(`🚀 Aplicación corriendo en: http://localhost:${port}/api`);
+  console.log(`📚 Swagger UI: http://localhost:${port}/api/swagger`);
   console.log(`📦 Entorno: ${nodeEnv}`);
   console.log(`🌐 CORS habilitado para: ${corsOrigin}`);
 }

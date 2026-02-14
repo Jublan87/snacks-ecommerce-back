@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Res, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Controller, Get, Post, Put, Body, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Response } from 'express';
 import { Throttle } from '@nestjs/throttler';
 import { THROTTLE_OPTIONS } from '../../common/constants/throttler.constants';
@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { AuthResponse, MeResponse, VerifyResponse } from './interfaces/auth-response.interface';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -68,6 +69,7 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'Obtener perfil del usuario autenticado' })
   @ApiResponse({ status: 200, description: 'Usuario completo sin password' })
   @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
@@ -77,6 +79,7 @@ export class AuthController {
 
   @Get('verify')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
   @ApiOperation({ summary: 'Verificar si el token JWT es válido' })
   @ApiResponse({ status: 200, description: 'Token válido' })
   @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
@@ -89,5 +92,20 @@ export class AuthController {
         role: currentUser.role,
       },
     };
+  }
+
+  @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Actualizar perfil del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Perfil actualizado correctamente' })
+  @ApiResponse({ status: 400, description: 'Datos de validación inválidos' })
+  @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
+  async updateProfile(
+    @CurrentUser() currentUser: UserWithoutPassword,
+    @Body() dto: UpdateProfileDto,
+  ): Promise<MeResponse> {
+    const user = await this.authService.updateProfile(currentUser.id, dto);
+    return { user };
   }
 }

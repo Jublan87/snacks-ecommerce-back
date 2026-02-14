@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { ERROR_CODES } from '../../common/constants/error-codes';
@@ -11,6 +16,7 @@ import { generateToken, JWT_COOKIE_NAME } from './utils/jwt.util';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { AuthResult } from './interfaces/auth-response.interface';
 import { SessionUser } from './interfaces/session-user.interface';
 import { AuthCookieOptions } from './interfaces/auth-cookie-options.interface';
@@ -108,6 +114,40 @@ export class AuthService {
     if (dto.phone !== undefined) data.phone = dto.phone;
     if (dto.shippingAddress !== undefined) data.shippingAddress = dto.shippingAddress;
     return this.usersService.update(userId, data);
+  }
+
+  /**
+   * Cambia la contraseña del usuario. Verifica la contraseña actual antes de actualizar.
+   */
+  async changePassword(userId: string, dto: ChangePasswordDto): Promise<{ message: string }> {
+    const userWithPassword = await this.usersService.findByIdWithPassword(userId);
+    if (!userWithPassword) {
+      throw new UnauthorizedException({
+        code: ERROR_CODES.INVALID_TOKEN,
+        message: 'Usuario no encontrado',
+      });
+    }
+
+    const currentMatch = await comparePassword(dto.currentPassword, userWithPassword.password);
+    if (!currentMatch) {
+      throw new BadRequestException({
+        code: ERROR_CODES.INVALID_PASSWORD,
+        message: 'La contraseña actual es incorrecta',
+      });
+    }
+
+    if (!isValidPasswordFormat(dto.newPassword)) {
+      throw new BadRequestException({
+        code: ERROR_CODES.INVALID_PASSWORD,
+        message:
+          'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número',
+      });
+    }
+
+    const hashedPassword = await hashPassword(dto.newPassword);
+    await this.usersService.update(userId, { password: hashedPassword });
+
+    return { message: 'Contraseña actualizada correctamente' };
   }
 
   /**

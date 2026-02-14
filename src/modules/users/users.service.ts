@@ -23,6 +23,12 @@ export class UsersService {
     return this.usersRepository.findByIdWithoutPassword(id);
   }
 
+  async findByIdWithPassword(id: string): Promise<UserWithPasswordForAuth | null> {
+    const user = await this.usersRepository.findByIdWithPassword(id);
+    if (!user || !('password' in user)) return null;
+    return user as UserWithPasswordForAuth;
+  }
+
   async create(data: CreateUserInput): Promise<UserWithoutPassword> {
     return this.usersRepository.createAndReturnWithoutPassword(data);
   }

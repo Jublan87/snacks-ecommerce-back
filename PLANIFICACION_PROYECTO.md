@@ -450,10 +450,8 @@
 #### 2.7 Endpoint: GET /api/auth/me
 - [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
-  - Usar `@CurrentUser()` para obtener usuario
-  - No requiere DTO
-- [x] **Implementar en `AuthService.getProfile()`**
-  - Recibe usuario (de request) y retorna SessionUser para respuesta consistente
+  - Usar `@CurrentUser()` para obtener usuario (ya cargado por JwtStrategy, sin nueva consulta a BD)
+  - Retornar `{ user: currentUser }` (MeResponse). No requiere DTO ni llamada a AuthService.
 
 #### 2.8 Endpoint: GET /api/auth/verify
 - [x] **Implementar en `AuthController`**
@@ -477,14 +475,14 @@
   - Retornar usuario actualizado
 
 #### 2.10 Endpoint: PUT /api/auth/password
-- [ ] **Crear `ChangePasswordDto`** con validaciones
+- [x] **Crear `ChangePasswordDto`** con validaciones
   - currentPassword (requerido, IsString)
   - newPassword (requerido, matches PASSWORD_REGEX, MinLength 8)
-- [ ] **Implementar en `AuthController`**
+- [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar datos con `ChangePasswordDto`
   - Usar `@CurrentUser()` para obtener userId
-- [ ] **Implementar en `AuthService.changePassword()`**
+- [x] **Implementar en `AuthService.changePassword()`**
   - Buscar usuario por ID (con password)
   - Verificar currentPassword con comparePassword
   - Si falla, lanzar BadRequestException con INVALID_PASSWORD
@@ -501,9 +499,9 @@
 ✅ **Hito 2.5**: Endpoint POST /api/auth/logout funcionando (limpia cookie)  
 ✅ **Hito 2.6**: Guards, decorators y JwtStrategy configurados  
 ✅ **Hito 2.7**: Endpoint GET /api/auth/me funcionando (protegido, retorna usuario)  
-**Hito 2.8**: Endpoint GET /api/auth/verify funcionando (protegido, valida token)  
-**Hito 2.9**: Endpoint PUT /api/auth/profile funcionando (UpdateProfileDto + actualiza datos)  
-**Hito 2.10**: Endpoint PUT /api/auth/password funcionando (ChangePasswordDto + valida y actualiza)
+✅ **Hito 2.8**: Endpoint GET /api/auth/verify funcionando (protegido, valida token)  
+✅ **Hito 2.9**: Endpoint PUT /api/auth/profile funcionando (UpdateProfileDto + actualiza datos)  
+✅ **Hito 2.10**: Endpoint PUT /api/auth/password funcionando (ChangePasswordDto + valida y actualiza)
 
 **Criterio de Finalización**: Sistema de autenticación completo con patrón Repository desacoplado de Prisma, todos los endpoints funcionando.
 

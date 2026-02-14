@@ -12,6 +12,7 @@ import { AuthResponse, MeResponse, VerifyResponse } from './interfaces/auth-resp
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -107,5 +108,19 @@ export class AuthController {
   ): Promise<MeResponse> {
     const user = await this.authService.updateProfile(currentUser.id, dto);
     return { user };
+  }
+
+  @Put('password')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT')
+  @ApiOperation({ summary: 'Cambiar contraseña del usuario autenticado' })
+  @ApiResponse({ status: 200, description: 'Contraseña actualizada correctamente' })
+  @ApiResponse({ status: 400, description: 'Datos inválidos o contraseña actual incorrecta' })
+  @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
+  async changePassword(
+    @CurrentUser() currentUser: UserWithoutPassword,
+    @Body() dto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    return this.authService.changePassword(currentUser.id, dto);
   }
 }

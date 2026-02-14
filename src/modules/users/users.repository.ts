@@ -105,6 +105,15 @@ export class UsersRepository extends BaseRepository<
     return this.toUserWithoutPassword(user);
   }
 
+  /**
+   * Busca por ID incluyendo password (para cambio de contraseña).
+   */
+  async findByIdWithPassword(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
   private toUserWithoutPassword(row: unknown): UserWithoutPassword | null {
     if (!row) return null;
     return row as UserWithoutPassword;

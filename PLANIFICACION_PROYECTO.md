@@ -514,65 +514,62 @@
 ### Tareas
 
 #### 3.1 Configuración Base - Categorías
-- [ ] Crear módulo `CategoriesModule`
-- [ ] **Crear `CategoriesRepository` extendiendo `BaseRepository`**
+- [x] Crear módulo `CategoriesModule`
+- [x] **Crear `CategoriesRepository` extendiendo `BaseRepository`**
   - Método `findAllWithHierarchy()` - retornar estructura de árbol
   - Método `findAllFlat()` - retornar lista plana
   - Método `findByIdWithChildren()` - incluir hijos
   - Método `findBySlug()`
   - Implementar queries optimizadas con eager loading
   - Usar interfaces de dominio (sin exponer Prisma)
-- [ ] **Crear interfaces de dominio en `categories/interfaces/`**
+- [x] **Crear interfaces de dominio en `categories/interfaces/`**
   - `CategoryWithChildren` - categoría con jerarquía
   - `CategoryFlat` - categoría sin hijos
   - `CategoryQueryFilters` - filtros de búsqueda
-- [ ] Crear servicio `CategoriesService`
+- [x] Crear servicio `CategoriesService`
   - Inyectar `CategoriesRepository`
   - Lógica de construcción de jerarquía
   - Usar solo interfaces de dominio
 
 #### 3.2 Configuración Base - Productos
-- [ ] Crear módulo `ProductsModule`
-- [ ] **Crear `ProductsRepository` extendiendo `BaseRepository`**
+- [x] Crear módulo `ProductsModule`
+- [x] **Crear `ProductsRepository` extendiendo `BaseRepository`**
   - Método `findAllWithFilters(filters)` - búsqueda avanzada
   - Método `findByIdWithRelations()` - incluir images, category, variants
   - Método `findBySlug()`
   - Método `findFeatured()` - productos destacados
   - Método `findByCategory(categoryId)`
   - Implementar queries optimizadas (N+1 prevention)
-  - Método privado `buildWhereClause(filters)` - construcción dinámica de queries
   - Usar interfaces de dominio
-- [ ] **Crear interfaces de dominio en `products/interfaces/`**
+- [x] **Crear interfaces de dominio en `products/interfaces/`**
   - `ProductWithRelations` - producto completo
   - `ProductListItem` - producto para listados
   - `ProductFilters` - filtros de búsqueda
   - `ProductSortOptions` - opciones de ordenamiento
   - `PaginatedProducts` - respuesta paginada
-- [ ] **Crear domain services para lógica compleja**
-  - `ProductSearchService` - lógica de búsqueda y filtrado
+- [x] **Crear domain services para lógica compleja**
+  - `ProductSearchService` - lógica de búsqueda y filtrado (buildWhereClause, buildOrderBy, parseCategoryParam)
   - `ProductPricingService` - cálculo de precios con descuento
-- [ ] Crear servicio `ProductsService`
+- [x] Crear servicio `ProductsService`
   - Inyectar `ProductsRepository` y domain services
   - Orquestar lógica de negocio
   - Usar solo interfaces de dominio
 
 #### 3.3 Utilidades Comunes (para paginación y búsqueda)
-- [ ] **Crear `src/common/utils/pagination.util.ts`**
+- [x] **Crear `src/common/utils/pagination.util.ts`**
   - Función `calculatePaginationMeta(total, page, limit)` - calcular metadata
   - Función `buildPaginatedResponse(data, meta)` - construir respuesta
   - Interface `PaginationMeta` (total, page, limit, totalPages, hasNext, hasPrev)
-- [ ] **Crear `src/common/utils/query-builder.util.ts`** (opcional)
-  - Helpers para construir queries dinámicas de búsqueda con Prisma
 
 #### 3.4 Endpoint: GET /api/categories
-- [ ] **Crear `CategoryQueryDto`** con validaciones
-  - flat (opcional, IsBoolean, Transform) - lista plana o jerárquica
+- [x] **Crear `CategoryQueryDto`** con validaciones
+  - flat (opcional, IsBoolean, Transform con obj[key]) - lista plana o jerárquica
   - includeInactive (opcional, IsBoolean) - incluir inactivas
-- [ ] **Crear `CategoriesController`**
-- [ ] **Implementar en controller**
+- [x] **Crear `CategoriesController`**
+- [x] **Implementar en controller**
   - Validar con `CategoryQueryDto`
   - Llamar a `categoriesService.findAll(filters)`
-- [ ] **Implementar en `CategoriesService.findAll()`**
+- [x] **Implementar en `CategoriesService.findAll()`**
   - Si flat=true, llamar a `repository.findAllFlat()`
   - Si flat=false, llamar a `repository.findAllWithHierarchy()`
   - Filtrar por isActive (solo activas por defecto)
@@ -580,31 +577,31 @@
   - Retornar categorías
 
 #### 3.5 Endpoint: GET /api/categories/:id
-- [ ] **Implementar en `CategoriesController`**
+- [x] **Implementar en `CategoriesController`**
   - Validar id (ParseUUIDPipe)
   - Llamar a `categoriesService.findById(id)`
-- [ ] **Implementar en `CategoriesService.findById()`**
+- [x] **Implementar en `CategoriesService.findById()`**
   - Llamar a `repository.findByIdWithChildren(id)`
   - Si no existe, lanzar NotFoundException
   - Retornar categoría con hijos
 
 #### 3.6 Endpoint: GET /api/products
-- [ ] **Crear `ProductQueryDto`** con validaciones
+- [x] **Crear `ProductQueryDto`** con validaciones
   - page (opcional, IsInt, Min 1, Default 1)
   - limit (opcional, IsInt, Min 1, Max 100, Default 12)
   - search (opcional, IsString, MinLength 2)
   - category (opcional, IsString - puede ser múltiple separado por comas)
   - minPrice (opcional, IsNumber, Min 0)
   - maxPrice (opcional, IsNumber, Min 0)
-  - inStock (opcional, IsBoolean)
-  - isFeatured (opcional, IsBoolean)
-  - hasDiscount (opcional, IsBoolean)
+  - inStock (opcional, IsBoolean, Transform con obj[key])
+  - isFeatured (opcional, IsBoolean, Transform con obj[key])
+  - hasDiscount (opcional, IsBoolean, Transform con obj[key])
   - sortBy (opcional, IsEnum: 'name-asc', 'name-desc', 'price-asc', 'price-desc', 'newest', 'oldest')
-- [ ] **Crear `ProductsController`**
-- [ ] **Implementar en controller**
+- [x] **Crear `ProductsController`**
+- [x] **Implementar en controller**
   - Validar con `ProductQueryDto`
   - Llamar a `productsService.findAll(filters)`
-- [ ] **Implementar en `ProductsService.findAll()`**
+- [x] **Implementar en `ProductsService.findAll()`**
   - Construir filtros desde DTO
   - Llamar a `repository.findAllWithFilters(filters, page, limit)`
   - Solo productos con `isActive = true`
@@ -613,38 +610,39 @@
   - Retornar respuesta paginada
 
 #### 3.7 Endpoint: GET /api/products/:id
-- [ ] **Implementar en `ProductsController`**
+- [x] **Implementar en `ProductsController`**
   - Validar id (ParseUUIDPipe)
   - Llamar a `productsService.findById(id)`
-- [ ] **Implementar en `ProductsService.findById()`**
+- [x] **Implementar en `ProductsService.findById()`**
   - Llamar a `repository.findByIdWithRelations(id)`
   - Si no existe, lanzar NotFoundException
   - Incluir todas las relaciones (images ordenadas, category, variants)
   - Retornar producto
 
 #### 3.8 Endpoint: GET /api/products/slug/:slug
-- [ ] **Implementar en `ProductsController`**
+- [x] **Implementar en `ProductsController`**
   - Validar slug (string)
   - Llamar a `productsService.findBySlug(slug)`
-- [ ] **Implementar en `ProductsService.findBySlug()`**
+  - ⚠️ Declarado ANTES de /:id para evitar conflicto de rutas
+- [x] **Implementar en `ProductsService.findBySlug()`**
   - Llamar a `repository.findBySlug(slug)`
   - Si no existe, lanzar NotFoundException
   - Incluir todas las relaciones
   - Retornar producto
 
 ### Hitos de la Fase 3
-**Hito 3.1**: Configuración base de categorías completada (módulo, repositorio, servicio, interfaces de dominio)  
-**Hito 3.2**: Configuración base de productos completada (módulo, repositorio, domain services, interfaces de dominio)  
-**Hito 3.3**: Utilidades de paginación y query builder implementadas  
-**Hito 3.4**: Endpoint GET /api/categories funcionando (CategoryQueryDto + jerarquía/flat)  
-**Hito 3.5**: Endpoint GET /api/categories/:id funcionando (retorna categoría con hijos)  
-**Hito 3.6**: Endpoint GET /api/products funcionando (ProductQueryDto + paginación + filtros básicos)  
-**Hito 3.7**: Búsqueda de productos por texto funciona  
-**Hito 3.8**: Filtros de productos (categoría, precio, stock, featured, descuento) funcionan  
-**Hito 3.9**: Ordenamiento de productos funciona  
-**Hito 3.10**: Endpoint GET /api/products/:id funcionando (con todas las relaciones)  
-**Hito 3.11**: Endpoint GET /api/products/slug/:slug funcionando  
-**Hito 3.12**: Queries optimizadas sin N+1 problems
+✅ **Hito 3.1**: Configuración base de categorías completada (módulo, repositorio, servicio, interfaces de dominio)
+✅ **Hito 3.2**: Configuración base de productos completada (módulo, repositorio, domain services, interfaces de dominio)
+✅ **Hito 3.3**: Utilidades de paginación implementadas (`calculatePaginationMeta`, `buildPaginatedResponse`)
+✅ **Hito 3.4**: Endpoint GET /api/categories funcionando (CategoryQueryDto + jerarquía/flat)
+✅ **Hito 3.5**: Endpoint GET /api/categories/:id funcionando (retorna categoría con hijos)
+✅ **Hito 3.6**: Endpoint GET /api/products funcionando (ProductQueryDto + paginación + filtros básicos)
+✅ **Hito 3.7**: Búsqueda de productos por texto funciona
+✅ **Hito 3.8**: Filtros de productos (categoría, precio, stock, featured, descuento) funcionan
+✅ **Hito 3.9**: Ordenamiento de productos funciona
+✅ **Hito 3.10**: Endpoint GET /api/products/:id funcionando (con todas las relaciones)
+✅ **Hito 3.11**: Endpoint GET /api/products/slug/:slug funcionando
+✅ **Hito 3.12**: Queries optimizadas sin N+1 problems — `Promise.all([findMany, count])` en paginación
 
 **Criterio de Finalización**: Endpoints públicos de productos y categorías funcionando con filtros, búsqueda, paginación y patrón Repository desacoplado de Prisma.
 
@@ -1477,10 +1475,10 @@ Opciones recomendadas:
 
 | Fase | Nombre | Estado | Hitos |
 |------|--------|--------|-------|
-| 0 | Configuración Inicial | ⏳ Pendiente | 10 hitos |
-| 1 | Base de Datos y Modelos | ⏳ Pendiente | 6 hitos |
-| 2 | Sistema de Autenticación | ⏳ Pendiente | 9 hitos |
-| 3 | Productos y Categorías (Público) | ⏳ Pendiente | 11 hitos |
+| 0 | Configuración Inicial | ✅ Completa | 10 hitos |
+| 1 | Base de Datos y Modelos | ✅ Completa | 6 hitos |
+| 2 | Sistema de Autenticación | ✅ Completa | 10 hitos |
+| 3 | Productos y Categorías (Público) | ✅ Completa | 12 hitos |
 | 4 | Módulo de Carrito | ⏳ Pendiente | 9 hitos |
 | 5 | Pedidos y Envío | ⏳ Pendiente | 14 hitos |
 | 6 | Admin - Productos y Categorías | ⏳ Pendiente | 14 hitos |

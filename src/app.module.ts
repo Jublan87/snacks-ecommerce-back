@@ -11,6 +11,8 @@ import { LoggerModule } from './shared/logger/logger.module';
 import { validationSchema } from './config/validation.schema';
 import configuration from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
+import { CategoriesModule } from './modules/categories/categories.module';
+import { ProductsModule } from './modules/products/products.module';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { AuthModule } from './modules/auth/auth.module';
     LoggerModule,
     PrismaModule,
     AuthModule,
+    CategoriesModule,
+    ProductsModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

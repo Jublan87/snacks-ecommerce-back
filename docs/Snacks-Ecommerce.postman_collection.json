@@ -1,0 +1,462 @@
+{
+  "info": {
+    "_postman_id": "000e9c9d-5b7e-429b-91b4-598d72a9b4cd",
+    "name": "Snacks-Ecommerce",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "34930090",
+    "_collection_link": "https://go.postman.co/collection/34930090-000e9c9d-5b7e-429b-91b4-598d72a9b4cd?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Registrar usuario",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"nuevo1@ejemplo.com\",\r\n  \"password\": \"MiPassword123\",\r\n  \"firstName\": \"Juan\",\r\n  \"lastName\": \"Pérez\",\r\n  \"phone\": \"+56912345678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "register"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"admin@snacks.com\",\r\n  \"password\": \"Admin-1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/logout",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "logout"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Datos usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/auth/me",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verificar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/auth/verify",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "verify"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Perfil",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"phone\": \"1123128964\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/profile",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "profile"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar pass",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"currentPassword\": \"Admin-123\",\r\n  \"newPassword\": \"Admin-1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/auth/password",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "auth", "password"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Categorias",
+      "item": [
+        {
+          "name": "Obtener categorias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/categories?flat=false",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "categories"],
+              "query": [
+                {
+                  "key": "flat",
+                  "value": "false"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener categoria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/categories/c81e3e99-57ce-42d7-98b0-b2b15b8326a9",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "categories", "c81e3e99-57ce-42d7-98b0-b2b15b8326a9"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Productos",
+      "item": [
+        {
+          "name": "Obtener productos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/products",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "products"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "12",
+                  "disabled": true
+                },
+                {
+                  "key": "search",
+                  "value": "papas",
+                  "disabled": true
+                },
+                {
+                  "key": "category",
+                  "value": "c81e3e99-57ce-42d7-98b0-b2b15b8326a9",
+                  "disabled": true
+                },
+                {
+                  "key": "minPrice",
+                  "value": "100",
+                  "disabled": true
+                },
+                {
+                  "key": "maxPrice",
+                  "value": "5000",
+                  "disabled": true
+                },
+                {
+                  "key": "inStock",
+                  "value": "true",
+                  "disabled": true
+                },
+                {
+                  "key": "isFeatured",
+                  "value": "false",
+                  "disabled": true
+                },
+                {
+                  "key": "hasDiscount",
+                  "value": "false",
+                  "disabled": true
+                },
+                {
+                  "key": "sortBy",
+                  "value": "newest",
+                  "disabled": true
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener producto por id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/products/bd02f4f7-af66-4c54-aff9-d1cdd77a540e",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "products", "bd02f4f7-af66-4c54-aff9-d1cdd77a540e"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener producto por slug",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:4000/api/products/slug/ferrero-rocher-3-unidades",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "products", "slug", "ferrero-rocher-3-unidades"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Carrito",
+      "item": [
+        {
+          "name": "Obtener carrito",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/cart",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "cart"]
+            },
+            "description": "Obtiene el carrito del usuario autenticado. Si no existe, lo crea vacío automáticamente.\n\nRequiere: copiar el accessToken del response de Login y pegarlo en la variable de colección {{token}}."
+          },
+          "response": []
+        },
+        {
+          "name": "Agregar item al carrito",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"quantity\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/cart/items",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "cart", "items"]
+            },
+            "description": "Agrega un producto al carrito. Si el item ya existe, incrementa la cantidad.\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar data.items[n].id de GET /api/products)\n\nErrores:\n- 404: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.available y details.requested)"
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar cantidad de item",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quantity\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/cart/items/{{cartItemId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "cart", "items", "{{cartItemId}}"]
+            },
+            "description": "Reemplaza la cantidad de un item del carrito (no incrementa, reemplaza directamente).\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n- {{cartItemId}}: UUID del item (copiar data.items[n].id de GET /api/cart o del response de Agregar item)\n\nErrores:\n- 404: item no encontrado o no pertenece al usuario\n- 400 INSUFFICIENT_STOCK: stock insuficiente para la nueva cantidad"
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar item del carrito",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/cart/items/{{cartItemId}}",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "cart", "items", "{{cartItemId}}"]
+            },
+            "description": "Elimina un item específico del carrito.\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n- {{cartItemId}}: UUID del item a eliminar\n\nErrores:\n- 404: item no encontrado o no pertenece al usuario"
+          },
+          "response": []
+        },
+        {
+          "name": "Vaciar carrito",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/cart",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "4000",
+              "path": ["api", "cart"]
+            },
+            "description": "Elimina todos los items del carrito del usuario autenticado.\n\nVariables a configurar:\n- {{token}}: JWT del usuario"
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT obtenido del response de Login (campo accessToken). Copiar y pegar aquí."
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string",
+      "description": "UUID de un producto. Obtener de GET /api/products -> data.items[n].id"
+    },
+    {
+      "key": "cartItemId",
+      "value": "",
+      "type": "string",
+      "description": "UUID de un item del carrito. Obtener de GET /api/cart -> data.items[n].id"
+    }
+  ]
+}

@@ -13,6 +13,7 @@ import configuration from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
+import { CartModule } from './modules/cart/cart.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ProductsModule } from './modules/products/products.module';
     AuthModule,
     CategoriesModule,
     ProductsModule,
+    CartModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

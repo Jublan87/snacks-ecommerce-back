@@ -45,6 +45,16 @@ export const ERROR_CODES = {
 
   /** Token JWT inválido o expirado */
   INVALID_TOKEN: 'INVALID_TOKEN',
+
+  // Carrito
+  /** Stock insuficiente para la cantidad solicitada */
+  INSUFFICIENT_STOCK: 'INSUFFICIENT_STOCK',
+
+  /** Producto inactivo */
+  PRODUCT_INACTIVE: 'PRODUCT_INACTIVE',
+
+  /** Item del carrito no encontrado */
+  CART_ITEM_NOT_FOUND: 'CART_ITEM_NOT_FOUND',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

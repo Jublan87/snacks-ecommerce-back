@@ -644,7 +644,9 @@
 ✅ **Hito 3.11**: Endpoint GET /api/products/slug/:slug funcionando
 ✅ **Hito 3.12**: Queries optimizadas sin N+1 problems — `Promise.all([findMany, count])` en paginación
 
-**Criterio de Finalización**: Endpoints públicos de productos y categorías funcionando con filtros, búsqueda, paginación y patrón Repository desacoplado de Prisma.
+**Criterio de Finalización**: ✅ Endpoints públicos de productos y categorías funcionando con filtros, búsqueda, paginación y patrón Repository desacoplado de Prisma.
+
+> **Preparación para Fase 6**: En Fase 6 se implementará **soft auth** en estos endpoints. Los GETs existentes detectarán el rol del usuario (sin romper el acceso público) para cambiar comportamiento: mostrar recursos inactivos solo a admins, sin crear endpoints duplicados. Requiere ajustar `JwtAuthGuard` para extraer el usuario opcionalmente en rutas `@Public()`.
 
 ---
 
@@ -655,58 +657,65 @@
 ### Tareas
 
 #### 4.1 Configuración Base
-- [ ] Crear módulo `CartModule`
-- [ ] **Crear `CartRepository` extendiendo `BaseRepository`**
-  - Método `findByUserId(userId)` - incluir items con productos
-  - Método `findOrCreate(userId)` - obtener o crear carrito
-  - Método `addItem(cartId, productId, quantity)`
-  - Método `updateItemQuantity(itemId, quantity)`
-  - Método `removeItem(itemId)`
-  - Método `clearCart(cartId)`
+- [x] Crear módulo `CartModule`
+- [x] **Crear `CartRepository` extendiendo `BaseRepository`**
+  - Método `findByUserId(userId)` - incluir items con productos e imágenes
+  - Método `findOrCreate(userId)` - obtener o crear carrito (upsert a nivel carrito)
+  - Método `findItemById(itemId)` - buscar item específico
+  - Método `upsertItem(cartId, productId, quantity)` - crear item o incrementar cantidad si ya existe
+  - Método `updateItemQuantity(itemId, quantity)` - reemplazar cantidad directamente
+  - Método `removeItem(itemId)` - eliminar item
+  - Método `clearCart(cartId)` - vaciar todos los items del carrito
   - Usar interfaces de dominio
-- [ ] **Crear interfaces de dominio en `cart/interfaces/`**
-  - `CartWithItems` - carrito con items y productos
-  - `CartItem` - item del carrito
+- [x] **Crear interfaces de dominio en `cart/interfaces/`**
+  - `CartWithItems` - carrito con items, productos e imágenes
+  - `CartItemDetail` - item del carrito con datos del producto
   - `AddItemInput` - datos para agregar item
-  - `UpdateItemInput` - datos para actualizar item
-- [ ] **Crear domain service `CartValidationService`**
-  - Validar stock antes de agregar
-  - Validar producto activo
-  - Validar que item pertenezca al usuario
-- [ ] Crear servicio `CartService`
+  - `UpdateItemInput` - datos para actualizar cantidad
+- [x] **Crear domain service `CartValidationService`**
+  - Validar stock disponible antes de agregar/actualizar
+  - Validar que el producto esté activo
+  - Validar que el item pertenezca al carrito del usuario autenticado
+- [x] Crear servicio `CartService`
   - Inyectar `CartRepository` y `CartValidationService`
+  - La lógica de negocio "si item ya existe → incrementar, si no → crear" va en el **servicio**, no en el repositorio
   - Usar solo interfaces de dominio
 
+> **Decisión de diseño MVP**: El modelo `CartItem` en Prisma tiene solo `productId`, sin `variantOptionId`. El carrito funciona a nivel de producto únicamente. Si el producto tiene variantes, el usuario las elige en el formulario de checkout al crear el pedido. Soporte de variantes en carrito queda fuera del MVP.
+
+> **Dependencia de módulo**: `CartModule` debe exportar `CartService` para que `OrdersModule` (Fase 5) pueda escuchar el evento `order.created` y vaciar el carrito.
+
 #### 4.2 Códigos de Error
-- [ ] **Agregar códigos de error** en `error-codes.ts`:
+- [x] **Agregar códigos de error** en `error-codes.ts`:
   - `INSUFFICIENT_STOCK` - stock insuficiente
   - `PRODUCT_NOT_FOUND` - producto no encontrado
   - `PRODUCT_INACTIVE` - producto inactivo
   - `CART_ITEM_NOT_FOUND` - item no encontrado
 
 #### 4.3 Endpoint: GET /api/cart
-- [ ] **Crear `CartController`**
-- [ ] **Implementar en controller**
+- [x] **Crear `CartController`**
+- [x] **Implementar en controller**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener userId
   - Llamar a `cartService.getCart(userId)`
   - No requiere DTO
-- [ ] **Implementar en `CartService.getCart()`**
+- [x] **Implementar en `CartService.getCart()`**
   - Llamar a `repository.findOrCreate(userId)`
-  - Si no existe, crear carrito vacío
   - Incluir items con relación a productos e imágenes
+  - Marcar items **stale** (producto inactivo o sin stock suficiente) con flag `isAvailable: boolean` por item
+  - No eliminar automáticamente los stale — solo informar al frontend para que los muestre en gris
   - Retornar carrito completo
 
 #### 4.4 Endpoint: POST /api/cart/items
-- [ ] **Crear `AddToCartDto`** con validaciones
+- [x] **Crear `AddToCartDto`** con validaciones
   - productId (requerido, IsUUID)
   - quantity (requerido, IsInt, Min 1)
-- [ ] **Implementar en `CartController`**
+- [x] **Implementar en `CartController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar con `AddToCartDto`
   - Usar `@CurrentUser()` para obtener userId
   - Llamar a `cartService.addItem(userId, dto)`
-- [ ] **Implementar en `CartService.addItem()`**
+- [x] **Implementar en `CartService.addItem()`**
   - Validar que producto exista con `cartValidationService`
   - Validar que producto esté activo
   - Validar stock disponible
@@ -716,39 +725,39 @@
   - Retornar item creado/actualizado
 
 #### 4.5 Endpoint: PUT /api/cart/items/:itemId
-- [ ] **Crear `UpdateCartItemDto`** con validaciones
+- [x] **Crear `UpdateCartItemDto`** con validaciones
   - quantity (requerido, IsInt, Min 1)
-- [ ] **Implementar en `CartController`**
+- [x] **Implementar en `CartController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar itemId (ParseUUIDPipe)
   - Validar con `UpdateCartItemDto`
   - Usar `@CurrentUser()` para obtener userId
   - Llamar a `cartService.updateItem(userId, itemId, dto)`
-- [ ] **Implementar en `CartService.updateItem()`**
+- [x] **Implementar en `CartService.updateItem()`**
   - Validar que item pertenezca al carrito del usuario
   - Validar stock disponible para la nueva cantidad
   - Actualizar cantidad
   - Retornar item actualizado
 
 #### 4.6 Endpoint: DELETE /api/cart/items/:itemId
-- [ ] **Implementar en `CartController`**
+- [x] **Implementar en `CartController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar itemId (ParseUUIDPipe)
   - Usar `@CurrentUser()` para obtener userId
   - Llamar a `cartService.removeItem(userId, itemId)`
   - No requiere DTO
-- [ ] **Implementar en `CartService.removeItem()`**
+- [x] **Implementar en `CartService.removeItem()`**
   - Validar que item pertenezca al carrito del usuario
   - Eliminar item del carrito
-  - Retornar { message: 'Item eliminado del carrito' }
+  - Retornar { message: 'Producto eliminado del carrito' }
 
 #### 4.7 Endpoint: DELETE /api/cart
-- [ ] **Implementar en `CartController`**
+- [x] **Implementar en `CartController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener userId
   - Llamar a `cartService.clearCart(userId)`
   - No requiere DTO
-- [ ] **Implementar en `CartService.clearCart()`**
+- [x] **Implementar en `CartService.clearCart()`**
   - Obtener carrito del usuario
   - Eliminar todos los items del carrito
   - Retornar { message: 'Carrito vaciado' }
@@ -823,38 +832,48 @@
     - Método `decreaseStock(items)`
     - Método `increaseStock(items)` - para cancelaciones
     - Método `recordStockChange(changes)` - registrar en historial
-- [ ] **NUEVO:** Crear eventos de pedidos
-  - Evento `OrderCreatedEvent` - emitir al crear pedido
+- [ ] **Arquitectura transaccional**: Usar `prisma.$transaction()` en la creación de pedido:
+  - Crear Order + OrderItems
+  - Decrementar stock de cada producto
+  - Registrar cambios en StockHistory
+  - Si cualquier paso falla → rollback automático completo
+  - El stock nunca puede quedar desincronizado respecto al pedido
+- [ ] **NUEVO:** Crear eventos de pedidos (solo para operaciones no críticas post-commit)
+  - Evento `OrderCreatedEvent` - emitir **después** del commit de la transacción
   - Evento `OrderStatusChangedEvent` - emitir al cambiar estado
 - [ ] **NUEVO:** Crear listeners de eventos
-  - `StockListener` - escucha `order.created` y descuenta stock
-  - `CartListener` - escucha `order.created` y vacía carrito
+  - `CartListener` - escucha `order.created` y vacía carrito (operación eventual, no crítica)
+  - ⚠️ El descuento de stock NO va en un listener — va dentro de la transacción Prisma
 - [ ] Crear servicio `OrdersService` (orquestador)
   - Inyectar: OrdersRepository, domain services, EventEmitter
   - Orquestar creación de pedido
   - Emitir eventos
 - [ ] Crear controlador `OrdersController`
 
+#### 5.5 Dependencias entre Módulos
+- [ ] `CartModule` exporta `CartService` (para que `CartListener` en OrdersModule pueda vaciar el carrito)
+- [ ] `ProductsModule` ya exporta `ProductsService` (✅ configurado en Fase 3) — usado para validar productos al crear pedido
+- [ ] `ShippingModule` exporta `ShippingService` — importado por `OrdersModule`
+- [ ] `OrdersModule` importa `CartModule`, `ProductsModule` y `ShippingModule`
+
 #### 5.6 Endpoints de Pedidos
 - [ ] **POST /api/orders**
   - Proteger con `JwtAuthGuard`
-  - Validar estructura de request:
-    - `items[]` (productId, quantity)
-    - `shippingAddress` (completo)
-    - `paymentMethod`
-    - `notes` (opcional)
-  - Validar que todos los productos existan y estén activos
+  - **El pedido se crea desde el carrito activo del usuario** (no se envían `items[]` en el body)
+  - Request body requiere solo: `shippingAddress` (reutilizar `ShippingAddressDto` de `src/modules/auth/dto/`), `paymentMethod`, `notes` (opcional)
+  - Obtener carrito del usuario — error 400 si está vacío
+  - Validar que todos los productos del carrito existan y estén activos
   - Validar stock disponible de todos los productos
-  - Calcular subtotal (considerar discountPrice si existe)
-  - Calcular shipping usando ShippingService
+  - Calcular subtotal usando precios actuales (considerar discountPrice si existe)
+  - Calcular shipping usando `ShippingService`
   - Calcular total
-  - Generar orderNumber único
-  - Crear transacción de base de datos:
+  - Generar `orderNumber` único — formato `ORD-YYYYMMDD-{nanoid(6)}` para evitar colisiones bajo carga concurrente
+  - Ejecutar `prisma.$transaction()`:
     - Crear Order con estado `pending`
-    - Crear OrderItems (capturar precio al momento)
-    - Descontar stock de productos
+    - Crear OrderItems (capturar precio exacto al momento de la compra)
+    - Decrementar stock de cada producto
     - Registrar cambios en StockHistory
-    - Vaciar carrito del usuario (si existe)
+  - Emitir `OrderCreatedEvent` (post-commit) → `CartListener` vacía el carrito
   - Retornar pedido completo creado
 - [ ] **GET /api/orders**
   - Proteger con `JwtAuthGuard`
@@ -877,11 +896,9 @@
   - Retornar pedido completo
 
 #### 5.7 DTOs de Pedidos
-- [ ] Crear `CreateOrderDto` para crear pedido
-- [ ] Crear `OrderItemDto` para items del pedido
-- [ ] Crear `ShippingAddressDto` para dirección
-- [ ] Crear `OrderDto` para respuestas
-- [ ] Crear `OrderQueryDto` para filtros
+- [ ] Crear `CreateOrderDto` — solo `shippingAddress`, `paymentMethod`, `notes` (sin `items[]`, el pedido viene del carrito)
+- [ ] **Reutilizar** `ShippingAddressDto` de `src/modules/auth/dto/shipping-address.dto.ts` — moverla a `src/common/dto/` si es necesario para que esté disponible en ambos módulos
+- [ ] Crear `OrderQueryDto` para filtros de listado (estado, ordenamiento)
 
 #### 5.8 Validaciones y Errores
 - [ ] Validar formato de todos los campos requeridos
@@ -897,20 +914,20 @@
 - [ ] Registrar logs de errores en transacciones
 
 ### Hitos de la Fase 5
-✅ **Hito 5.1**: Cálculo de envío funciona correctamente  
-✅ **Hito 5.2**: Usuario puede crear pedido con items válidos  
-✅ **Hito 5.3**: Sistema valida stock de todos los productos antes de crear pedido  
-✅ **Hito 5.4**: Stock se descuenta correctamente al crear pedido  
-✅ **Hito 5.5**: Historial de stock se registra correctamente  
-✅ **Hito 5.6**: Número de orden se genera con formato correcto  
-✅ **Hito 5.7**: Usuario puede listar sus pedidos con paginación  
-✅ **Hito 5.8**: Usuario puede ver detalle de un pedido  
-✅ **Hito 5.9**: Carrito se vacía automáticamente al crear pedido (vía evento)  
-✅ **Hito 5.10**: Precio se captura correctamente al momento de compra  
-✅ **Hito 5.11**: OrdersRepository implementado con transacciones  
-✅ **Hito 5.12**: Domain services de pedidos separados correctamente  
-✅ **Hito 5.13**: Event-driven architecture funcionando (eventos y listeners)  
-✅ **Hito 5.14**: Módulos desacoplados mediante eventos
+**Hito 5.1**: Cálculo de envío funciona correctamente
+**Hito 5.2**: Usuario puede crear pedido con items válidos
+**Hito 5.3**: Sistema valida stock de todos los productos antes de crear pedido
+**Hito 5.4**: Stock se descuenta correctamente al crear pedido (dentro de `$transaction`)
+**Hito 5.5**: Historial de stock se registra correctamente
+**Hito 5.6**: Número de orden se genera con formato correcto (`ORD-YYYYMMDD-{nanoid(6)}`)
+**Hito 5.7**: Usuario puede listar sus pedidos con paginación
+**Hito 5.8**: Usuario puede ver detalle de un pedido
+**Hito 5.9**: Carrito se vacía automáticamente al crear pedido (vía evento)
+**Hito 5.10**: Precio se captura correctamente al momento de compra
+**Hito 5.11**: OrdersRepository implementado con transacciones
+**Hito 5.12**: Domain services de pedidos separados correctamente
+**Hito 5.13**: Event-driven architecture funcionando (eventos y listeners)
+**Hito 5.14**: Módulos desacoplados mediante eventos
 
 **Criterio de Finalización**: Sistema de pedidos con arquitectura event-driven, Repository pattern, Domain Services, transaccionalidad y validaciones completas.
 
@@ -922,48 +939,48 @@
 
 ### Tareas
 
-#### 6.1 Configuración de Módulos Admin
+#### 6.1 Soft Auth en Endpoints Existentes (prerequisito)
+- [ ] **Ajustar `JwtAuthGuard`** para soportar "optional auth":
+  - En rutas `@Public()`, si hay token válido en la request → extraer y poblar `request.user`
+  - Si no hay token o el token es inválido → continuar sin error (request.user = undefined)
+  - Esto permite que los endpoints públicos conozcan el rol del caller
+- [ ] **Actualizar `CategoriesController`** (Fase 3) con soft auth:
+  - `GET /api/categories` — si `request.user?.role === admin` → respetar `includeInactive`; si no → ignorarlo (siempre activas)
+  - `GET /api/categories/:id` — admin puede ver categorías inactivas; público → 404 si inactiva
+- [ ] **Actualizar `ProductsController`** (Fase 3) con soft auth:
+  - `GET /api/products` — admin puede filtrar por `isActive=false`; público → solo activos siempre
+  - `GET /api/products/:id` y `GET /api/products/slug/:slug` — admin ve inactivos; público → 404
+- [ ] Agregar `isActive?: boolean` a `ProductQueryDto` (solo efectivo para admins)
+
+#### 6.2 Configuración de Módulos Admin
 - [ ] Crear módulo `AdminProductsModule` en `src/modules/admin/admin-products/`
-- [ ] **NUEVO:** Crear `AdminProductsRepository` (reusar o extender ProductsRepository)
-  - Método `findAllIncludingInactive(filters)`
-  - Método `updateWithStockHistory(id, data)` - actualizar y registrar
+- [ ] **NUEVO:** Crear `AdminProductsRepository` (extender ProductsRepository)
+  - Método `updateWithStockHistory(id, data)` — actualizar producto y registrar cambio de stock en misma transacción
 - [ ] **NUEVO:** Crear domain services admin
-  - `SlugGeneratorService` - generar slugs únicos
-  - `ProductImageService` - validar imagen principal única
-  - `ProductValidationService` - validar SKU único, categoría existe
+  - `SlugGeneratorService` — generar slugs únicos con sufijo numérico si hay colisión (`papas-fritas`, `papas-fritas-2`, etc.)
+  - `ProductImageService` — validar que solo 1 imagen tenga `isPrimary=true`
+  - `ProductValidationService` — validar SKU único, categoría existe
 - [ ] Crear servicio `AdminProductsService`
   - Inyectar repository y domain services
+  - Importar `CategoriesService` para validar que `categoryId` exista
 - [ ] Crear controlador `AdminProductsController`
 - [ ] Crear módulo `AdminCategoriesModule` en `src/modules/admin/admin-categories/`
 - [ ] **NUEVO:** Crear `AdminCategoriesRepository`
-  - Método `findAllIncludingInactive()`
-  - Método `checkDependencies(id)` - verificar productos y hijos
-  - Método `validateNoCircularReference(id, parentId)` - prevenir ciclos
+  - Método `checkDependencies(id)` — verificar si tiene productos o subcategorías antes de eliminar
+  - Método `validateNoCircularReference(id, parentId)` — prevenir ciclos en jerarquía
 - [ ] **NUEVO:** Crear domain service `CategoryHierarchyService`
-  - Validar jerarquía sin ciclos
+  - Validar que no se creen ciclos al cambiar `parentId`
   - Verificar dependencias antes de eliminar
 - [ ] Crear servicio `AdminCategoriesService`
 - [ ] Crear controlador `AdminCategoriesController`
 
-#### 6.2 Endpoints Admin - Productos
-- [ ] **GET /api/admin/products**
-  - Proteger con `JwtAuthGuard` + `RolesGuard` (admin)
-  - Listar todos los productos (incluir inactivos)
-  - Implementar filtros:
-    - `search` (texto)
-    - `category`
-    - `isActive`
-    - `isFeatured`
-    - `lowStock` (stock < threshold)
-    - `outOfStock` (stock = 0)
-  - Implementar paginación
-  - Implementar ordenamiento
-  - Retornar con metadata
-- [ ] **GET /api/admin/products/:id**
-  - Proteger con admin guard
-  - Obtener producto por ID (incluir inactivos)
-  - Incluir todas las relaciones
-  - Retornar producto completo
+> **Decisión de diseño**: Las imágenes se gestionan como **URLs** (el frontend/cliente sube la imagen a un servicio externo como Cloudinary/S3 y envía la URL resultante). El backend no maneja archivos binarios. Esta decisión simplifica el MVP y evita dependencias de cloud storage en el backend.
+
+> **Soft delete**: Los productos solo se desactivan (`isActive=false`), nunca se eliminan permanentemente. Esto preserva la integridad referencial con `OrderItem`. Si en el futuro se necesita hard delete, se evalúa entonces.
+
+#### 6.3 Endpoints Admin - Productos
+> Los `GET` de productos usan los endpoints de Fase 3 mejorados con soft auth (ver 6.1). No hay endpoints GET duplicados en `/api/admin/products`.
+
 - [ ] **POST /api/admin/products**
   - Proteger con admin guard
   - Validar todos los campos requeridos:
@@ -991,11 +1008,19 @@
   - Retornar producto actualizado
 - [ ] **DELETE /api/admin/products/:id**
   - Proteger con admin guard
-  - Implementar soft delete (marcar isActive=false)
-  - Alternativamente: verificar que no haya pedidos asociados antes de eliminar
+  - Implementar soft delete (marcar `isActive=false`) — sin hard delete (ver nota de diseño)
+  - Retornar mensaje de éxito
+- [ ] **DELETE /api/admin/products/:productId/images/:imageId**
+  - Proteger con admin guard
+  - Eliminar imagen específica del producto
+  - Si era la imagen primaria, marcar otra como primaria automáticamente (si quedan imágenes)
+  - Error 400 si es la única imagen del producto
+- [ ] **DELETE /api/admin/products/:productId/variants/:variantId**
+  - Proteger con admin guard
+  - Eliminar variante y todas sus opciones
   - Retornar mensaje de éxito
 
-#### 6.3 Endpoint Especial - Stock
+#### 6.4 Endpoint Especial - Stock
 - [ ] **PUT /api/admin/products/:id/stock**
   - Proteger con admin guard
   - Validar nuevo valor de stock >= 0
@@ -1008,20 +1033,16 @@
     - `productName`
   - Retornar información de actualización
 
-#### 6.4 DTOs Admin - Productos
-- [ ] Crear `CreateProductDto` con todas las validaciones
-- [ ] Crear `UpdateProductDto` (Partial de CreateProductDto)
-- [ ] Crear `UpdateStockDto` para actualización de stock
-- [ ] Crear `CreateProductImageDto`
-- [ ] Crear `CreateProductVariantDto`
-- [ ] Crear `AdminProductQueryDto` para filtros admin
+#### 6.5 DTOs Admin - Productos
+- [ ] Crear `CreateProductDto` con todas las validaciones (name, description, sku, price, stock, categoryId, images[])
+- [ ] Crear `UpdateProductDto` (`PartialType` de `CreateProductDto`)
+- [ ] Crear `UpdateStockDto` para actualización de stock (newStock, reason)
+- [ ] Crear `CreateProductImageDto` (url, isPrimary, order)
+- [ ] Crear `CreateProductVariantDto` (name, options[])
 
-#### 6.5 Endpoints Admin - Categorías
-- [ ] **GET /api/admin/categories**
-  - Proteger con admin guard
-  - Listar todas las categorías (incluir inactivas por defecto)
-  - Implementar estructura jerárquica o plana según query
-  - Retornar categorías
+#### 6.6 Endpoints Admin - Categorías
+> Los `GET` de categorías usan los endpoints de Fase 3 mejorados con soft auth (ver 6.1). No hay endpoints GET duplicados en `/api/admin/categories`.
+
 - [ ] **POST /api/admin/categories**
   - Proteger con admin guard
   - Validar campos requeridos: `name`
@@ -1044,38 +1065,36 @@
   - Si no tiene dependencias, eliminar
   - Retornar mensaje de éxito
 
-#### 6.6 DTOs Admin - Categorías
-- [ ] Crear `CreateCategoryDto`
-- [ ] Crear `UpdateCategoryDto`
-- [ ] Crear `AdminCategoryQueryDto`
-
-#### 6.7 Utilidades Admin
-- [ ] Crear función para generar slug único
-- [ ] Crear función para validar ciclos en jerarquía de categorías
-- [ ] Crear función para verificar dependencias de categorías
+#### 6.7 DTOs Admin - Categorías
+- [ ] Crear `CreateCategoryDto` (name, parentId?, image?, order?, isActive?)
+- [ ] Crear `UpdateCategoryDto` (`PartialType` de `CreateCategoryDto`)
 
 #### 6.8 Validaciones y Errores Admin
 - [ ] Error `SKU_DUPLICATE` (409)
 - [ ] Error `CATEGORY_NOT_FOUND` (404)
 - [ ] Error `PRODUCT_NOT_FOUND` (404)
-- [ ] Error `CATEGORY_HAS_DEPENDENCIES` (409) con detalles
-- [ ] Error `INVALID_PARENT_CATEGORY` (400) si crea ciclo
+- [ ] Error `CATEGORY_HAS_DEPENDENCIES` (409) con detalles (cantidad de productos y subcategorías)
+- [ ] Error `INVALID_PARENT_CATEGORY` (400) si el nuevo parentId crearía un ciclo
+- [ ] Error `LAST_IMAGE` (400) si se intenta eliminar la única imagen de un producto
 
 ### Hitos de la Fase 6
-✅ **Hito 6.1**: Admin puede listar todos los productos con filtros  
-✅ **Hito 6.2**: Admin puede crear nuevo producto con imágenes  
-✅ **Hito 6.3**: Slug se genera automáticamente y es único (SlugGeneratorService)  
-✅ **Hito 6.4**: Admin puede actualizar producto existente  
-✅ **Hito 6.5**: Admin puede actualizar solo el stock de un producto  
-✅ **Hito 6.6**: Cambios de stock se registran en historial automáticamente  
-✅ **Hito 6.7**: Admin puede eliminar producto (soft delete)  
-✅ **Hito 6.8**: Admin puede crear categoría  
-✅ **Hito 6.9**: Admin puede actualizar categoría  
-✅ **Hito 6.10**: Sistema previene eliminación de categorías con productos  
-✅ **Hito 6.11**: Sistema previene ciclos en jerarquía (CategoryHierarchyService)  
-✅ **Hito 6.12**: Solo usuarios con role admin pueden acceder  
-✅ **Hito 6.13**: AdminProductsRepository y AdminCategoriesRepository implementados  
-✅ **Hito 6.14**: Domain services admin funcionando correctamente
+**Hito 6.1**: Soft auth configurado (`JwtAuthGuard` extrae usuario opcionalmente en rutas `@Public()`)
+**Hito 6.2**: Admin puede listar todos los productos con filtros (incluyendo inactivos)
+**Hito 6.3**: Admin puede crear nuevo producto con imágenes (URLs desde cliente)
+**Hito 6.4**: Slug se genera automáticamente y es único (SlugGeneratorService)
+**Hito 6.5**: Admin puede actualizar producto existente
+**Hito 6.6**: Admin puede actualizar solo el stock de un producto
+**Hito 6.7**: Cambios de stock se registran en historial automáticamente
+**Hito 6.8**: Admin puede eliminar producto (soft delete — `isActive=false`)
+**Hito 6.9**: Admin puede añadir/eliminar imágenes de un producto
+**Hito 6.10**: Admin puede crear/actualizar/eliminar variantes de un producto
+**Hito 6.11**: Admin puede crear categoría
+**Hito 6.12**: Admin puede actualizar categoría
+**Hito 6.13**: Sistema previene eliminación de categorías con productos
+**Hito 6.14**: Sistema previene ciclos en jerarquía (CategoryHierarchyService)
+**Hito 6.15**: Solo usuarios con role admin pueden acceder
+**Hito 6.16**: AdminProductsRepository y AdminCategoriesRepository implementados
+**Hito 6.17**: Domain services admin funcionando correctamente
 
 **Criterio de Finalización**: Panel admin con Repository pattern y Domain Services, todas las validaciones funcionando.
 
@@ -1141,16 +1160,20 @@
   - Incluir todas las relaciones
   - Incluir información del usuario
   - Retornar pedido completo
+- [ ] **GET /api/admin/orders/number/:orderNumber**
+  - Proteger con admin guard
+  - Buscar pedido por número de orden (de cualquier usuario)
+  - Incluir todas las relaciones e información del usuario
+  - Retornar pedido completo
 - [ ] **PUT /api/admin/orders/:id/status**
   - Proteger con admin guard
   - Validar nuevo estado en request
-  - Validar transición de estado válida:
-    - No se puede pasar de shipped/delivered a cancelled
-    - No se puede retroceder desde delivered
-  - Si se cambia a `cancelled`, considerar devolver stock (opcional)
-  - Actualizar estado del pedido
-  - Actualizar `updatedAt`
-  - Opcionalmente agregar notas sobre el cambio
+  - Validar transición de estado válida (`OrderStatusValidationService`):
+    - No se puede pasar de `shipped` o `delivered` a `cancelled`
+    - No se puede retroceder desde `delivered`
+  - Si se cambia a `cancelled` → **devolver stock obligatoriamente** (no opcional):
+    - Usar `prisma.$transaction()` para actualizar estado + incrementar stock + registrar en StockHistory
+  - Emitir `OrderStatusChangedEvent` post-commit
   - Retornar pedido actualizado
 
 #### 7.3 Lógica de Estados de Pedidos
@@ -1199,19 +1222,21 @@
 - [ ] Error `PRODUCT_NOT_FOUND` para historial de stock
 
 ### Hitos de la Fase 7
-✅ **Hito 7.1**: Admin puede listar todos los pedidos con filtros  
-✅ **Hito 7.2**: Admin puede buscar pedidos por texto  
-✅ **Hito 7.3**: Admin puede filtrar pedidos por fecha, estado, total  
-✅ **Hito 7.4**: Admin puede ver resumen estadístico (OrderSummaryService)  
-✅ **Hito 7.5**: Admin puede ver detalle completo de cualquier pedido  
-✅ **Hito 7.6**: Admin puede actualizar estado de un pedido  
-✅ **Hito 7.7**: Sistema valida transiciones de estado (OrderStatusValidationService)  
-✅ **Hito 7.8**: Admin puede ver historial de stock general  
-✅ **Hito 7.9**: Admin puede ver historial de stock de un producto  
-✅ **Hito 7.10**: Historial muestra cambios de stock con razón y fechas  
-✅ **Hito 7.11**: Solo usuarios admin pueden acceder a estos endpoints  
-✅ **Hito 7.12**: AdminOrdersRepository y StockHistoryRepository implementados  
-✅ **Hito 7.13**: Event-driven para cancelación de pedidos (devolución de stock)
+**Hito 7.1**: Admin puede listar todos los pedidos con filtros
+**Hito 7.2**: Admin puede buscar pedidos por texto
+**Hito 7.3**: Admin puede filtrar pedidos por fecha, estado, total
+**Hito 7.4**: Admin puede ver resumen estadístico (OrderSummaryService)
+**Hito 7.5**: Admin puede ver detalle completo de cualquier pedido
+**Hito 7.6**: Admin puede buscar pedido por número de orden (`GET /api/admin/orders/number/:orderNumber`)
+**Hito 7.7**: Admin puede actualizar estado de un pedido
+**Hito 7.8**: Sistema valida transiciones de estado (OrderStatusValidationService)
+**Hito 7.9**: Cancelación devuelve stock obligatoriamente (dentro de `$transaction`)
+**Hito 7.10**: Admin puede ver historial de stock general
+**Hito 7.11**: Admin puede ver historial de stock de un producto
+**Hito 7.12**: Historial muestra cambios de stock con razón y fechas
+**Hito 7.13**: Solo usuarios admin pueden acceder a estos endpoints
+**Hito 7.14**: AdminOrdersRepository y StockHistoryRepository implementados
+**Hito 7.15**: Domain services admin de pedidos funcionando correctamente
 
 **Criterio de Finalización**: Panel admin con Repository pattern, Domain Services y eventos, filtros avanzados funcionando.
 
@@ -1224,14 +1249,11 @@
 ### Tareas
 
 #### 8.1 Configuración de Swagger
-- [ ] Configurar SwaggerModule en `main.ts`
-- [ ] Definir metadata general del API:
-  - Título: "Snacks E-commerce API"
-  - Descripción
-  - Versión
-  - Información de contacto
-- [ ] Configurar autenticación en Swagger (Bearer token / Cookies)
-- [ ] Definir tags para agrupar endpoints:
+> ✅ `SwaggerModule` ya está configurado en `main.ts` desde Fase 0 y funciona en `/api/swagger`. Las tareas pendientes son agregar decoradores a los nuevos módulos implementados en Fases 4–7.
+
+- [ ] Completar metadata general del API (descripción, versión, contacto)
+- [ ] Configurar autenticación en Swagger (Bearer token + Cookie)
+- [ ] Verificar/completar tags para todos los módulos:
   - Auth
   - Products
   - Categories
@@ -1327,17 +1349,17 @@
 - [ ] Crear CHANGELOG.md
 
 ### Hitos de la Fase 8
-✅ **Hito 8.1**: Swagger configurado y accesible en `/api/docs`  
-✅ **Hito 8.2**: Todos los endpoints documentados en Swagger  
-✅ **Hito 8.3**: DTOs tienen decoradores de Swagger con ejemplos  
-✅ **Hito 8.4**: Respuestas y errores documentados correctamente  
-✅ **Hito 8.5**: Health checks funcionando con Terminus (/health, /health/ready, /health/live)  
-✅ **Hito 8.6**: Queries optimizadas sin N+1 problems  
-✅ **Hito 8.7**: Interceptores de logging y transformación verificados  
-✅ **Hito 8.8**: Rate limiting verificado en todos los endpoints sensibles  
-✅ **Hito 8.9**: Manejo global de errores funcionando correctamente  
-✅ **Hito 8.10**: README completo con arquitectura documentada  
-✅ **Hito 8.11**: Documentación de patrones arquitectónicos (Repository, Domain Services, Events)
+**Hito 8.1**: Decoradores Swagger añadidos a todos los nuevos módulos (4–7)
+**Hito 8.2**: Todos los endpoints documentados en Swagger
+**Hito 8.3**: DTOs tienen decoradores de Swagger con ejemplos
+**Hito 8.4**: Respuestas y errores documentados correctamente
+**Hito 8.5**: Health checks funcionando con Terminus (/health, /health/ready, /health/live)
+**Hito 8.6**: Queries optimizadas sin N+1 problems
+**Hito 8.7**: Interceptores de logging y transformación verificados
+**Hito 8.8**: Rate limiting verificado en todos los endpoints sensibles
+**Hito 8.9**: Manejo global de errores funcionando correctamente
+**Hito 8.10**: README completo con arquitectura documentada
+**Hito 8.11**: Documentación de patrones arquitectónicos (Repository, Domain Services, Events)
 
 **Criterio de Finalización**: API completamente documentada, optimizada, con health checks completos y documentación de arquitectura.
 
@@ -1454,16 +1476,16 @@ Opciones recomendadas:
 - [ ] Documentar credenciales de admin en lugar seguro
 
 ### Hitos de la Fase 9
-✅ **Hito 9.1**: Base de datos de producción creada y migrada  
-✅ **Hito 9.2**: Variables de entorno configuradas en producción  
-✅ **Hito 9.3**: Build exitoso y aplicación desplegada  
-✅ **Hito 9.4**: Health check responde correctamente  
-✅ **Hito 9.5**: Swagger accesible en producción  
-✅ **Hito 9.6**: Login y autenticación funcionando en producción  
-✅ **Hito 9.7**: CORS configurado correctamente con frontend  
-✅ **Hito 9.8**: Cookies HTTPS configuradas correctamente  
-✅ **Hito 9.9**: Monitoreo de uptime configurado  
-✅ **Hito 9.10**: Backups de base de datos configurados
+**Hito 9.1**: Base de datos de producción creada y migrada
+**Hito 9.2**: Variables de entorno configuradas en producción
+**Hito 9.3**: Build exitoso y aplicación desplegada
+**Hito 9.4**: Health check responde correctamente
+**Hito 9.5**: Swagger accesible en producción
+**Hito 9.6**: Login y autenticación funcionando en producción
+**Hito 9.7**: CORS configurado correctamente con frontend
+**Hito 9.8**: Cookies HTTPS configuradas correctamente
+**Hito 9.9**: Monitoreo de uptime configurado
+**Hito 9.10**: Backups de base de datos configurados
 
 **Criterio de Finalización**: Backend completamente funcional en producción, accesible desde el frontend, con monitoreo activo y backups configurados.
 
@@ -1481,12 +1503,12 @@ Opciones recomendadas:
 | 3 | Productos y Categorías (Público) | ✅ Completa | 12 hitos |
 | 4 | Módulo de Carrito | ⏳ Pendiente | 9 hitos |
 | 5 | Pedidos y Envío | ⏳ Pendiente | 14 hitos |
-| 6 | Admin - Productos y Categorías | ⏳ Pendiente | 14 hitos |
-| 7 | Admin - Pedidos y Stock | ⏳ Pendiente | 13 hitos |
+| 6 | Admin - Productos y Categorías | ⏳ Pendiente | 17 hitos |
+| 7 | Admin - Pedidos y Stock | ⏳ Pendiente | 15 hitos |
 | 8 | Documentación y Optimización | ⏳ Pendiente | 11 hitos |
 | 9 | Despliegue a Producción | ⏳ Pendiente | 10 hitos |
 
-**Total de Hitos**: 107 hitos principales
+**Total de Hitos**: 112 hitos principales
 
 **Hitos adicionales por arquitectura mejorada**: +22 hitos para implementar:
 - Patrón Repository en todos los módulos
@@ -1804,21 +1826,39 @@ POST /api/orders [285ms]
 
 ---
 
-**Versión del Documento**: 2.0  
-**Fecha de Creación**: 2026-02-04  
-**Última Actualización**: 2026-02-04
+**Versión del Documento**: 2.1
+**Fecha de Creación**: 2026-02-04
+**Última Actualización**: 2026-03-01
 
-**Changelog v2.0**:
-- ✅ Agregado patrón Repository en todos los módulos
-- ✅ Agregados Domain Services para lógica de negocio
-- ✅ Implementada arquitectura Event-Driven (eventos y listeners)
-- ✅ Agregados interceptores globales (logging, transform, timeout)
-- ✅ Agregados filtros de excepciones globales
-- ✅ Configuración centralizada y modular
-- ✅ Rate limiting configurado
-- ✅ Health checks con @nestjs/terminus
-- ✅ Estructura de carpetas expandida y organizada
-- ✅ Total de hitos incrementado de 85 a 107
-- ✅ Agregada sección de Oportunidades de Mejora Futuras
+**Changelog v2.1** (2026-03-01):
+- Fase 3 completada: categorías y productos públicos con Repository pattern, Domain Services y paginación
+- Decisión de diseño: CartItem MVP sin soporte de variantes (campo `variantOptionId` no existe en Prisma)
+- Añadida sección 5.5: dependencias de módulos en Fase 5
+- Arquitectura de stock corregida: decremento dentro de `prisma.$transaction()`, no en listener de evento
+- Corrección: `POST /api/orders` toma items del carrito activo, no lista libre de items
+- `ShippingAddressDto` trasladado a `src/common/dto/` para ser reutilizado en Fase 5
+- Formato de número de orden cambiado a `ORD-YYYYMMDD-{nanoid(6)}`
+- Nueva sección 6.1 en Fase 6: prerequisito de soft auth (`JwtAuthGuard` opcional)
+- Endpoints admin de GET eliminados: se usa el endpoint público con soft auth donde aplica
+- Manejo de imágenes: URLs únicamente (Cloudinary/S3 en cliente); backend no hace upload
+- Nuevos endpoints en Fase 6: `DELETE /images/:imageId`, `DELETE /variants/:variantId`
+- Cancelación de pedido: devolución de stock ahora obligatoria y dentro de `$transaction`
+- Nuevo endpoint en Fase 7: `GET /api/admin/orders/number/:orderNumber`
+- Nota en Fase 8: Swagger ya está configurado desde Fase 0; solo requiere añadir decoradores
+- Hitos de Fases 5–9: eliminados marcadores `✅` prematuros (estaban como aspiracionales en v2.0)
+- Hitos de Fase 6 actualizados: 14 → 17 hitos; Fase 7: 13 → 15 hitos
+
+**Changelog v2.0** (2026-02-04):
+- Agregado patrón Repository en todos los módulos
+- Agregados Domain Services para lógica de negocio
+- Implementada arquitectura Event-Driven (eventos y listeners)
+- Agregados interceptores globales (logging, transform, timeout)
+- Agregados filtros de excepciones globales
+- Configuración centralizada y modular
+- Rate limiting configurado
+- Health checks con @nestjs/terminus
+- Estructura de carpetas expandida y organizada
+- Total de hitos incrementado de 85 a 107
+- Agregada sección de Oportunidades de Mejora Futuras
 
 Para comenzar el desarrollo, ir a [Fase 0: Configuración Inicial del Proyecto](#fase-0-configuración-inicial-del-proyecto)

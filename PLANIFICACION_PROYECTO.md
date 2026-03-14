@@ -783,17 +783,17 @@
 ### Tareas
 
 #### 5.1 Módulo de Envío
-- [ ] Crear módulo `ShippingModule`
-- [ ] **NUEVO:** Crear domain service `ShippingCalculationService`
+- [x] Crear módulo `ShippingModule`
+- [x] **NUEVO:** Crear domain service `ShippingCalculationService`
   - Método `calculateShipping(subtotal)` - lógica de cálculo
   - Método `calculateFreeShippingRemaining(subtotal)`
   - Usar ConfigService para obtener thresholds
-- [ ] Crear servicio `ShippingService` (orquestador)
+- [x] Crear servicio `ShippingService` (orquestador)
   - Inyectar `ShippingCalculationService`
-- [ ] Crear controlador `ShippingController`
+- [x] Crear controlador `ShippingController`
 
 #### 5.2 Endpoint de Cálculo de Envío
-- [ ] **POST /api/shipping/calculate**
+- [x] **POST /api/shipping/calculate**
   - Endpoint público (no requiere autenticación)
   - Validar subtotal en request
   - Leer `FREE_SHIPPING_THRESHOLD` de variables de entorno
@@ -808,18 +808,18 @@
     - `amountNeededForFreeShipping`
 
 #### 5.3 DTOs de Envío
-- [ ] Crear `CalculateShippingDto` para request
-- [ ] Crear `ShippingResponseDto` para response
+- [x] Crear `CalculateShippingDto` para request
+- [x] Crear `ShippingResponseDto` para response
 
 #### 5.4 Módulo de Pedidos
-- [ ] Crear módulo `OrdersModule`
-- [ ] **NUEVO:** Crear `OrdersRepository` extendiendo `BaseRepository`
+- [x] Crear módulo `OrdersModule`
+- [x] **NUEVO:** Crear `OrdersRepository` extendiendo `BaseRepository`
   - Método `create(data)` - crear pedido con transacción
   - Método `findByUserId(userId, filters)` - con paginación
   - Método `findByIdWithRelations(id)` - incluir items, productos, usuario
   - Método `findByOrderNumber(orderNumber)`
   - Método `createWithTransaction(data)` - pedido + items + stock en transacción
-- [ ] **NUEVO:** Crear domain services para lógica de pedidos
+- [x] **NUEVO:** Crear domain services para lógica de pedidos
   - `OrderCalculationService` - cálculo de totales
     - Método `calculateSubtotal(items)`
     - Método `calculateTotal(subtotal, shipping)`
@@ -832,32 +832,32 @@
     - Método `decreaseStock(items)`
     - Método `increaseStock(items)` - para cancelaciones
     - Método `recordStockChange(changes)` - registrar en historial
-- [ ] **Arquitectura transaccional**: Usar `prisma.$transaction()` en la creación de pedido:
+- [x] **Arquitectura transaccional**: Usar `prisma.$transaction()` en la creación de pedido:
   - Crear Order + OrderItems
   - Decrementar stock de cada producto
   - Registrar cambios en StockHistory
   - Si cualquier paso falla → rollback automático completo
   - El stock nunca puede quedar desincronizado respecto al pedido
-- [ ] **NUEVO:** Crear eventos de pedidos (solo para operaciones no críticas post-commit)
+- [x] **NUEVO:** Crear eventos de pedidos (solo para operaciones no críticas post-commit)
   - Evento `OrderCreatedEvent` - emitir **después** del commit de la transacción
   - Evento `OrderStatusChangedEvent` - emitir al cambiar estado
-- [ ] **NUEVO:** Crear listeners de eventos
+- [x] **NUEVO:** Crear listeners de eventos
   - `CartListener` - escucha `order.created` y vacía carrito (operación eventual, no crítica)
   - ⚠️ El descuento de stock NO va en un listener — va dentro de la transacción Prisma
-- [ ] Crear servicio `OrdersService` (orquestador)
+- [x] Crear servicio `OrdersService` (orquestador)
   - Inyectar: OrdersRepository, domain services, EventEmitter
   - Orquestar creación de pedido
   - Emitir eventos
-- [ ] Crear controlador `OrdersController`
+- [x] Crear controlador `OrdersController`
 
 #### 5.5 Dependencias entre Módulos
-- [ ] `CartModule` exporta `CartService` (para que `CartListener` en OrdersModule pueda vaciar el carrito)
-- [ ] `ProductsModule` ya exporta `ProductsService` (✅ configurado en Fase 3) — usado para validar productos al crear pedido
-- [ ] `ShippingModule` exporta `ShippingService` — importado por `OrdersModule`
-- [ ] `OrdersModule` importa `CartModule`, `ProductsModule` y `ShippingModule`
+- [x] `CartModule` exporta `CartService` (para que `CartListener` en OrdersModule pueda vaciar el carrito)
+- [x] `ProductsModule` ya exporta `ProductsService` (✅ configurado en Fase 3) — usado para validar productos al crear pedido
+- [x] `ShippingModule` exporta `ShippingService` — importado por `OrdersModule`
+- [x] `OrdersModule` importa `CartModule`, `ProductsModule` y `ShippingModule`
 
 #### 5.6 Endpoints de Pedidos
-- [ ] **POST /api/orders**
+- [x] **POST /api/orders**
   - Proteger con `JwtAuthGuard`
   - **El pedido se crea desde el carrito activo del usuario** (no se envían `items[]` en el body)
   - Request body requiere solo: `shippingAddress` (reutilizar `ShippingAddressDto` de `src/modules/auth/dto/`), `paymentMethod`, `notes` (opcional)
@@ -875,7 +875,7 @@
     - Registrar cambios en StockHistory
   - Emitir `OrderCreatedEvent` (post-commit) → `CartListener` vacía el carrito
   - Retornar pedido completo creado
-- [ ] **GET /api/orders**
+- [x] **GET /api/orders**
   - Proteger con `JwtAuthGuard`
   - Listar pedidos del usuario autenticado
   - Implementar paginación
@@ -883,51 +883,51 @@
   - Implementar ordenamiento (newest/oldest)
   - Incluir items con productos e imágenes
   - Retornar con metadata de paginación
-- [ ] **GET /api/orders/:id**
+- [x] **GET /api/orders/:id**
   - Proteger con `JwtAuthGuard`
   - Buscar pedido por ID
   - Validar que pedido pertenezca al usuario (403 si no)
   - Incluir todas las relaciones
   - Retornar pedido completo
-- [ ] **GET /api/orders/number/:orderNumber**
+- [x] **GET /api/orders/number/:orderNumber**
   - Proteger con `JwtAuthGuard`
   - Buscar pedido por número de orden
   - Validar que pedido pertenezca al usuario (403 si no)
   - Retornar pedido completo
 
 #### 5.7 DTOs de Pedidos
-- [ ] Crear `CreateOrderDto` — solo `shippingAddress`, `paymentMethod`, `notes` (sin `items[]`, el pedido viene del carrito)
-- [ ] **Reutilizar** `ShippingAddressDto` de `src/modules/auth/dto/shipping-address.dto.ts` — moverla a `src/common/dto/` si es necesario para que esté disponible en ambos módulos
-- [ ] Crear `OrderQueryDto` para filtros de listado (estado, ordenamiento)
+- [x] Crear `CreateOrderDto` — solo `shippingAddress`, `paymentMethod`, `notes` (sin `items[]`, el pedido viene del carrito)
+- [x] **Reutilizar** `ShippingAddressDto` de `src/modules/auth/dto/shipping-address.dto.ts` — moverla a `src/common/dto/` si es necesario para que esté disponible en ambos módulos
+- [x] Crear `OrderQueryDto` para filtros de listado (estado, ordenamiento)
 
 #### 5.8 Validaciones y Errores
-- [ ] Validar formato de todos los campos requeridos
-- [ ] Implementar error `INSUFFICIENT_STOCK` con lista de productos
-- [ ] Implementar error `PRODUCT_NOT_FOUND`
-- [ ] Implementar error `PRODUCT_INACTIVE`
-- [ ] Implementar error `ORDER_NOT_FOUND`
-- [ ] Implementar error `FORBIDDEN` si pedido no pertenece al usuario
+- [x] Validar formato de todos los campos requeridos
+- [x] Implementar error `INSUFFICIENT_STOCK` con lista de productos
+- [x] Implementar error `PRODUCT_NOT_FOUND`
+- [x] Implementar error `PRODUCT_INACTIVE`
+- [x] Implementar error `ORDER_NOT_FOUND`
+- [x] Implementar error `FORBIDDEN` si pedido no pertenece al usuario
 
 #### 5.9 Transacciones
-- [ ] Asegurar que la creación de pedido sea transaccional
-- [ ] Si algún paso falla, hacer rollback completo
-- [ ] Registrar logs de errores en transacciones
+- [x] Asegurar que la creación de pedido sea transaccional
+- [x] Si algún paso falla, hacer rollback completo
+- [x] Registrar logs de errores en transacciones
 
 ### Hitos de la Fase 5
-**Hito 5.1**: Cálculo de envío funciona correctamente
-**Hito 5.2**: Usuario puede crear pedido con items válidos
-**Hito 5.3**: Sistema valida stock de todos los productos antes de crear pedido
-**Hito 5.4**: Stock se descuenta correctamente al crear pedido (dentro de `$transaction`)
-**Hito 5.5**: Historial de stock se registra correctamente
-**Hito 5.6**: Número de orden se genera con formato correcto (`ORD-YYYYMMDD-{nanoid(6)}`)
-**Hito 5.7**: Usuario puede listar sus pedidos con paginación
-**Hito 5.8**: Usuario puede ver detalle de un pedido
-**Hito 5.9**: Carrito se vacía automáticamente al crear pedido (vía evento)
-**Hito 5.10**: Precio se captura correctamente al momento de compra
-**Hito 5.11**: OrdersRepository implementado con transacciones
-**Hito 5.12**: Domain services de pedidos separados correctamente
-**Hito 5.13**: Event-driven architecture funcionando (eventos y listeners)
-**Hito 5.14**: Módulos desacoplados mediante eventos
+✅ **Hito 5.1**: Cálculo de envío funciona correctamente
+✅ **Hito 5.2**: Usuario puede crear pedido con items válidos
+✅ **Hito 5.3**: Sistema valida stock de todos los productos antes de crear pedido
+✅ **Hito 5.4**: Stock se descuenta correctamente al crear pedido (dentro de `$transaction`)
+✅ **Hito 5.5**: Historial de stock se registra correctamente
+✅ **Hito 5.6**: Número de orden se genera con formato correcto (`ORD-YYYY-MMDD-HHMMSS-XXX`)
+✅ **Hito 5.7**: Usuario puede listar sus pedidos con paginación
+✅ **Hito 5.8**: Usuario puede ver detalle de un pedido
+✅ **Hito 5.9**: Carrito se vacía automáticamente al crear pedido (vía evento)
+✅ **Hito 5.10**: Precio se captura correctamente al momento de compra
+✅ **Hito 5.11**: OrdersRepository implementado con transacciones
+✅ **Hito 5.12**: Domain services de pedidos separados correctamente
+✅ **Hito 5.13**: Event-driven architecture funcionando (eventos y listeners)
+✅ **Hito 5.14**: Módulos desacoplados mediante eventos
 
 **Criterio de Finalización**: Sistema de pedidos con arquitectura event-driven, Repository pattern, Domain Services, transaccionalidad y validaciones completas.
 

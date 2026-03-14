@@ -27,9 +27,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/register",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "register"]
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
             }
           },
           "response": []
@@ -51,9 +57,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/login",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "login"]
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
             }
           },
           "response": []
@@ -75,9 +87,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/logout",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "logout"]
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
             }
           },
           "response": []
@@ -90,9 +108,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/me",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "me"]
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
             }
           },
           "response": []
@@ -105,9 +129,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/verify",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "verify"]
+              "path": [
+                "api",
+                "auth",
+                "verify"
+              ]
             }
           },
           "response": []
@@ -129,9 +159,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/profile",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "profile"]
+              "path": [
+                "api",
+                "auth",
+                "profile"
+              ]
             }
           },
           "response": []
@@ -153,9 +189,15 @@
             "url": {
               "raw": "http://localhost:4000/api/auth/password",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "auth", "password"]
+              "path": [
+                "api",
+                "auth",
+                "password"
+              ]
             }
           },
           "response": []
@@ -173,9 +215,14 @@
             "url": {
               "raw": "http://localhost:4000/api/categories?flat=false",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "categories"],
+              "path": [
+                "api",
+                "categories"
+              ],
               "query": [
                 {
                   "key": "flat",
@@ -194,9 +241,15 @@
             "url": {
               "raw": "http://localhost:4000/api/categories/c81e3e99-57ce-42d7-98b0-b2b15b8326a9",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "categories", "c81e3e99-57ce-42d7-98b0-b2b15b8326a9"]
+              "path": [
+                "api",
+                "categories",
+                "c81e3e99-57ce-42d7-98b0-b2b15b8326a9"
+              ]
             }
           },
           "response": []
@@ -214,9 +267,14 @@
             "url": {
               "raw": "http://localhost:4000/api/products",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "products"],
+              "path": [
+                "api",
+                "products"
+              ],
               "query": [
                 {
                   "key": "page",
@@ -281,9 +339,15 @@
             "url": {
               "raw": "http://localhost:4000/api/products/bd02f4f7-af66-4c54-aff9-d1cdd77a540e",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "products", "bd02f4f7-af66-4c54-aff9-d1cdd77a540e"]
+              "path": [
+                "api",
+                "products",
+                "bd02f4f7-af66-4c54-aff9-d1cdd77a540e"
+              ]
             }
           },
           "response": []
@@ -296,9 +360,16 @@
             "url": {
               "raw": "http://localhost:4000/api/products/slug/ferrero-rocher-3-unidades",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "products", "slug", "ferrero-rocher-3-unidades"]
+              "path": [
+                "api",
+                "products",
+                "slug",
+                "ferrero-rocher-3-unidades"
+              ]
             }
           },
           "response": []
@@ -322,9 +393,14 @@
             "url": {
               "raw": "http://localhost:4000/api/cart",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "cart"]
+              "path": [
+                "api",
+                "cart"
+              ]
             },
             "description": "Obtiene el carrito del usuario autenticado. Si no existe, lo crea vacío automáticamente.\n\nRequiere: copiar el accessToken del response de Login y pegarlo en la variable de colección {{token}}."
           },
@@ -353,9 +429,15 @@
             "url": {
               "raw": "http://localhost:4000/api/cart/items",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "cart", "items"]
+              "path": [
+                "api",
+                "cart",
+                "items"
+              ]
             },
             "description": "Agrega un producto al carrito. Si el item ya existe, incrementa la cantidad.\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar data.items[n].id de GET /api/products)\n\nErrores:\n- 404: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.available y details.requested)"
           },
@@ -384,9 +466,16 @@
             "url": {
               "raw": "http://localhost:4000/api/cart/items/{{cartItemId}}",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "cart", "items", "{{cartItemId}}"]
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "{{cartItemId}}"
+              ]
             },
             "description": "Reemplaza la cantidad de un item del carrito (no incrementa, reemplaza directamente).\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n- {{cartItemId}}: UUID del item (copiar data.items[n].id de GET /api/cart o del response de Agregar item)\n\nErrores:\n- 404: item no encontrado o no pertenece al usuario\n- 400 INSUFFICIENT_STOCK: stock insuficiente para la nueva cantidad"
           },
@@ -406,9 +495,16 @@
             "url": {
               "raw": "http://localhost:4000/api/cart/items/{{cartItemId}}",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "cart", "items", "{{cartItemId}}"]
+              "path": [
+                "api",
+                "cart",
+                "items",
+                "{{cartItemId}}"
+              ]
             },
             "description": "Elimina un item específico del carrito.\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n- {{cartItemId}}: UUID del item a eliminar\n\nErrores:\n- 404: item no encontrado o no pertenece al usuario"
           },
@@ -428,11 +524,199 @@
             "url": {
               "raw": "http://localhost:4000/api/cart",
               "protocol": "http",
-              "host": ["localhost"],
+              "host": [
+                "localhost"
+              ],
               "port": "4000",
-              "path": ["api", "cart"]
+              "path": [
+                "api",
+                "cart"
+              ]
             },
             "description": "Elimina todos los items del carrito del usuario autenticado.\n\nVariables a configurar:\n- {{token}}: JWT del usuario"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Envio",
+      "item": [
+        {
+          "name": "Calcular costo de envio",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"subtotal\": 5000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/shipping/calculate",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "shipping",
+                "calculate"
+              ]
+            },
+            "description": "Calcula el costo de envío según el subtotal.\n\nNo requiere autenticación.\n\nLógica:\n- Si subtotal >= FREE_SHIPPING_THRESHOLD (10000) → envío gratis (shipping: 0)\n- Si no → shipping = SHIPPING_COST (1500)\n\nCampos opcionales para uso futuro: postalCode, address, city, province.\n\nEjemplos:\n- { \"subtotal\": 5000 } → shipping: 1500, isFreeShipping: false\n- { \"subtotal\": 15000 } → shipping: 0, isFreeShipping: true"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pedidos",
+      "item": [
+        {
+          "name": "Crear pedido",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"items\": [\n    {\n      \"productId\": \"{{productId}}\",\n      \"quantity\": 2\n    }\n  ],\n  \"shippingAddress\": {\n    \"firstName\": \"Juan\",\n    \"lastName\": \"Pérez\",\n    \"email\": \"juan@ejemplo.com\",\n    \"phone\": \"+56912345678\",\n    \"address\": \"Av. Principal 123\",\n    \"city\": \"Santiago\",\n    \"province\": \"Región Metropolitana\",\n    \"postalCode\": \"8320000\",\n    \"notes\": \"Dejar con conserje\"\n  },\n  \"paymentMethod\": \"credit_card\",\n  \"notes\": \"Sin gluten por favor\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "orders"
+              ]
+            },
+            "description": "Crea un nuevo pedido.\n\nRequiere autenticación. Los ítems se especifican en el body (productId + quantity).\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar de GET /api/products -> data.items[n].id)\n\nPaymentMethod válidos: credit_card | debit_card | cash_on_delivery | bank_transfer\n\nLógica:\n1. Valida stock y estado activo de cada producto\n2. Captura el precio al momento de la compra (discountPrice si existe, sino price)\n3. Calcula subtotal, shipping y total\n4. Genera orderNumber con formato ORD-YYYY-MMDD-HHMMSS-XXX\n5. Crea pedido en transacción atómica (order + orderItems + descuento de stock + StockHistory)\n6. Vacía el carrito del usuario automáticamente (vía evento)\n\nErrores:\n- 400 NOT_FOUND: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.productId, details.available, details.requested)\n- 401: no autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Listar pedidos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/orders",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "orders"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "pending",
+                  "disabled": true
+                },
+                {
+                  "key": "sort",
+                  "value": "newest",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Lista los pedidos del usuario autenticado con paginación.\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n\nQuery params opcionales:\n- page: número de página (default 1)\n- limit: items por página (default 10, max 50)\n- status: filtrar por estado (pending | confirmed | processing | shipped | delivered | cancelled)\n- sort: newest (default) | oldest\n\nRespuesta incluye pagination con: page, limit, totalItems, totalPages, hasNextPage, hasPrevPage"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener pedido por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/orders/{{orderId}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "orders",
+                "{{orderId}}"
+              ]
+            },
+            "description": "Obtiene un pedido específico por su UUID.\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n- {{orderId}}: UUID del pedido (copiar data.id de POST /api/orders o data.orders[n].id de GET /api/orders)\n\nErrores:\n- 403: el pedido no pertenece al usuario autenticado\n- 404 ORDER_NOT_FOUND: pedido no encontrado\n- 401: no autenticado"
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener pedido por número",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/orders/number/{{orderNumber}}",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "orders",
+                "number",
+                "{{orderNumber}}"
+              ]
+            },
+            "description": "Obtiene un pedido específico por su número de orden.\n\nVariables a configurar:\n- {{token}}: JWT del usuario\n- {{orderNumber}}: Número de orden con formato ORD-YYYY-MMDD-HHMMSS-XXX (copiar data.orderNumber de POST /api/orders)\n\nEjemplo: ORD-2024-0115-143025-047\n\nErrores:\n- 403: el pedido no pertenece al usuario autenticado\n- 404 ORDER_NOT_FOUND: pedido no encontrado\n- 401: no autenticado"
           },
           "response": []
         }
@@ -457,6 +741,18 @@
       "value": "",
       "type": "string",
       "description": "UUID de un item del carrito. Obtener de GET /api/cart -> data.items[n].id"
+    },
+    {
+      "key": "orderId",
+      "value": "",
+      "type": "string",
+      "description": "UUID de un pedido. Obtener de POST /api/orders -> data.id o GET /api/orders -> data.orders[n].id"
+    },
+    {
+      "key": "orderNumber",
+      "value": "",
+      "type": "string",
+      "description": "Número de orden. Formato: ORD-YYYY-MMDD-HHMMSS-XXX. Obtener de POST /api/orders -> data.orderNumber"
     }
   ]
 }

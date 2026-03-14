@@ -23,7 +23,11 @@ export class CartService {
     return this.cartRepository.upsertItem(cart.id, dto.productId, quantity);
   }
 
-  async updateItem(userId: string, itemId: string, dto: UpdateCartItemDto): Promise<CartItemDetail> {
+  async updateItem(
+    userId: string,
+    itemId: string,
+    dto: UpdateCartItemDto,
+  ): Promise<CartItemDetail> {
     const item = await this.cartValidationService.validateItemOwnership(itemId, userId);
     await this.cartValidationService.validateProductForCart(item.productId, dto.quantity);
     return this.cartRepository.updateItemQuantity(itemId, dto.quantity);

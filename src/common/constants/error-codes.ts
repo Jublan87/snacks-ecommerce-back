@@ -55,6 +55,16 @@ export const ERROR_CODES = {
 
   /** Item del carrito no encontrado */
   CART_ITEM_NOT_FOUND: 'CART_ITEM_NOT_FOUND',
+
+  // Pedidos
+  /** Pedido no encontrado */
+  ORDER_NOT_FOUND: 'ORDER_NOT_FOUND',
+
+  /** El carrito está vacío */
+  CART_EMPTY: 'CART_EMPTY',
+
+  /** Transición de estado de pedido inválida */
+  INVALID_STATUS_TRANSITION: 'INVALID_STATUS_TRANSITION',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

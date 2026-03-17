@@ -40,11 +40,11 @@ export class ProductsService {
 
   /**
    * Producto completo por ID.
-   * Lanza NotFoundException si no existe.
+   * Lanza NotFoundException si no existe o está inactivo (a menos que sea admin).
    */
-  async findById(id: string): Promise<ProductWithRelations> {
+  async findById(id: string, isAdmin = false): Promise<ProductWithRelations> {
     const product = await this.productsRepository.findByIdWithRelations(id);
-    if (!product) {
+    if (!product || (!product.isActive && !isAdmin)) {
       throw new NotFoundException({
         code: ERROR_CODES.NOT_FOUND,
         message: `Producto con id ${id} no encontrado`,
@@ -55,11 +55,11 @@ export class ProductsService {
 
   /**
    * Producto completo por slug.
-   * Lanza NotFoundException si no existe.
+   * Lanza NotFoundException si no existe o está inactivo (a menos que sea admin).
    */
-  async findBySlug(slug: string): Promise<ProductWithRelations> {
+  async findBySlug(slug: string, isAdmin = false): Promise<ProductWithRelations> {
     const product = await this.productsRepository.findBySlug(slug);
-    if (!product) {
+    if (!product || (!product.isActive && !isAdmin)) {
       throw new NotFoundException({
         code: ERROR_CODES.NOT_FOUND,
         message: `Producto con slug "${slug}" no encontrado`,

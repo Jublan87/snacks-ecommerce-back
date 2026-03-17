@@ -1,7 +1,7 @@
 # 📅 Planificación del Proyecto - Snacks E-commerce Backend
 
 > **Documento de planificación para el desarrollo del backend del e-commerce de snacks**
-> 
+>
 > Este documento organiza el desarrollo en fases, con tareas específicas e hitos verificables para cada etapa del proyecto.
 
 ---
@@ -11,6 +11,7 @@
 **Objetivo**: Desarrollar la API REST completa para el e-commerce de snacks, siguiendo la especificación técnica del backend.
 
 **Stack Tecnológico**:
+
 - Framework: NestJS (TypeScript)
 - Base de datos: PostgreSQL
 - ORM: Prisma
@@ -25,6 +26,7 @@
 **Nota**: Esta planificación NO incluye tests unitarios ni de integración según lo solicitado.
 
 **Arquitectura Implementada**:
+
 - ✅ Patrón Repository (Dependency Inversion Principle)
 - ✅ Domain Services (Single Responsibility Principle)
 - ✅ Event-Driven Architecture (Open/Closed Principle)
@@ -57,6 +59,7 @@
 ### Tareas
 
 #### 0.1 Inicialización del Proyecto
+
 - [x] Crear proyecto NestJS con CLI
   ```bash
   npm i -g @nestjs/cli
@@ -103,6 +106,7 @@
   - `src/health/` - health checks
 
 #### 0.2 Instalación de Dependencias
+
 - [x] Instalar Prisma
   ```bash
   npm install @prisma/client
@@ -145,6 +149,7 @@
   ```
 
 #### 0.3 Configuración de Variables de Entorno
+
 - [x] Crear archivo `.env` con variables necesarias (copiar desde `.env.example`):
   ```env
   DATABASE_URL=postgresql://user:password@localhost:5432/snacks_db
@@ -161,6 +166,7 @@
 - [x] Agregar `.env` al `.gitignore`
 
 #### 0.4 Configuración Inicial de NestJS
+
 - [x] **Configurar módulo de configuración global modular (`ConfigModule`)**
   - Crear `src/config/configuration.ts` con configuración estructurada
   - Configurar validación de variables de entorno con Joi
@@ -173,6 +179,7 @@
 - [x] **Configurar prefijo global de rutas (`/api`)**
 
 #### 0.5 **NUEVO:** Configuración de Interceptores Globales
+
 - [x] Crear `src/common/interceptors/logging.interceptor.ts`
   - Loggear método, ruta, duración, status code
   - Loggear en formato estructurado
@@ -184,6 +191,7 @@
 - [x] Registrar interceptores globales en `main.ts`
 
 #### 0.6 **NUEVO:** Configuración de Filtros de Excepciones Globales
+
 - [x] Crear `src/common/filters/all-exceptions.filter.ts`
   - Capturar todas las excepciones
   - Formatear respuestas de error consistentes
@@ -196,6 +204,7 @@
 - [x] Registrar filtros globales en `main.ts`
 
 #### 0.7 **NUEVO:** Configuración de Rate Limiting
+
 - [x] Configurar ThrottlerModule globalmente
   - Default: 100 requests por 15 minutos
 - [x] Crear configuración específica para endpoints sensibles:
@@ -205,11 +214,13 @@
 - [x] Aplicar ThrottlerGuard globalmente
 
 #### 0.8 Configuración de Base de Datos
+
 - [x] Crear base de datos PostgreSQL local (docker-compose)
 - [x] Inicializar Prisma (schema.prisma + PrismaService + PrismaModule)
 - [x] Verificar conexión a la base de datos (PrismaService.$connect en onModuleInit)
 
 #### 0.9 **NUEVO:** Configuración de Event Emitter
+
 - [x] Configurar EventEmitterModule globalmente
   - Configurar wildcard: true
   - Configurar delimiter: '.'
@@ -217,6 +228,7 @@
 - [x] Documentar convención de nombres de eventos (ej: `order.created`, `stock.updated`)
 
 #### 0.10 **NUEVO:** Configuración de Logger Personalizado
+
 - [x] Crear `src/shared/logger/logger.module.ts`
 - [x] Crear `src/shared/logger/logger.service.ts`
   - Niveles: error, warn, info, debug
@@ -225,6 +237,7 @@
 - [x] Inyectar Logger en módulos principales
 
 ### Hitos de la Fase 0
+
 ✅ **Hito 0.1**: Proyecto NestJS creado y servidor levantado en `http://localhost:4000`  
 ✅ **Hito 0.2**: Todas las dependencias instaladas sin errores  
 ✅ **Hito 0.3**: Variables de entorno configuradas correctamente con validación  
@@ -247,6 +260,7 @@
 ### Tareas
 
 #### 1.1 Creación del Esquema Prisma
+
 - [x] Definir modelo `User` en `prisma/schema.prisma`
 - [x] Definir modelo `Category` con auto-relación (jerarquía)
 - [x] Definir modelo `Product` con todas sus propiedades
@@ -260,6 +274,7 @@
 - [x] Agregar relaciones entre modelos
 
 #### 1.2 Migraciones de Base de Datos
+
 - [x] Crear primera migración
   ```bash
   npx prisma migrate dev --name init
@@ -271,6 +286,7 @@
   ```
 
 #### 1.3 Configuración de Prisma Service
+
 - [x] Crear módulo Prisma (`src/database/prisma.module.ts`)
 - [x] Crear servicio Prisma (`src/database/prisma.service.ts`)
 - [x] Configurar `onModuleInit` y `onModuleDestroy` para conexiones
@@ -278,6 +294,7 @@
 - [x] Exportar `PrismaService` globalmente
 
 #### 1.4 **NUEVO:** Creación de Capa de Repositorios Base
+
 - [x] Crear `src/database/repositories/interfaces/base-repository.interface.ts`
   - Definir interfaz genérica con operaciones CRUD
   - Métodos: findById, findAll, create, update, delete, findOne, count, exists
@@ -288,6 +305,7 @@
 - [x] Documentar patrón de uso de repositorios (README.md con ejemplos)
 
 #### 1.5 Seeds de Datos Iniciales
+
 - [x] Crear archivo `prisma/seed.ts`
 - [x] Agregar usuario admin por defecto:
   - Email: `admin@snacks.com`
@@ -310,6 +328,7 @@
   ```
 
 #### 1.6 Verificación de Base de Datos
+
 - [x] Usar Prisma Studio para verificar datos
   ```bash
   npx prisma studio
@@ -330,6 +349,7 @@
   - ✅ 28 productos distribuidos correctamente en categorías
 
 ### Hitos de la Fase 1
+
 ✅ **Hito 1.1**: Esquema Prisma completo con todos los modelos  
 ✅ **Hito 1.2**: Migración ejecutada y base de datos creada  
 ✅ **Hito 1.3**: PrismaService configurado y funcionando  
@@ -348,6 +368,7 @@
 ### Tareas
 
 #### 2.1 Configuración Base (Módulos, Repositorios y Servicios)
+
 - [x] Crear módulo `UsersModule`
 - [x] **Crear `UsersRepository` extendiendo `BaseRepository`**
   - Métodos: findByEmail (con overloads), findByIdWithoutPassword, createAndReturnWithoutPassword, updateAndReturnWithoutPassword
@@ -366,6 +387,7 @@
   - Usar interfaces de dominio (sin tipos de Prisma)
 
 #### 2.2 Utilidades y Códigos de Error
+
 - [x] Crear `src/common/utils/password.util.ts`
   - Función de hash de passwords con bcrypt (10 rounds)
   - Función de comparación de passwords
@@ -385,6 +407,7 @@
   - `INVALID_TOKEN`
 
 #### 2.3 Endpoint: POST /api/auth/register
+
 - [x] **Crear `RegisterDto`** con validaciones
   - Email válido (IsEmail)
   - Password con requisitos (8+ chars, mayúscula, minúscula, número)
@@ -405,6 +428,7 @@
   - Retornar usuario y token
 
 #### 2.4 Endpoint: POST /api/auth/login
+
 - [x] **Crear `LoginDto`** con validaciones
   - Email (requerido, IsEmail)
   - Password (requerido, MinLength 1)
@@ -422,12 +446,14 @@
   - Retornar usuario y token
 
 #### 2.5 Endpoint: POST /api/auth/logout
+
 - [x] **Implementar en `AuthController`**
   - No requiere DTO
   - Limpiar cookie de autenticación (res.clearCookie con mismas opciones path, httpOnly, sameSite, secure)
   - Retornar mensaje de éxito ({ message: 'Sesión cerrada' })
 
 #### 2.6 Guards, Decorators y Estrategias (para endpoints protegidos)
+
 - [x] **Configurar `JwtStrategy`** para Passport
   - Validar token desde cookie o header Authorization
   - Extraer payload (sub, email, role)
@@ -448,18 +474,21 @@
   - Extraer usuario del request (common/decorators, createParamDecorator)
 
 #### 2.7 Endpoint: GET /api/auth/me
+
 - [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener usuario (ya cargado por JwtStrategy, sin nueva consulta a BD)
   - Retornar `{ user: currentUser }` (MeResponse). No requiere DTO ni llamada a AuthService.
 
 #### 2.8 Endpoint: GET /api/auth/verify
+
 - [x] **Implementar en `AuthController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener usuario
   - Retornar { valid: true, user: { id, email, role } }
 
 #### 2.9 Endpoint: PUT /api/auth/profile
+
 - [x] **Crear `UpdateProfileDto`** con validaciones
   - firstName (opcional, IsString, MinLength 1)
   - lastName (opcional, IsString, MinLength 1)
@@ -475,6 +504,7 @@
   - Retornar usuario actualizado
 
 #### 2.10 Endpoint: PUT /api/auth/password
+
 - [x] **Crear `ChangePasswordDto`** con validaciones
   - currentPassword (requerido, IsString)
   - newPassword (requerido, matches PASSWORD_REGEX, MinLength 8)
@@ -492,6 +522,7 @@
   - Retornar { message: 'Contraseña actualizada correctamente' }
 
 ### Hitos de la Fase 2
+
 ✅ **Hito 2.1**: Configuración base completada (módulos, repositorios, servicios con patrón Repository e interfaces de dominio sin Prisma)  
 ✅ **Hito 2.2**: Utilidades y códigos de error listos (password, JWT, interfaces de auth)  
 ✅ **Hito 2.3**: Endpoint POST /api/auth/register funcionando (RegisterDto + controller + service + cookie)  
@@ -514,6 +545,7 @@
 ### Tareas
 
 #### 3.1 Configuración Base - Categorías
+
 - [x] Crear módulo `CategoriesModule`
 - [x] **Crear `CategoriesRepository` extendiendo `BaseRepository`**
   - Método `findAllWithHierarchy()` - retornar estructura de árbol
@@ -532,6 +564,7 @@
   - Usar solo interfaces de dominio
 
 #### 3.2 Configuración Base - Productos
+
 - [x] Crear módulo `ProductsModule`
 - [x] **Crear `ProductsRepository` extendiendo `BaseRepository`**
   - Método `findAllWithFilters(filters)` - búsqueda avanzada
@@ -556,12 +589,14 @@
   - Usar solo interfaces de dominio
 
 #### 3.3 Utilidades Comunes (para paginación y búsqueda)
+
 - [x] **Crear `src/common/utils/pagination.util.ts`**
   - Función `calculatePaginationMeta(total, page, limit)` - calcular metadata
   - Función `buildPaginatedResponse(data, meta)` - construir respuesta
   - Interface `PaginationMeta` (total, page, limit, totalPages, hasNext, hasPrev)
 
 #### 3.4 Endpoint: GET /api/categories
+
 - [x] **Crear `CategoryQueryDto`** con validaciones
   - flat (opcional, IsBoolean, Transform con obj[key]) - lista plana o jerárquica
   - includeInactive (opcional, IsBoolean) - incluir inactivas
@@ -577,6 +612,7 @@
   - Retornar categorías
 
 #### 3.5 Endpoint: GET /api/categories/:id
+
 - [x] **Implementar en `CategoriesController`**
   - Validar id (ParseUUIDPipe)
   - Llamar a `categoriesService.findById(id)`
@@ -586,6 +622,7 @@
   - Retornar categoría con hijos
 
 #### 3.6 Endpoint: GET /api/products
+
 - [x] **Crear `ProductQueryDto`** con validaciones
   - page (opcional, IsInt, Min 1, Default 1)
   - limit (opcional, IsInt, Min 1, Max 100, Default 12)
@@ -610,6 +647,7 @@
   - Retornar respuesta paginada
 
 #### 3.7 Endpoint: GET /api/products/:id
+
 - [x] **Implementar en `ProductsController`**
   - Validar id (ParseUUIDPipe)
   - Llamar a `productsService.findById(id)`
@@ -620,6 +658,7 @@
   - Retornar producto
 
 #### 3.8 Endpoint: GET /api/products/slug/:slug
+
 - [x] **Implementar en `ProductsController`**
   - Validar slug (string)
   - Llamar a `productsService.findBySlug(slug)`
@@ -631,6 +670,7 @@
   - Retornar producto
 
 ### Hitos de la Fase 3
+
 ✅ **Hito 3.1**: Configuración base de categorías completada (módulo, repositorio, servicio, interfaces de dominio)
 ✅ **Hito 3.2**: Configuración base de productos completada (módulo, repositorio, domain services, interfaces de dominio)
 ✅ **Hito 3.3**: Utilidades de paginación implementadas (`calculatePaginationMeta`, `buildPaginatedResponse`)
@@ -657,6 +697,7 @@
 ### Tareas
 
 #### 4.1 Configuración Base
+
 - [x] Crear módulo `CartModule`
 - [x] **Crear `CartRepository` extendiendo `BaseRepository`**
   - Método `findByUserId(userId)` - incluir items con productos e imágenes
@@ -686,6 +727,7 @@
 > **Dependencia de módulo**: `CartModule` debe exportar `CartService` para que `OrdersModule` (Fase 5) pueda escuchar el evento `order.created` y vaciar el carrito.
 
 #### 4.2 Códigos de Error
+
 - [x] **Agregar códigos de error** en `error-codes.ts`:
   - `INSUFFICIENT_STOCK` - stock insuficiente
   - `PRODUCT_NOT_FOUND` - producto no encontrado
@@ -693,6 +735,7 @@
   - `CART_ITEM_NOT_FOUND` - item no encontrado
 
 #### 4.3 Endpoint: GET /api/cart
+
 - [x] **Crear `CartController`**
 - [x] **Implementar en controller**
   - Proteger con `@UseGuards(JwtAuthGuard)`
@@ -707,6 +750,7 @@
   - Retornar carrito completo
 
 #### 4.4 Endpoint: POST /api/cart/items
+
 - [x] **Crear `AddToCartDto`** con validaciones
   - productId (requerido, IsUUID)
   - quantity (requerido, IsInt, Min 1)
@@ -725,6 +769,7 @@
   - Retornar item creado/actualizado
 
 #### 4.5 Endpoint: PUT /api/cart/items/:itemId
+
 - [x] **Crear `UpdateCartItemDto`** con validaciones
   - quantity (requerido, IsInt, Min 1)
 - [x] **Implementar en `CartController`**
@@ -740,6 +785,7 @@
   - Retornar item actualizado
 
 #### 4.6 Endpoint: DELETE /api/cart/items/:itemId
+
 - [x] **Implementar en `CartController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Validar itemId (ParseUUIDPipe)
@@ -752,6 +798,7 @@
   - Retornar { message: 'Producto eliminado del carrito' }
 
 #### 4.7 Endpoint: DELETE /api/cart
+
 - [x] **Implementar en `CartController`**
   - Proteger con `@UseGuards(JwtAuthGuard)`
   - Usar `@CurrentUser()` para obtener userId
@@ -763,6 +810,7 @@
   - Retornar { message: 'Carrito vaciado' }
 
 ### Hitos de la Fase 4
+
 **Hito 4.1**: Configuración base completada (módulo, repositorio, domain service, interfaces de dominio)  
 **Hito 4.2**: Códigos de error creados  
 **Hito 4.3**: Endpoint GET /api/cart funcionando (obtiene o crea carrito del usuario)  
@@ -783,6 +831,7 @@
 ### Tareas
 
 #### 5.1 Módulo de Envío
+
 - [x] Crear módulo `ShippingModule`
 - [x] **NUEVO:** Crear domain service `ShippingCalculationService`
   - Método `calculateShipping(subtotal)` - lógica de cálculo
@@ -793,6 +842,7 @@
 - [x] Crear controlador `ShippingController`
 
 #### 5.2 Endpoint de Cálculo de Envío
+
 - [x] **POST /api/shipping/calculate**
   - Endpoint público (no requiere autenticación)
   - Validar subtotal en request
@@ -808,10 +858,12 @@
     - `amountNeededForFreeShipping`
 
 #### 5.3 DTOs de Envío
+
 - [x] Crear `CalculateShippingDto` para request
 - [x] Crear `ShippingResponseDto` para response
 
 #### 5.4 Módulo de Pedidos
+
 - [x] Crear módulo `OrdersModule`
 - [x] **NUEVO:** Crear `OrdersRepository` extendiendo `BaseRepository`
   - Método `create(data)` - crear pedido con transacción
@@ -851,12 +903,14 @@
 - [x] Crear controlador `OrdersController`
 
 #### 5.5 Dependencias entre Módulos
+
 - [x] `CartModule` exporta `CartService` (para que `CartListener` en OrdersModule pueda vaciar el carrito)
 - [x] `ProductsModule` ya exporta `ProductsService` (✅ configurado en Fase 3) — usado para validar productos al crear pedido
 - [x] `ShippingModule` exporta `ShippingService` — importado por `OrdersModule`
 - [x] `OrdersModule` importa `CartModule`, `ProductsModule` y `ShippingModule`
 
 #### 5.6 Endpoints de Pedidos
+
 - [x] **POST /api/orders**
   - Proteger con `JwtAuthGuard`
   - **El pedido se crea desde el carrito activo del usuario** (no se envían `items[]` en el body)
@@ -896,11 +950,13 @@
   - Retornar pedido completo
 
 #### 5.7 DTOs de Pedidos
+
 - [x] Crear `CreateOrderDto` — solo `shippingAddress`, `paymentMethod`, `notes` (sin `items[]`, el pedido viene del carrito)
 - [x] **Reutilizar** `ShippingAddressDto` de `src/modules/auth/dto/shipping-address.dto.ts` — moverla a `src/common/dto/` si es necesario para que esté disponible en ambos módulos
 - [x] Crear `OrderQueryDto` para filtros de listado (estado, ordenamiento)
 
 #### 5.8 Validaciones y Errores
+
 - [x] Validar formato de todos los campos requeridos
 - [x] Implementar error `INSUFFICIENT_STOCK` con lista de productos
 - [x] Implementar error `PRODUCT_NOT_FOUND`
@@ -909,11 +965,13 @@
 - [x] Implementar error `FORBIDDEN` si pedido no pertenece al usuario
 
 #### 5.9 Transacciones
+
 - [x] Asegurar que la creación de pedido sea transaccional
 - [x] Si algún paso falla, hacer rollback completo
 - [x] Registrar logs de errores en transacciones
 
 ### Hitos de la Fase 5
+
 ✅ **Hito 5.1**: Cálculo de envío funciona correctamente
 ✅ **Hito 5.2**: Usuario puede crear pedido con items válidos
 ✅ **Hito 5.3**: Sistema valida stock de todos los productos antes de crear pedido
@@ -940,48 +998,51 @@
 ### Tareas
 
 #### 6.1 Soft Auth en Endpoints Existentes (prerequisito)
-- [ ] **Ajustar `JwtAuthGuard`** para soportar "optional auth":
+
+- [x] **Ajustar `JwtAuthGuard`** para soportar "optional auth":
   - En rutas `@Public()`, si hay token válido en la request → extraer y poblar `request.user`
   - Si no hay token o el token es inválido → continuar sin error (request.user = undefined)
   - Esto permite que los endpoints públicos conozcan el rol del caller
-- [ ] **Actualizar `CategoriesController`** (Fase 3) con soft auth:
+- [x] **Actualizar `CategoriesController`** (Fase 3) con soft auth:
   - `GET /api/categories` — si `request.user?.role === admin` → respetar `includeInactive`; si no → ignorarlo (siempre activas)
   - `GET /api/categories/:id` — admin puede ver categorías inactivas; público → 404 si inactiva
-- [ ] **Actualizar `ProductsController`** (Fase 3) con soft auth:
+- [x] **Actualizar `ProductsController`** (Fase 3) con soft auth:
   - `GET /api/products` — admin puede filtrar por `isActive=false`; público → solo activos siempre
   - `GET /api/products/:id` y `GET /api/products/slug/:slug` — admin ve inactivos; público → 404
-- [ ] Agregar `isActive?: boolean` a `ProductQueryDto` (solo efectivo para admins)
+- [x] Agregar `isActive?: boolean` a `ProductQueryDto` (solo efectivo para admins)
 
 #### 6.2 Configuración de Módulos Admin
-- [ ] Crear módulo `AdminProductsModule` en `src/modules/admin/admin-products/`
-- [ ] **NUEVO:** Crear `AdminProductsRepository` (extender ProductsRepository)
+
+- [x] Crear módulo `AdminProductsModule` en `src/modules/admin/admin-products/`
+- [x] **NUEVO:** Crear `AdminProductsRepository` (extender ProductsRepository)
   - Método `updateWithStockHistory(id, data)` — actualizar producto y registrar cambio de stock en misma transacción
-- [ ] **NUEVO:** Crear domain services admin
+- [x] **NUEVO:** Crear domain services admin
   - `SlugGeneratorService` — generar slugs únicos con sufijo numérico si hay colisión (`papas-fritas`, `papas-fritas-2`, etc.)
   - `ProductImageService` — validar que solo 1 imagen tenga `isPrimary=true`
   - `ProductValidationService` — validar SKU único, categoría existe
-- [ ] Crear servicio `AdminProductsService`
+- [x] Crear servicio `AdminProductsService`
   - Inyectar repository y domain services
   - Importar `CategoriesService` para validar que `categoryId` exista
-- [ ] Crear controlador `AdminProductsController`
-- [ ] Crear módulo `AdminCategoriesModule` en `src/modules/admin/admin-categories/`
-- [ ] **NUEVO:** Crear `AdminCategoriesRepository`
+- [x] Crear controlador `AdminProductsController`
+- [x] Crear módulo `AdminCategoriesModule` en `src/modules/admin/admin-categories/`
+- [x] **NUEVO:** Crear `AdminCategoriesRepository`
   - Método `checkDependencies(id)` — verificar si tiene productos o subcategorías antes de eliminar
   - Método `validateNoCircularReference(id, parentId)` — prevenir ciclos en jerarquía
-- [ ] **NUEVO:** Crear domain service `CategoryHierarchyService`
+- [x] **NUEVO:** Crear domain service `CategoryHierarchyService`
   - Validar que no se creen ciclos al cambiar `parentId`
   - Verificar dependencias antes de eliminar
-- [ ] Crear servicio `AdminCategoriesService`
-- [ ] Crear controlador `AdminCategoriesController`
+- [x] Crear servicio `AdminCategoriesService`
+- [x] Crear controlador `AdminCategoriesController`
 
 > **Decisión de diseño**: Las imágenes se gestionan como **URLs** (el frontend/cliente sube la imagen a un servicio externo como Cloudinary/S3 y envía la URL resultante). El backend no maneja archivos binarios. Esta decisión simplifica el MVP y evita dependencias de cloud storage en el backend.
 
 > **Soft delete**: Los productos solo se desactivan (`isActive=false`), nunca se eliminan permanentemente. Esto preserva la integridad referencial con `OrderItem`. Si en el futuro se necesita hard delete, se evalúa entonces.
 
 #### 6.3 Endpoints Admin - Productos
+
 > Los `GET` de productos usan los endpoints de Fase 3 mejorados con soft auth (ver 6.1). No hay endpoints GET duplicados en `/api/admin/products`.
 
-- [ ] **POST /api/admin/products**
+- [x] **POST /api/admin/products**
   - Proteger con admin guard
   - Validar todos los campos requeridos:
     - `name`, `description`, `sku`, `price`, `stock`, `categoryId`
@@ -996,7 +1057,7 @@
     - ProductImages
     - ProductVariants y VariantOptions (si aplica)
   - Retornar producto creado
-- [ ] **PUT /api/admin/products/:id**
+- [x] **PUT /api/admin/products/:id**
   - Proteger con admin guard
   - Actualización parcial (todos los campos opcionales)
   - Validar SKU único (si se actualiza)
@@ -1006,22 +1067,23 @@
   - Actualizar imágenes (crear nuevas, actualizar existentes)
   - Actualizar variantes (crear nuevas, actualizar existentes)
   - Retornar producto actualizado
-- [ ] **DELETE /api/admin/products/:id**
+- [x] **DELETE /api/admin/products/:id**
   - Proteger con admin guard
   - Implementar soft delete (marcar `isActive=false`) — sin hard delete (ver nota de diseño)
   - Retornar mensaje de éxito
-- [ ] **DELETE /api/admin/products/:productId/images/:imageId**
+- [x] **DELETE /api/admin/products/:productId/images/:imageId**
   - Proteger con admin guard
   - Eliminar imagen específica del producto
   - Si era la imagen primaria, marcar otra como primaria automáticamente (si quedan imágenes)
   - Error 400 si es la única imagen del producto
-- [ ] **DELETE /api/admin/products/:productId/variants/:variantId**
+- [x] **DELETE /api/admin/products/:productId/variants/:variantId**
   - Proteger con admin guard
   - Eliminar variante y todas sus opciones
   - Retornar mensaje de éxito
 
 #### 6.4 Endpoint Especial - Stock
-- [ ] **PUT /api/admin/products/:id/stock**
+
+- [x] **PUT /api/admin/products/:id/stock**
   - Proteger con admin guard
   - Validar nuevo valor de stock >= 0
   - Obtener stock actual
@@ -1034,16 +1096,18 @@
   - Retornar información de actualización
 
 #### 6.5 DTOs Admin - Productos
-- [ ] Crear `CreateProductDto` con todas las validaciones (name, description, sku, price, stock, categoryId, images[])
-- [ ] Crear `UpdateProductDto` (`PartialType` de `CreateProductDto`)
-- [ ] Crear `UpdateStockDto` para actualización de stock (newStock, reason)
-- [ ] Crear `CreateProductImageDto` (url, isPrimary, order)
-- [ ] Crear `CreateProductVariantDto` (name, options[])
+
+- [x] Crear `CreateProductDto` con todas las validaciones (name, description, sku, price, stock, categoryId, images[])
+- [x] Crear `UpdateProductDto` (`PartialType` de `CreateProductDto`)
+- [x] Crear `UpdateStockDto` para actualización de stock (newStock, reason)
+- [x] Crear `CreateProductImageDto` (url, isPrimary, order)
+- [x] Crear `CreateProductVariantDto` (name, options[])
 
 #### 6.6 Endpoints Admin - Categorías
+
 > Los `GET` de categorías usan los endpoints de Fase 3 mejorados con soft auth (ver 6.1). No hay endpoints GET duplicados en `/api/admin/categories`.
 
-- [ ] **POST /api/admin/categories**
+- [x] **POST /api/admin/categories**
   - Proteger con admin guard
   - Validar campos requeridos: `name`
   - Validar parentId si se proporciona
@@ -1051,13 +1115,13 @@
   - Si slug existe, agregar sufijo numérico
   - Crear categoría
   - Retornar categoría creada
-- [ ] **PUT /api/admin/categories/:id**
+- [x] **PUT /api/admin/categories/:id**
   - Proteger con admin guard
   - Actualización parcial
   - Si se actualiza name, regenerar slug
   - Si se actualiza parentId, validar que no cree ciclo
   - Retornar categoría actualizada
-- [ ] **DELETE /api/admin/categories/:id**
+- [x] **DELETE /api/admin/categories/:id**
   - Proteger con admin guard
   - Verificar que no tenga productos asociados
   - Verificar que no tenga categorías hijas
@@ -1066,37 +1130,40 @@
   - Retornar mensaje de éxito
 
 #### 6.7 DTOs Admin - Categorías
-- [ ] Crear `CreateCategoryDto` (name, parentId?, image?, order?, isActive?)
-- [ ] Crear `UpdateCategoryDto` (`PartialType` de `CreateCategoryDto`)
+
+- [x] Crear `CreateCategoryDto` (name, parentId?, image?, order?, isActive?)
+- [x] Crear `UpdateCategoryDto` (`PartialType` de `CreateCategoryDto`)
 
 #### 6.8 Validaciones y Errores Admin
-- [ ] Error `SKU_DUPLICATE` (409)
-- [ ] Error `CATEGORY_NOT_FOUND` (404)
-- [ ] Error `PRODUCT_NOT_FOUND` (404)
-- [ ] Error `CATEGORY_HAS_DEPENDENCIES` (409) con detalles (cantidad de productos y subcategorías)
-- [ ] Error `INVALID_PARENT_CATEGORY` (400) si el nuevo parentId crearía un ciclo
-- [ ] Error `LAST_IMAGE` (400) si se intenta eliminar la única imagen de un producto
+
+- [x] Error `SKU_DUPLICATE` (409)
+- [x] Error `CATEGORY_NOT_FOUND` (404)
+- [x] Error `PRODUCT_NOT_FOUND` (404)
+- [x] Error `CATEGORY_HAS_DEPENDENCIES` (409) con detalles (cantidad de productos y subcategorías)
+- [x] Error `INVALID_PARENT_CATEGORY` (400) si el nuevo parentId crearía un ciclo
+- [x] Error `LAST_IMAGE` (400) si se intenta eliminar la única imagen de un producto
 
 ### Hitos de la Fase 6
-**Hito 6.1**: Soft auth configurado (`JwtAuthGuard` extrae usuario opcionalmente en rutas `@Public()`)
-**Hito 6.2**: Admin puede listar todos los productos con filtros (incluyendo inactivos)
-**Hito 6.3**: Admin puede crear nuevo producto con imágenes (URLs desde cliente)
-**Hito 6.4**: Slug se genera automáticamente y es único (SlugGeneratorService)
-**Hito 6.5**: Admin puede actualizar producto existente
-**Hito 6.6**: Admin puede actualizar solo el stock de un producto
-**Hito 6.7**: Cambios de stock se registran en historial automáticamente
-**Hito 6.8**: Admin puede eliminar producto (soft delete — `isActive=false`)
-**Hito 6.9**: Admin puede añadir/eliminar imágenes de un producto
-**Hito 6.10**: Admin puede crear/actualizar/eliminar variantes de un producto
-**Hito 6.11**: Admin puede crear categoría
-**Hito 6.12**: Admin puede actualizar categoría
-**Hito 6.13**: Sistema previene eliminación de categorías con productos
-**Hito 6.14**: Sistema previene ciclos en jerarquía (CategoryHierarchyService)
-**Hito 6.15**: Solo usuarios con role admin pueden acceder
-**Hito 6.16**: AdminProductsRepository y AdminCategoriesRepository implementados
-**Hito 6.17**: Domain services admin funcionando correctamente
 
-**Criterio de Finalización**: Panel admin con Repository pattern y Domain Services, todas las validaciones funcionando.
+✅ **Hito 6.1**: Soft auth configurado (`JwtAuthGuard` extrae usuario opcionalmente en rutas `@Public()`)
+✅ **Hito 6.2**: Admin puede listar todos los productos con filtros (incluyendo inactivos)
+✅ **Hito 6.3**: Admin puede crear nuevo producto con imágenes (URLs desde cliente)
+✅ **Hito 6.4**: Slug se genera automáticamente y es único (SlugGeneratorService)
+✅ **Hito 6.5**: Admin puede actualizar producto existente
+✅ **Hito 6.6**: Admin puede actualizar solo el stock de un producto
+✅ **Hito 6.7**: Cambios de stock se registran en historial automáticamente
+✅ **Hito 6.8**: Admin puede eliminar producto (soft delete — `isActive=false`)
+✅ **Hito 6.9**: Admin puede añadir/eliminar imágenes de un producto
+✅ **Hito 6.10**: Admin puede crear/actualizar/eliminar variantes de un producto
+✅ **Hito 6.11**: Admin puede crear categoría
+✅ **Hito 6.12**: Admin puede actualizar categoría
+✅ **Hito 6.13**: Sistema previene eliminación de categorías con productos
+✅ **Hito 6.14**: Sistema previene ciclos en jerarquía (CategoryHierarchyService)
+✅ **Hito 6.15**: Solo usuarios con role admin pueden acceder
+✅ **Hito 6.16**: AdminProductsRepository y AdminCategoriesRepository implementados
+✅ **Hito 6.17**: Domain services admin funcionando correctamente
+
+**Criterio de Finalización**: ✅ Panel admin con Repository pattern y Domain Services, todas las validaciones funcionando.
 
 ---
 
@@ -1107,6 +1174,7 @@
 ### Tareas
 
 #### 7.1 Configuración de Módulos
+
 - [ ] Crear módulo `AdminOrdersModule` en `src/modules/admin/admin-orders/`
 - [ ] **NUEVO:** Crear `AdminOrdersRepository` (extender OrdersRepository)
   - Método `findAllWithFilters(filters)` - todos los usuarios
@@ -1132,6 +1200,7 @@
 - [ ] Crear controlador `AdminStockController`
 
 #### 7.2 Endpoints Admin - Pedidos
+
 - [ ] **GET /api/admin/orders**
   - Proteger con admin guard
   - Listar todos los pedidos de todos los usuarios
@@ -1177,6 +1246,7 @@
   - Retornar pedido actualizado
 
 #### 7.3 Lógica de Estados de Pedidos
+
 - [ ] Implementar función de validación de flujo de estados
   - Estados válidos: pending → confirmed → processing → shipped → delivered
   - Cancelación permitida solo antes de shipped
@@ -1185,11 +1255,13 @@
   - Registrar en StockHistory con reason "Pedido cancelado"
 
 #### 7.4 DTOs Admin - Pedidos
+
 - [ ] Crear `UpdateOrderStatusDto`
 - [ ] Crear `AdminOrderQueryDto` con todos los filtros
 - [ ] Crear `OrderSummaryDto` para resumen estadístico
 
 #### 7.5 Endpoints Admin - Stock
+
 - [ ] **GET /api/admin/stock/history**
   - Proteger con admin guard
   - Listar historial de cambios de stock de todos los productos
@@ -1213,15 +1285,18 @@
   - Retornar threshold actualizado
 
 #### 7.6 DTOs Admin - Stock
+
 - [ ] Crear `StockHistoryQueryDto` para filtros
 - [ ] Crear `UpdateStockThresholdDto` (opcional)
 
 #### 7.7 Validaciones y Errores Admin
+
 - [ ] Error `INVALID_STATUS_TRANSITION` con detalles de estado actual y solicitado
 - [ ] Error `ORDER_NOT_FOUND`
 - [ ] Error `PRODUCT_NOT_FOUND` para historial de stock
 
 ### Hitos de la Fase 7
+
 **Hito 7.1**: Admin puede listar todos los pedidos con filtros
 **Hito 7.2**: Admin puede buscar pedidos por texto
 **Hito 7.3**: Admin puede filtrar pedidos por fecha, estado, total
@@ -1249,6 +1324,7 @@
 ### Tareas
 
 #### 8.1 Configuración de Swagger
+
 > ✅ `SwaggerModule` ya está configurado en `main.ts` desde Fase 0 y funciona en `/api/swagger`. Las tareas pendientes son agregar decoradores a los nuevos módulos implementados en Fases 4–7.
 
 - [ ] Completar metadata general del API (descripción, versión, contacto)
@@ -1266,6 +1342,7 @@
   - Admin - Stock
 
 #### 8.2 Decoradores de Swagger
+
 - [ ] Agregar `@ApiTags()` en todos los controladores
 - [ ] Agregar `@ApiOperation()` en todos los endpoints con descripción
 - [ ] Agregar `@ApiResponse()` para respuestas exitosas y errores
@@ -1276,6 +1353,7 @@
 - [ ] Agregar ejemplos de respuesta con `@ApiResponseExample()`
 
 #### 8.3 Validación de Documentación
+
 - [ ] Verificar que todos los endpoints estén documentados
 - [ ] Verificar que todos los DTOs tengan ejemplos
 - [ ] Verificar que códigos de error estén documentados
@@ -1283,6 +1361,7 @@
 - [ ] Exportar schema OpenAPI en JSON/YAML
 
 #### 8.4 Health Check y Monitoreo
+
 - [ ] **Configurar TerminusModule de @nestjs/terminus**
 - [ ] Crear módulo `HealthModule` en `src/health/`
 - [ ] Crear `HealthController` con endpoint `GET /health`
@@ -1302,6 +1381,7 @@
   - Retornar timestamp de deploy
 
 #### 8.5 Optimización de Queries
+
 - [ ] Revisar queries de Prisma y optimizar eager loading
 - [ ] Agregar índices faltantes en base de datos
 - [ ] Implementar select específico en lugar de cargar todos los campos
@@ -1309,6 +1389,7 @@
 - [ ] Optimizar query de listado de pedidos
 
 #### 8.6 Verificación de Interceptores y Middleware
+
 - [ ] Verificar que interceptor de logging funcione correctamente
   - Logs estructurados en producción
   - Información completa: método, ruta, duración, status, userId
@@ -1323,6 +1404,7 @@
 - [ ] Revisar configuración de timeouts (30s por request)
 
 #### 8.7 Manejo Global de Errores
+
 - [ ] Crear filtro de excepciones global
 - [ ] Mapear excepciones de Prisma a errores HTTP apropiados
 - [ ] Agregar códigos de error internos consistentes
@@ -1330,11 +1412,13 @@
 - [ ] Sanitizar errores en producción (no exponer stack trace)
 
 #### 8.8 Validaciones Adicionales
+
 - [ ] Revisar todas las validaciones de DTOs
 - [ ] Agregar mensajes de error personalizados en español
 - [ ] Implementar validadores personalizados si es necesario
 
 #### 8.9 README y Documentación
+
 - [ ] Actualizar README.md con:
   - Descripción del proyecto
   - Requisitos previos
@@ -1349,6 +1433,7 @@
 - [ ] Crear CHANGELOG.md
 
 ### Hitos de la Fase 8
+
 **Hito 8.1**: Decoradores Swagger añadidos a todos los nuevos módulos (4–7)
 **Hito 8.2**: Todos los endpoints documentados en Swagger
 **Hito 8.3**: DTOs tienen decoradores de Swagger con ejemplos
@@ -1372,6 +1457,7 @@
 ### Tareas
 
 #### 9.1 Preparación para Producción
+
 - [ ] Crear archivo `.env.production` con variables de producción
 - [ ] Configurar `NODE_ENV=production`
 - [ ] Revisar y ajustar configuración de CORS para dominio de producción
@@ -1380,7 +1466,9 @@
 - [ ] Revisar logs y eliminar logs de debug
 
 #### 9.2 Selección de Plataforma de Hosting
+
 Opciones recomendadas:
+
 - [ ] **Railway** (recomendado para MVP)
   - Fácil setup
   - PostgreSQL incluido
@@ -1393,6 +1481,7 @@ Opciones recomendadas:
   - Más configuración requerida
 
 #### 9.3 Configuración de Base de Datos
+
 - [ ] Crear instancia de PostgreSQL en producción
 - [ ] Obtener `DATABASE_URL` de producción
 - [ ] Ejecutar migraciones en base de datos de producción
@@ -1406,6 +1495,7 @@ Opciones recomendadas:
 - [ ] Verificar que datos iniciales existan (admin, categorías)
 
 #### 9.4 Configuración de Variables de Entorno
+
 - [ ] Configurar todas las variables en la plataforma de hosting:
   - `DATABASE_URL`
   - `JWT_SECRET` (generar uno nuevo seguro)
@@ -1420,6 +1510,7 @@ Opciones recomendadas:
   - Configurar credenciales de cloud storage
 
 #### 9.5 Build y Deploy
+
 - [ ] Configurar script de build en `package.json`
   ```json
   "build": "nest build"
@@ -1437,6 +1528,7 @@ Opciones recomendadas:
 - [ ] Verificar que el servidor esté corriendo
 
 #### 9.6 Verificación Post-Deploy
+
 - [ ] Verificar que `/health` responda correctamente
 - [ ] Verificar que `/api/docs` (Swagger) sea accesible
 - [ ] Probar endpoint de login con usuario admin
@@ -1446,6 +1538,7 @@ Opciones recomendadas:
 - [ ] Verificar que cookies se establezcan correctamente (HttpOnly, Secure)
 
 #### 9.7 Configuración de Dominio (Opcional)
+
 - [ ] Adquirir dominio personalizado
 - [ ] Configurar DNS para apuntar a servidor
 - [ ] Configurar SSL/TLS (usualmente automático en Railway/Render)
@@ -1453,6 +1546,7 @@ Opciones recomendadas:
 - [ ] Verificar HTTPS funcionando
 
 #### 9.8 Monitoreo y Logs
+
 - [ ] Configurar monitoreo de uptime (UptimeRobot, Pingdom)
 - [ ] Configurar alertas de downtime
 - [ ] Configurar servicio de tracking de errores (Sentry, opcional)
@@ -1460,11 +1554,13 @@ Opciones recomendadas:
 - [ ] Configurar retención de logs
 
 #### 9.9 Backup y Recuperación
+
 - [ ] Configurar backups automáticos de base de datos
 - [ ] Documentar proceso de restauración
 - [ ] Probar proceso de restauración (en ambiente de staging si es posible)
 
 #### 9.10 Documentación de Deploy
+
 - [ ] Crear documento DEPLOYMENT.md con:
   - Requisitos de producción
   - Pasos de deploy
@@ -1476,6 +1572,7 @@ Opciones recomendadas:
 - [ ] Documentar credenciales de admin en lugar seguro
 
 ### Hitos de la Fase 9
+
 **Hito 9.1**: Base de datos de producción creada y migrada
 **Hito 9.2**: Variables de entorno configuradas en producción
 **Hito 9.3**: Build exitoso y aplicación desplegada
@@ -1495,22 +1592,23 @@ Opciones recomendadas:
 
 ### Resumen por Fase
 
-| Fase | Nombre | Estado | Hitos |
-|------|--------|--------|-------|
-| 0 | Configuración Inicial | ✅ Completa | 10 hitos |
-| 1 | Base de Datos y Modelos | ✅ Completa | 6 hitos |
-| 2 | Sistema de Autenticación | ✅ Completa | 10 hitos |
-| 3 | Productos y Categorías (Público) | ✅ Completa | 12 hitos |
-| 4 | Módulo de Carrito | ⏳ Pendiente | 9 hitos |
-| 5 | Pedidos y Envío | ⏳ Pendiente | 14 hitos |
-| 6 | Admin - Productos y Categorías | ⏳ Pendiente | 17 hitos |
-| 7 | Admin - Pedidos y Stock | ⏳ Pendiente | 15 hitos |
-| 8 | Documentación y Optimización | ⏳ Pendiente | 11 hitos |
-| 9 | Despliegue a Producción | ⏳ Pendiente | 10 hitos |
+| Fase | Nombre                           | Estado       | Hitos    |
+| ---- | -------------------------------- | ------------ | -------- |
+| 0    | Configuración Inicial            | ✅ Completa  | 10 hitos |
+| 1    | Base de Datos y Modelos          | ✅ Completa  | 6 hitos  |
+| 2    | Sistema de Autenticación         | ✅ Completa  | 10 hitos |
+| 3    | Productos y Categorías (Público) | ✅ Completa  | 12 hitos |
+| 4    | Módulo de Carrito                | ⏳ Pendiente | 9 hitos  |
+| 5    | Pedidos y Envío                  | ⏳ Pendiente | 14 hitos |
+| 6    | Admin - Productos y Categorías   | ⏳ Pendiente | 17 hitos |
+| 7    | Admin - Pedidos y Stock          | ⏳ Pendiente | 15 hitos |
+| 8    | Documentación y Optimización     | ⏳ Pendiente | 11 hitos |
+| 9    | Despliegue a Producción          | ⏳ Pendiente | 10 hitos |
 
 **Total de Hitos**: 112 hitos principales
 
 **Hitos adicionales por arquitectura mejorada**: +22 hitos para implementar:
+
 - Patrón Repository en todos los módulos
 - Domain Services para lógica de negocio
 - Event-Driven Architecture
@@ -1568,12 +1666,14 @@ Este proyecto está diseñado para ser desarrollado de manera incremental:
 ## 🔧 Herramientas Recomendadas para Desarrollo
 
 ### Esenciales
+
 - **IDE**: Visual Studio Code con extensiones de NestJS y Prisma
 - **Cliente HTTP**: Postman o Insomnia para probar endpoints
 - **Cliente de BD**: Prisma Studio (incluido) o DBeaver
 - **Control de versiones**: Git + GitHub
 
 ### Útiles
+
 - **Thunder Client**: Extensión de VSCode (alternativa ligera a Postman)
 - **REST Client**: Extensión de VSCode para archivos `.http`
 - **Prisma VSCode Extension**: Autocompletado para schemas
@@ -1618,6 +1718,7 @@ Este proyecto está diseñado para ser desarrollado de manera incremental:
 ### Próximos Pasos Sugeridos
 
 Una vez completado este backend:
+
 1. Implementar refresh tokens para JWT
 2. Agregar sistema de notificaciones por email
 3. Agregar panel de analytics para admin
@@ -1637,6 +1738,7 @@ Esta sección documenta mejoras avanzadas que pueden implementarse en fases futu
 **Objetivo**: Mejorar significativamente el rendimiento y reducir la carga en la base de datos.
 
 **Casos de Uso**:
+
 - Cachear listados de productos (GET /api/products)
 - Cachear categorías con jerarquía (GET /api/categories)
 - Cachear información de productos individuales
@@ -1645,18 +1747,21 @@ Esta sección documenta mejoras avanzadas que pueden implementarse en fases futu
 - Sesiones de usuario (alternativa a JWT)
 
 **Implementación Sugerida**:
+
 ```bash
 npm install @nestjs/cache-manager cache-manager
 npm install cache-manager-redis-store
 ```
 
 **Beneficios Esperados**:
+
 - ⚡ Reducción de latencia: 80-95% en endpoints cacheados
 - 📉 Reducción de carga en BD: 60-80%
 - 💰 Reducción de costos de infraestructura
 - 🚀 Mejor experiencia de usuario
 
 **Estrategia de Invalidación**:
+
 - Cache-aside pattern
 - TTL de 5-15 minutos para productos
 - TTL de 30 minutos para categorías
@@ -1664,6 +1769,7 @@ npm install cache-manager-redis-store
 - Event-driven cache invalidation (escuchar eventos de actualización)
 
 **Integración con Arquitectura Actual**:
+
 ```typescript
 // Ejemplo de implementación en ProductsService
 @Injectable()
@@ -1678,7 +1784,7 @@ export class ProductsService {
     const cacheKey = `product:${id}`;
     const cached = await this.cacheManager.get(cacheKey);
     if (cached) return cached;
-    
+
     const product = await this.productsRepository.findById(id);
     await this.cacheManager.set(cacheKey, product, { ttl: 600 });
     return product;
@@ -1700,6 +1806,7 @@ export class ProductsService {
 **Métricas a Monitorear**:
 
 **Métricas de Aplicación**:
+
 - Requests por segundo (RPS)
 - Latencia de endpoints (p50, p95, p99)
 - Tasa de errores por endpoint
@@ -1709,6 +1816,7 @@ export class ProductsService {
 - Usuarios activos
 
 **Métricas de Sistema**:
+
 - Uso de CPU y memoria
 - Conexiones de base de datos (pool)
 - Queries lentas (> 1s)
@@ -1716,6 +1824,7 @@ export class ProductsService {
 - Rate limiting hits
 
 **Métricas de Negocio**:
+
 - Ingresos por hora/día
 - Valor promedio de pedidos
 - Tasa de conversión (carritos → pedidos)
@@ -1723,11 +1832,13 @@ export class ProductsService {
 - Pedidos por estado
 
 **Implementación Sugerida**:
+
 ```bash
 npm install @willsoto/nestjs-prometheus prom-client
 ```
 
 **Setup de Grafana**:
+
 - Dashboards predefinidos para APIs REST
 - Alertas automáticas:
   - Latencia > 2s
@@ -1737,6 +1848,7 @@ npm install @willsoto/nestjs-prometheus prom-client
   - Stock crítico de productos
 
 **Beneficios Esperados**:
+
 - 🔍 Detección proactiva de problemas
 - 📈 Optimización basada en datos reales
 - 🚨 Alertas antes de que los usuarios se vean afectados
@@ -1750,6 +1862,7 @@ npm install @willsoto/nestjs-prometheus prom-client
 **Objetivo**: Rastrear requests completos a través de todos los servicios y dependencias para debugging avanzado.
 
 **Casos de Uso**:
+
 - Debugging de requests lentos
 - Identificar qué parte del flujo causa latencia
 - Rastrear transacciones de pedidos completas:
@@ -1758,6 +1871,7 @@ npm install @willsoto/nestjs-prometheus prom-client
 - Análisis de dependencias entre servicios
 
 **Implementación Sugerida**:
+
 ```bash
 npm install @opentelemetry/sdk-node
 npm install @opentelemetry/auto-instrumentations-node
@@ -1765,6 +1879,7 @@ npm install @opentelemetry/exporter-jaeger
 ```
 
 **Qué se Rastrea Automáticamente**:
+
 - HTTP requests/responses
 - Database queries (Prisma)
 - External API calls
@@ -1772,12 +1887,14 @@ npm install @opentelemetry/exporter-jaeger
 - Redis operations (cuando se implemente)
 
 **Visualización**:
+
 - Jaeger UI o Grafana Tempo
 - Flame graphs de requests
 - Dependency graphs
 - Error tracking con contexto completo
 
 **Ejemplo de Vista de Trace**:
+
 ```
 POST /api/orders [285ms]
   ├─ OrdersService.create [280ms]
@@ -1792,6 +1909,7 @@ POST /api/orders [285ms]
 ```
 
 **Beneficios Esperados**:
+
 - 🐛 Debugging 10x más rápido
 - 🔍 Visibilidad end-to-end de requests
 - 📊 Identificación precisa de cuellos de botella
@@ -1820,6 +1938,7 @@ POST /api/orders [285ms]
    - Preparación para eventual migración a microservicios
 
 **Criterios para Priorizar**:
+
 - ✅ Implementar Prometheus/Grafana cuando se despliegue a producción
 - ✅ Implementar Redis cuando la latencia > 500ms o carga BD > 70%
 - ✅ Implementar OpenTelemetry cuando se tenga más de 3 servicios/módulos complejos interactuando
@@ -1831,6 +1950,7 @@ POST /api/orders [285ms]
 **Última Actualización**: 2026-03-01
 
 **Changelog v2.1** (2026-03-01):
+
 - Fase 3 completada: categorías y productos públicos con Repository pattern, Domain Services y paginación
 - Decisión de diseño: CartItem MVP sin soporte de variantes (campo `variantOptionId` no existe en Prisma)
 - Añadida sección 5.5: dependencias de módulos en Fase 5
@@ -1849,6 +1969,7 @@ POST /api/orders [285ms]
 - Hitos de Fase 6 actualizados: 14 → 17 hitos; Fase 7: 13 → 15 hitos
 
 **Changelog v2.0** (2026-02-04):
+
 - Agregado patrón Repository en todos los módulos
 - Agregados Domain Services para lógica de negocio
 - Implementada arquitectura Event-Driven (eventos y listeners)

@@ -25,11 +25,11 @@ export class CategoriesService {
 
   /**
    * Retorna una categoría por ID con sus hijos directos.
-   * Lanza NotFoundException si no existe.
+   * Lanza NotFoundException si no existe o está inactiva (a menos que sea admin).
    */
-  async findById(id: string): Promise<CategoryWithChildren> {
+  async findById(id: string, isAdmin = false): Promise<CategoryWithChildren> {
     const category = await this.categoriesRepository.findByIdWithChildren(id);
-    if (!category) {
+    if (!category || (!category.isActive && !isAdmin)) {
       throw new NotFoundException({
         code: ERROR_CODES.NOT_FOUND,
         message: `Categoría con id ${id} no encontrada`,

@@ -41,7 +41,7 @@ export const ERROR_CODES = {
   EMAIL_EXISTS: 'EMAIL_EXISTS',
 
   /** Contraseña no cumple requisitos o es incorrecta */
-  INVALID_PASSWORD: 'INVALID_PASSWORD',
+  INVALID_PASSWORD: 'INVALID_PASSWORD', // NOSONAR No es una contraseña real, es un código de error para el cliente
 
   /** Token JWT inválido o expirado */
   INVALID_TOKEN: 'INVALID_TOKEN',
@@ -65,6 +65,23 @@ export const ERROR_CODES = {
 
   /** Transición de estado de pedido inválida */
   INVALID_STATUS_TRANSITION: 'INVALID_STATUS_TRANSITION',
+
+  // Admin - Productos
+  /** SKU duplicado al crear/actualizar producto */
+  SKU_DUPLICATE: 'SKU_DUPLICATE',
+
+  /** Intento de eliminar la única imagen de un producto */
+  LAST_IMAGE: 'LAST_IMAGE',
+
+  // Admin - Categorías
+  /** Categoría no encontrada */
+  CATEGORY_NOT_FOUND: 'CATEGORY_NOT_FOUND',
+
+  /** Categoría tiene productos o subcategorías asociadas */
+  CATEGORY_HAS_DEPENDENCIES: 'CATEGORY_HAS_DEPENDENCIES',
+
+  /** El parentId generaría un ciclo en la jerarquía */
+  INVALID_PARENT_CATEGORY: 'INVALID_PARENT_CATEGORY',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

@@ -18,6 +18,8 @@ export interface ProductFilters {
   inStock?: boolean;
   isFeatured?: boolean;
   hasDiscount?: boolean;
+  /** Solo admin: undefined = activos por defecto; true/false = override explícito */
+  isActive?: boolean;
   sortBy?: ProductSortBy;
   page?: number;
   limit?: number;

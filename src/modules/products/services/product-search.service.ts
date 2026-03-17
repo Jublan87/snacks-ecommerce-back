@@ -6,10 +6,13 @@ import { ProductFilters, ProductSortBy } from '../interfaces/product-filters.int
 export class ProductSearchService {
   /**
    * Construye el objeto WHERE de Prisma a partir de los filtros de dominio.
-   * Siempre filtra productos activos.
+   * Por defecto filtra solo productos activos.
+   * Si filters.isActive está definido (admin), usa ese valor en su lugar.
    */
   buildWhereClause(filters: ProductFilters): Prisma.ProductWhereInput {
-    const where: Prisma.ProductWhereInput = { isActive: true };
+    const where: Prisma.ProductWhereInput = {
+      isActive: filters.isActive ?? true,
+    };
 
     if (filters.search) {
       where.OR = [

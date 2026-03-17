@@ -4,48 +4,9 @@ import type { Prisma } from '@prisma/client';
 import { PrismaService } from '../../database/prisma.service';
 import { BaseRepository } from '../../database/repositories/base.repository';
 import { ProductListItem } from './interfaces/product-list-item.interface';
-import {
-  ProductWithRelations,
-  ProductVariantItem,
-  VariantOptionItem,
-  ProductImageItem,
-  ProductCategory,
-} from './interfaces/product-with-relations.interface';
-
-// ─── Constantes de include para reusar en queries ─────────────────────────────
-
-const PRODUCT_LIST_INCLUDE = {
-  category: {
-    select: { id: true, name: true, slug: true },
-  },
-  images: {
-    orderBy: { order: 'asc' as const },
-  },
-} satisfies Prisma.ProductInclude;
-
-const PRODUCT_DETAIL_INCLUDE = {
-  category: {
-    select: { id: true, name: true, slug: true },
-  },
-  images: {
-    orderBy: { order: 'asc' as const },
-  },
-  variants: {
-    include: {
-      options: {
-        orderBy: { value: 'asc' as const },
-      },
-    },
-    orderBy: { name: 'asc' as const },
-  },
-} satisfies Prisma.ProductInclude;
-
-// ─── Tipos internos (resultado de Prisma con include) ─────────────────────────
-
-type ProductListRow = Prisma.ProductGetPayload<{ include: typeof PRODUCT_LIST_INCLUDE }>;
-type ProductDetailRow = Prisma.ProductGetPayload<{ include: typeof PRODUCT_DETAIL_INCLUDE }>;
-
-// ─── Repositorio ──────────────────────────────────────────────────────────────
+import { ProductWithRelations } from './interfaces/product-with-relations.interface';
+import { PRODUCT_LIST_INCLUDE, PRODUCT_DETAIL_INCLUDE } from './utils/product-includes.const';
+import { toProductListItem, toProductWithRelations } from './utils/product-mappers';
 
 @Injectable()
 export class ProductsRepository extends BaseRepository<
@@ -81,7 +42,7 @@ export class ProductsRepository extends BaseRepository<
     ]);
 
     return {
-      items: rows.map((row) => this.toProductListItem(row)),
+      items: rows.map(toProductListItem),
       total,
     };
   }
@@ -96,7 +57,7 @@ export class ProductsRepository extends BaseRepository<
     });
 
     if (!row) return null;
-    return this.toProductWithRelations(row);
+    return toProductWithRelations(row);
   }
 
   /**
@@ -109,7 +70,7 @@ export class ProductsRepository extends BaseRepository<
     });
 
     if (!row) return null;
-    return this.toProductWithRelations(row);
+    return toProductWithRelations(row);
   }
 
   /**
@@ -123,7 +84,7 @@ export class ProductsRepository extends BaseRepository<
       take: limit,
     });
 
-    return rows.map((row) => this.toProductListItem(row));
+    return rows.map(toProductListItem);
   }
 
   /**
@@ -136,102 +97,6 @@ export class ProductsRepository extends BaseRepository<
       orderBy: { createdAt: 'desc' },
     });
 
-    return rows.map((row) => this.toProductListItem(row));
-  }
-
-  // ─── Mappers privados ──────────────────────────────────────────────────────
-
-  private toNumber(decimal: { toNumber(): number } | null): number | null {
-    return decimal ? decimal.toNumber() : null;
-  }
-
-  private toProductListItem(row: ProductListRow): ProductListItem {
-    return {
-      id: row.id,
-      name: row.name,
-      slug: row.slug,
-      shortDescription: row.shortDescription,
-      price: row.price.toNumber(),
-      discountPrice: this.toNumber(row.discountPrice),
-      discountPercentage: row.discountPercentage,
-      stock: row.stock,
-      isActive: row.isActive,
-      isFeatured: row.isFeatured,
-      tags: row.tags,
-      categoryId: row.categoryId,
-      category: row.category as ProductCategory,
-      images: row.images.map(this.toProductImage),
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-    };
-  }
-
-  private toProductWithRelations(row: ProductDetailRow): ProductWithRelations {
-    return {
-      id: row.id,
-      name: row.name,
-      slug: row.slug,
-      description: row.description,
-      shortDescription: row.shortDescription,
-      sku: row.sku,
-      price: row.price.toNumber(),
-      discountPrice: this.toNumber(row.discountPrice),
-      discountPercentage: row.discountPercentage,
-      stock: row.stock,
-      categoryId: row.categoryId,
-      category: row.category as ProductCategory,
-      specifications: row.specifications,
-      isActive: row.isActive,
-      isFeatured: row.isFeatured,
-      tags: row.tags,
-      weight: row.weight ? row.weight.toNumber() : null,
-      dimensions: row.dimensions,
-      images: row.images.map(this.toProductImage),
-      variants: row.variants.map(this.toProductVariant),
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
-    };
-  }
-
-  private toProductImage(image: {
-    id: string;
-    url: string;
-    alt: string;
-    isPrimary: boolean;
-    order: number;
-  }): ProductImageItem {
-    return {
-      id: image.id,
-      url: image.url,
-      alt: image.alt,
-      isPrimary: image.isPrimary,
-      order: image.order,
-    };
-  }
-
-  private toProductVariant(variant: {
-    id: string;
-    name: string;
-    options: Array<{
-      id: string;
-      value: string;
-      priceModifier: { toNumber(): number } | null;
-      stock: number;
-      sku: string | null;
-    }>;
-  }): ProductVariantItem {
-    return {
-      id: variant.id,
-      name: variant.name,
-      options: variant.options.map(
-        (opt): VariantOptionItem => ({
-          id: opt.id,
-          value: opt.value,
-          priceModifier: opt.priceModifier ? opt.priceModifier.toNumber() : null,
-          stock: opt.stock,
-          sku: opt.sku,
-        }),
-      ),
-    };
+    return rows.map(toProductListItem);
   }
 }

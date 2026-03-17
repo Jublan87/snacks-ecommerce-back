@@ -16,6 +16,8 @@ import { ProductsModule } from './modules/products/products.module';
 import { CartModule } from './modules/cart/cart.module';
 import { ShippingModule } from './modules/shipping/shipping.module';
 import { OrdersModule } from './modules/orders/orders.module';
+import { AdminProductsModule } from './modules/admin/admin-products/admin-products.module';
+import { AdminCategoriesModule } from './modules/admin/admin-categories/admin-categories.module';
 
 @Module({
   imports: [
@@ -42,6 +44,8 @@ import { OrdersModule } from './modules/orders/orders.module';
     CartModule,
     ShippingModule,
     OrdersModule,
+    AdminProductsModule,
+    AdminCategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

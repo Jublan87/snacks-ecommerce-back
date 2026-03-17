@@ -105,6 +105,19 @@ export class ProductQueryDto {
 
   @ApiProperty({
     required: false,
+    description: 'Solo admin: filtrar por estado activo (true) o inactivo (false)',
+  })
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ obj, key }) => {
+    const raw = obj[key];
+    if (raw === undefined || raw === null) return undefined;
+    return raw === 'true' || raw === true;
+  })
+  isActive?: boolean;
+
+  @ApiProperty({
+    required: false,
     enum: SORT_BY_VALUES,
     description: 'Criterio de ordenamiento',
   })

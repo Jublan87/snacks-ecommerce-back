@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "000e9c9d-5b7e-429b-91b4-598d72a9b4cd",
+    "_postman_id": "046d434f-1974-4733-b87b-8397c96da4c1",
     "name": "Snacks-Ecommerce",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "_exporter_id": "34930090",
-    "_collection_link": "https://go.postman.co/collection/34930090-000e9c9d-5b7e-429b-91b4-598d72a9b4cd?source=collection_link"
+    "_collection_link": "https://go.postman.co/collection/34930090-046d434f-1974-4733-b87b-8397c96da4c1?source=collection_link"
   },
   "item": [
     {
@@ -721,6 +721,336 @@
           "response": []
         }
       ]
+    },
+    {
+      "name": "Admin - Productos",
+      "item": [
+        {
+          "name": "Crear producto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Papas Fritas Artesanales\",\n  \"description\": \"Deliciosas papas fritas artesanales con sal marina y hierbas.\",\n  \"sku\": \"PFA-001\",\n  \"price\": 3500,\n  \"discountPercentage\": 10,\n  \"stock\": 100,\n  \"categoryId\": \"cfae521c-8562-4fc2-b48a-2892a3e6e6b7\",\n  \"isActive\": true,\n  \"isFeatured\": false,\n  \"tags\": [\n    \"snacks\",\n    \"papas\"\n  ],\n  \"images\": [\n    {\n      \"url\": \"https://placehold.co/600x600/FFDA91/000000/png?text=Papas%20artesanales\",\n      \"alt\": \"Papas fritas\",\n      \"isPrimary\": true,\n      \"order\": 0\n    }\n  ],\n  \"variants\": [\n    {\n      \"name\": \"Tamaño\",\n      \"options\": [\n        {\n          \"value\": \"Pequeño\",\n          \"stock\": 50,\n          \"priceModifier\": 0,\n          \"sku\": \"PFA-001-S\"\n        },\n        {\n          \"value\": \"Grande\",\n          \"stock\": 50,\n          \"priceModifier\": 500,\n          \"sku\": \"PFA-001-L\"\n        }\n      ]\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/products",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Papas Fritas Artesanales Premium\",\n  \"price\": 3900,\n  \"discountPercentage\": 15,\n  \"isFeatured\": true,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/products/2ac03c70-10b7-42be-9921-df0f4a8ddcde",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "2ac03c70-10b7-42be-9921-df0f4a8ddcde"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Soft delete producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/admin/products/2ac03c70-10b7-42be-9921-df0f4a8ddcde",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "2ac03c70-10b7-42be-9921-df0f4a8ddcde"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar stock",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStock\": 50,\n  \"reason\": \"Reposición manual\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/products/2ac03c70-10b7-42be-9921-df0f4a8ddcde/stock",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "2ac03c70-10b7-42be-9921-df0f4a8ddcde",
+                "stock"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar imagen de producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/admin/products/2ac03c70-10b7-42be-9921-df0f4a8ddcde/images/4a6331b7-0c66-4cec-809f-cbd6fa1fa480",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "2ac03c70-10b7-42be-9921-df0f4a8ddcde",
+                "images",
+                "4a6331b7-0c66-4cec-809f-cbd6fa1fa480"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar variante de producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/admin/products/2ac03c70-10b7-42be-9921-df0f4a8ddcde/variants/4d2fc89b-ce36-41b0-9dc7-9c63eb401b02",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "products",
+                "2ac03c70-10b7-42be-9921-df0f4a8ddcde",
+                "variants",
+                "4d2fc89b-ce36-41b0-9dc7-9c63eb401b02"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Categorías",
+      "item": [
+        {
+          "name": "Crear categoría",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Snacks Saludables\",\n  \"description\": \"Opciones de snacks bajos en calorías y saludables.\",\n  \"image\": \"https://placehold.co/600x600/87CEEB/000000/png?text=Snacks%20saludables\",\n  \"order\": 1,\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/categories",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "categories"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Snacks Saludables y Naturales\",\n  \"description\": \"Opciones saludables y sin conservantes.\",\n  \"isActive\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/categories/ef5533c0-8b6d-46c1-9103-490d97a097b3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                "ef5533c0-8b6d-46c1-9103-490d97a097b3"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar categoría",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/admin/categories/ef5533c0-8b6d-46c1-9103-490d97a097b3",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "categories",
+                "ef5533c0-8b6d-46c1-9103-490d97a097b3"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:4000/api/health",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "4000",
+          "path": [
+            "api",
+            "health"
+          ]
+        }
+      },
+      "response": []
     }
   ],
   "variable": [
@@ -753,6 +1083,18 @@
       "value": "",
       "type": "string",
       "description": "Número de orden. Formato: ORD-YYYY-MMDD-HHMMSS-XXX. Obtener de POST /api/orders -> data.orderNumber"
+    },
+    {
+      "key": "imageId",
+      "value": ""
+    },
+    {
+      "key": "variantId",
+      "value": ""
+    },
+    {
+      "key": "categoryId",
+      "value": ""
     }
   ]
 }

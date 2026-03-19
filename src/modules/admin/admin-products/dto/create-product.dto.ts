@@ -20,30 +20,30 @@ import { CreateProductVariantDto } from './create-product-variant.dto';
 
 export class CreateProductDto {
   @ApiProperty({ description: 'Nombre del producto', maxLength: 200 })
-  @IsString()
-  @MinLength(2)
-  @MaxLength(200)
+  @IsString({ message: 'El nombre del producto debe ser un texto' })
+  @MinLength(2, { message: 'El nombre del producto debe tener al menos 2 caracteres' })
+  @MaxLength(200, { message: 'El nombre del producto no debe superar los 200 caracteres' })
   name: string;
 
   @ApiProperty({ description: 'Descripción completa del producto' })
-  @IsString()
-  @MinLength(10)
+  @IsString({ message: 'La descripción debe ser un texto' })
+  @MinLength(10, { message: 'La descripción debe tener al menos 10 caracteres' })
   description: string;
 
   @ApiProperty({ required: false, nullable: true, description: 'Descripción corta' })
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'La descripción corta debe ser un texto' })
   shortDescription?: string | null;
 
   @ApiProperty({ description: 'SKU único del producto', maxLength: 100 })
-  @IsString()
-  @MinLength(2)
-  @MaxLength(100)
+  @IsString({ message: 'El SKU debe ser un texto' })
+  @MinLength(2, { message: 'El SKU debe tener al menos 2 caracteres' })
+  @MaxLength(100, { message: 'El SKU no debe superar los 100 caracteres' })
   sku: string;
 
   @ApiProperty({ minimum: 0, description: 'Precio regular del producto' })
-  @IsNumber()
-  @Min(0)
+  @IsNumber({}, { message: 'El precio debe ser un número' })
+  @Min(0, { message: 'El precio no puede ser negativo' })
   @Type(() => Number)
   price: number;
 
@@ -55,20 +55,20 @@ export class CreateProductDto {
     description: 'Porcentaje de descuento (0-100). Se calcula discountPrice automáticamente.',
   })
   @IsOptional()
-  @IsInt()
-  @Min(0)
-  @Max(100)
+  @IsInt({ message: 'El porcentaje de descuento debe ser un número entero' })
+  @Min(0, { message: 'El porcentaje de descuento no puede ser negativo' })
+  @Max(100, { message: 'El porcentaje de descuento no puede superar 100' })
   @Type(() => Number)
   discountPercentage?: number | null;
 
   @ApiProperty({ default: 0, minimum: 0, description: 'Stock disponible' })
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: 'El stock debe ser un número entero' })
+  @Min(0, { message: 'El stock no puede ser negativo' })
   @Type(() => Number)
   stock: number = 0;
 
   @ApiProperty({ description: 'UUID de la categoría' })
-  @IsUUID()
+  @IsUUID('all', { message: 'El ID de categoría debe ser un UUID válido' })
   categoryId: string;
 
   @ApiProperty({ required: false, description: 'Especificaciones técnicas (clave: valor)' })
@@ -77,7 +77,7 @@ export class CreateProductDto {
 
   @ApiProperty({ required: false, default: true, description: 'Si el producto está activo' })
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: 'El campo isActive debe ser un valor booleano' })
   @Transform(({ obj, key }) => {
     const raw = obj[key];
     if (raw === undefined || raw === null) return true;
@@ -87,7 +87,7 @@ export class CreateProductDto {
 
   @ApiProperty({ required: false, default: false, description: 'Si el producto es destacado' })
   @IsOptional()
-  @IsBoolean()
+  @IsBoolean({ message: 'El campo isFeatured debe ser un valor booleano' })
   @Transform(({ obj, key }) => {
     const raw = obj[key];
     return raw === 'true' || raw === true;
@@ -96,14 +96,14 @@ export class CreateProductDto {
 
   @ApiProperty({ required: false, type: [String], description: 'Etiquetas del producto' })
   @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
+  @IsArray({ message: 'Las etiquetas deben ser un arreglo' })
+  @IsString({ each: true, message: 'Cada etiqueta debe ser un texto' })
   tags?: string[] = [];
 
   @ApiProperty({ required: false, nullable: true, minimum: 0, description: 'Peso en gramos' })
   @IsOptional()
-  @IsNumber()
-  @Min(0)
+  @IsNumber({}, { message: 'El peso debe ser un número' })
+  @Min(0, { message: 'El peso no puede ser negativo' })
   @Type(() => Number)
   weight?: number | null;
 
@@ -112,8 +112,8 @@ export class CreateProductDto {
   dimensions?: unknown;
 
   @ApiProperty({ type: [CreateProductImageDto], description: 'Imágenes del producto (mín. 1)' })
-  @IsArray()
-  @ArrayMinSize(1)
+  @IsArray({ message: 'Las imágenes deben ser un arreglo' })
+  @ArrayMinSize(1, { message: 'Debe incluir al menos una imagen' })
   @ValidateNested({ each: true })
   @Type(() => CreateProductImageDto)
   images: CreateProductImageDto[];
@@ -124,7 +124,7 @@ export class CreateProductDto {
     description: 'Variantes del producto',
   })
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: 'Las variantes deben ser un arreglo' })
   @ValidateNested({ each: true })
   @Type(() => CreateProductVariantDto)
   variants?: CreateProductVariantDto[];

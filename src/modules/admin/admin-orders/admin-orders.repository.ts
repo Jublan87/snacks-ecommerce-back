@@ -146,8 +146,13 @@ export class AdminOrdersRepository extends BaseRepository<any, any, any, Prisma.
       await this.prisma.$transaction(async (tx) => {
         await tx.order.update({ where: { id }, data: { status: newStatus } });
 
+        const products = await tx.product.findMany({
+          where: { id: { in: items.map((i) => i.productId) } },
+        });
+        const productMap = new Map(products.map((p) => [p.id, p]));
+
         for (const item of items) {
-          const product = await tx.product.findUnique({ where: { id: item.productId } });
+          const product = productMap.get(item.productId);
           if (!product) {
             throw new NotFoundException({
               code: ERROR_CODES.PRODUCT_NOT_FOUND,

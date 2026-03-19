@@ -4,16 +4,16 @@ import { IsBoolean, IsInt, IsString, IsUrl, Min } from 'class-validator';
 
 export class CreateProductImageDto {
   @ApiProperty({ description: 'URL de la imagen' })
-  @IsString()
-  @IsUrl()
+  @IsString({ message: 'La URL de la imagen debe ser un texto' })
+  @IsUrl({}, { message: 'La URL de la imagen no es válida' })
   url: string;
 
   @ApiProperty({ description: 'Texto alternativo de la imagen' })
-  @IsString()
+  @IsString({ message: 'El texto alternativo debe ser un texto' })
   alt: string;
 
   @ApiProperty({ default: false, description: 'Indica si es la imagen principal del producto' })
-  @IsBoolean()
+  @IsBoolean({ message: 'El campo isPrimary debe ser un valor booleano' })
   @Transform(({ obj, key }) => {
     const raw = obj[key];
     return raw === 'true' || raw === true;
@@ -21,8 +21,8 @@ export class CreateProductImageDto {
   isPrimary: boolean = false;
 
   @ApiProperty({ default: 0, minimum: 0, description: 'Orden de visualización' })
-  @IsInt()
-  @Min(0)
+  @IsInt({ message: 'El orden debe ser un número entero' })
+  @Min(0, { message: 'El orden no puede ser negativo' })
   @Type(() => Number)
   order: number = 0;
 }

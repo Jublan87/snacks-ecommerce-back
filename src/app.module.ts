@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { TerminusModule } from '@nestjs/terminus';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { THROTTLE_MODULE_LIMITS } from './common/constants/throttler.constants';
@@ -38,6 +39,7 @@ import { AdminStockModule } from './modules/admin/admin-stock/admin-stock.module
       delimiter: '.',
     }),
     ThrottlerModule.forRoot(THROTTLE_MODULE_LIMITS),
+    TerminusModule,
     LoggerModule,
     PrismaModule,
     AuthModule,

@@ -108,6 +108,7 @@ model Product {
   @@index([categoryId])
   @@index([isActive])
   @@index([isFeatured])
+  @@index([createdAt])
 }
 
 model ProductImage {
@@ -197,6 +198,7 @@ model Order {
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+  @@index([userId, status])
 }
 
 model OrderItem {
@@ -226,4 +228,5 @@ model StockHistory {
 
   @@index([productId])
   @@index([createdAt])
+  @@index([productId, createdAt])
 }

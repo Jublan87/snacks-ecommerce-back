@@ -15,7 +15,7 @@ export class UpdateProductDto extends PartialType(
       'Imágenes del producto. Si se provee este array, reemplaza todas las imágenes existentes.',
   })
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: 'Las imágenes deben ser un arreglo' })
   @ValidateNested({ each: true })
   @Type(() => UpdateProductImageDto)
   images?: UpdateProductImageDto[];
@@ -27,7 +27,7 @@ export class UpdateProductDto extends PartialType(
       'Variantes del producto. Si se provee este array, reemplaza todas las variantes existentes.',
   })
   @IsOptional()
-  @IsArray()
+  @IsArray({ message: 'Las variantes deben ser un arreglo' })
   @ValidateNested({ each: true })
   @Type(() => UpdateProductVariantDto)
   variants?: UpdateProductVariantDto[];

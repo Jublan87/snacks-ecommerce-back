@@ -11,6 +11,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
+import { THROTTLE_OPTIONS } from '../../../common/constants/throttler.constants';
 import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { Roles } from '../../../common/decorators/roles.decorator';
@@ -22,6 +24,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles('admin')
+@Throttle({ admin: THROTTLE_OPTIONS.admin })
 @Controller('admin/categories')
 export class AdminCategoriesController {
   constructor(private readonly adminCategoriesService: AdminCategoriesService) {}

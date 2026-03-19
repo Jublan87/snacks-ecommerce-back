@@ -14,8 +14,8 @@ import { CreateOrderItemDto } from './create-order-item.dto';
 
 export class CreateOrderDto {
   @ApiProperty({ type: [CreateOrderItemDto] })
-  @IsArray()
-  @ArrayMinSize(1)
+  @IsArray({ message: 'Los items deben ser un arreglo' })
+  @ArrayMinSize(1, { message: 'La orden debe tener al menos un item' })
   @ValidateNested({ each: true })
   @Type(() => CreateOrderItemDto)
   items: CreateOrderItemDto[];
@@ -26,11 +26,11 @@ export class CreateOrderDto {
   shippingAddress: OrderShippingAddressDto;
 
   @ApiProperty({ enum: PaymentMethod, example: PaymentMethod.credit_card })
-  @IsEnum(PaymentMethod)
+  @IsEnum(PaymentMethod, { message: 'El método de pago debe ser uno de los valores permitidos' })
   paymentMethod: PaymentMethod;
 
   @ApiProperty({ example: 'Sin gluten por favor', required: false })
   @IsOptional()
-  @IsString()
+  @IsString({ message: 'Las notas deben ser texto' })
   notes?: string;
 }

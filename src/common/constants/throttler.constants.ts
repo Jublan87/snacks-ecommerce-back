@@ -21,9 +21,8 @@ export const THROTTLE_OPTIONS = {
  * - login, register, admin: límites específicos para endpoints sensibles
  */
 export const THROTTLE_MODULE_LIMITS = [
-  //TODO: DESCOMENTAR AL TERMINAR
-  // { name: 'default', ttl: minutes(15), limit: 100 },
-  // { name: 'login', ...THROTTLE_OPTIONS.login },
-  // { name: 'register', ...THROTTLE_OPTIONS.register },
-  // { name: 'admin', ...THROTTLE_OPTIONS.admin },
+  { name: 'default', ttl: minutes(15), limit: 100 },
+  { name: 'login', ...THROTTLE_OPTIONS.login },
+  { name: 'register', ...THROTTLE_OPTIONS.register },
+  { name: 'admin', ...THROTTLE_OPTIONS.admin },
 ];

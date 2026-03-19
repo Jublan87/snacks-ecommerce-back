@@ -1274,9 +1274,9 @@
 
 > ✅ `SwaggerModule` ya está configurado en `main.ts` desde Fase 0 y funciona en `/api/swagger`. Las tareas pendientes son agregar decoradores a los nuevos módulos implementados en Fases 4–7.
 
-- [ ] Completar metadata general del API (descripción, versión, contacto)
-- [ ] Configurar autenticación en Swagger (Bearer token + Cookie)
-- [ ] Verificar/completar tags para todos los módulos:
+- [x] Completar metadata general del API (descripción, versión, contacto)
+- [x] Configurar autenticación en Swagger (Bearer token + Cookie)
+- [x] Verificar/completar tags para todos los módulos:
   - Auth
   - Products
   - Categories
@@ -1290,83 +1290,83 @@
 
 #### 8.2 Decoradores de Swagger
 
-- [ ] Agregar `@ApiTags()` en todos los controladores
-- [ ] Agregar `@ApiOperation()` en todos los endpoints con descripción
-- [ ] Agregar `@ApiResponse()` para respuestas exitosas y errores
-- [ ] Agregar `@ApiProperty()` en todos los DTOs
-- [ ] Agregar `@ApiBearerAuth()` en endpoints protegidos
-- [ ] Agregar `@ApiQuery()` para query parameters
-- [ ] Agregar `@ApiParam()` para path parameters
-- [ ] Agregar ejemplos de respuesta con `@ApiResponseExample()`
+- [x] Agregar `@ApiTags()` en todos los controladores
+- [x] Agregar `@ApiOperation()` en todos los endpoints con descripción
+- [x] Agregar `@ApiResponse()` para respuestas exitosas y errores
+- [x] Agregar `@ApiProperty()` en todos los DTOs
+- [x] Agregar `@ApiBearerAuth()` en endpoints protegidos
+- [x] Agregar `@ApiQuery()` para query parameters
+- [x] Agregar `@ApiParam()` para path parameters
+- [x] Agregar ejemplos de respuesta con `@ApiResponseExample()`
 
 #### 8.3 Validación de Documentación
 
-- [ ] Verificar que todos los endpoints estén documentados
-- [ ] Verificar que todos los DTOs tengan ejemplos
-- [ ] Verificar que códigos de error estén documentados
-- [ ] Probar endpoints desde la UI de Swagger
-- [ ] Exportar schema OpenAPI en JSON/YAML
+- [x] Verificar que todos los endpoints estén documentados
+- [x] Verificar que todos los DTOs tengan ejemplos
+- [x] Verificar que códigos de error estén documentados
+- [x] Probar endpoints desde la UI de Swagger
+- [x] Exportar schema OpenAPI en JSON/YAML
 
 #### 8.4 Health Check y Monitoreo
 
-- [ ] **Configurar TerminusModule de @nestjs/terminus**
-- [ ] Crear módulo `HealthModule` en `src/health/`
-- [ ] Crear `HealthController` con endpoint `GET /health`
+- [x] **Configurar TerminusModule de @nestjs/terminus**
+- [x] Crear módulo `HealthModule` en `src/health/`
+- [x] Crear `HealthController` con endpoint `GET /health`
   - Health indicator de base de datos (Prisma)
   - Health indicator de memoria
   - Health indicator de disco
   - Retornar status agregado: healthy/unhealthy
   - Incluir detalles de cada indicator
   - Timestamp de verificación
-- [ ] Crear endpoint `GET /health/ready`
+- [x] Crear endpoint `GET /health/ready`
   - Verificar que la app esté lista para recibir tráfico
-- [ ] Crear endpoint `GET /health/live`
+- [x] Crear endpoint `GET /health/live`
   - Verificar que la app esté viva
-- [ ] Crear endpoint `GET /api/version`
+- [x] Crear endpoint `GET /api/version`
   - Retornar versión del API (desde package.json)
   - Retornar información del ambiente
   - Retornar timestamp de deploy
 
 #### 8.5 Optimización de Queries
 
-- [ ] Revisar queries de Prisma y optimizar eager loading
-- [ ] Agregar índices faltantes en base de datos
-- [ ] Implementar select específico en lugar de cargar todos los campos
-- [ ] Optimizar query de listado de productos (N+1 query problem)
-- [ ] Optimizar query de listado de pedidos
+- [x] Revisar queries de Prisma y optimizar eager loading
+- [x] Agregar índices faltantes en base de datos
+- [x] Implementar select específico en lugar de cargar todos los campos
+- [x] Optimizar query de listado de productos (N+1 query problem)
+- [x] Optimizar query de listado de pedidos
 
 #### 8.6 Verificación de Interceptores y Middleware
 
-- [ ] Verificar que interceptor de logging funcione correctamente
+- [x] Verificar que interceptor de logging funcione correctamente
   - Logs estructurados en producción
   - Información completa: método, ruta, duración, status, userId
-- [ ] Verificar interceptor de transformación
+- [x] Verificar interceptor de transformación
   - Todas las respuestas en formato estándar
   - Manejo correcto de errores
-- [ ] Verificar compression middleware
-- [ ] Verificar rate limiting en todos los endpoints sensibles
+- [x] Verificar compression middleware
+- [x] Verificar rate limiting en todos los endpoints sensibles
   - Login: 5 intentos por 15 minutos
   - Registro: 3 intentos por hora
   - Admin endpoints: 200 por 15 minutos
-- [ ] Revisar configuración de timeouts (30s por request)
+- [x] Revisar configuración de timeouts (30s por request)
 
 #### 8.7 Manejo Global de Errores
 
-- [ ] Crear filtro de excepciones global
-- [ ] Mapear excepciones de Prisma a errores HTTP apropiados
-- [ ] Agregar códigos de error internos consistentes
-- [ ] Loggear errores 500 con stack trace
-- [ ] Sanitizar errores en producción (no exponer stack trace)
+- [x] Crear filtro de excepciones global
+- [x] Mapear excepciones de Prisma a errores HTTP apropiados
+- [x] Agregar códigos de error internos consistentes
+- [x] Loggear errores 500 con stack trace
+- [x] Sanitizar errores en producción (no exponer stack trace)
 
 #### 8.8 Validaciones Adicionales
 
-- [ ] Revisar todas las validaciones de DTOs
-- [ ] Agregar mensajes de error personalizados en español
-- [ ] Implementar validadores personalizados si es necesario
+- [x] Revisar todas las validaciones de DTOs
+- [x] Agregar mensajes de error personalizados en español
+- [x] Implementar validadores personalizados si es necesario
 
 #### 8.9 README y Documentación
 
-- [ ] Actualizar README.md con:
+- [x] Actualizar README.md con:
   - Descripción del proyecto
   - Requisitos previos
   - Instrucciones de instalación
@@ -1376,7 +1376,7 @@
   - Comandos de build y producción
   - Acceso a Swagger
   - Estructura del proyecto
-- [ ] Crear CHANGELOG.md
+- [x] Crear CHANGELOG.md
 
 ### Hitos de la Fase 8
 

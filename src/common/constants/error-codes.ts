@@ -73,6 +73,9 @@ export const ERROR_CODES = {
   /** Intento de eliminar la única imagen de un producto */
   LAST_IMAGE: 'LAST_IMAGE',
 
+  /** Producto no encontrado */
+  PRODUCT_NOT_FOUND: 'PRODUCT_NOT_FOUND',
+
   // Admin - Categorías
   /** Categoría no encontrada */
   CATEGORY_NOT_FOUND: 'CATEGORY_NOT_FOUND',

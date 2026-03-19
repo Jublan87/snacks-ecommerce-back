@@ -14,7 +14,11 @@ export interface PaginationMeta {
  * Calcula la metadata de paginación a partir del total de registros,
  * la página actual y el límite por página.
  */
-export function calculatePaginationMeta(total: number, page: number, limit: number): PaginationMeta {
+export function calculatePaginationMeta(
+  total: number,
+  page: number,
+  limit: number,
+): PaginationMeta {
   const totalPages = limit > 0 ? Math.ceil(total / limit) : 0;
   return {
     total,

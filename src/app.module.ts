@@ -18,6 +18,8 @@ import { ShippingModule } from './modules/shipping/shipping.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { AdminProductsModule } from './modules/admin/admin-products/admin-products.module';
 import { AdminCategoriesModule } from './modules/admin/admin-categories/admin-categories.module';
+import { AdminOrdersModule } from './modules/admin/admin-orders/admin-orders.module';
+import { AdminStockModule } from './modules/admin/admin-stock/admin-stock.module';
 
 @Module({
   imports: [
@@ -46,6 +48,8 @@ import { AdminCategoriesModule } from './modules/admin/admin-categories/admin-ca
     OrdersModule,
     AdminProductsModule,
     AdminCategoriesModule,
+    AdminOrdersModule,
+    AdminStockModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

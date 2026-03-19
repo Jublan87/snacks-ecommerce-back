@@ -1175,145 +1175,92 @@
 
 #### 7.1 Configuración de Módulos
 
-- [ ] Crear módulo `AdminOrdersModule` en `src/modules/admin/admin-orders/`
-- [ ] **NUEVO:** Crear `AdminOrdersRepository` (extender OrdersRepository)
-  - Método `findAllWithFilters(filters)` - todos los usuarios
-  - Método `calculateSummary(filters)` - estadísticas
-  - Método `updateStatus(id, status)`
-- [ ] **NUEVO:** Crear domain services admin de pedidos
+- [x] Crear módulo `AdminOrdersModule` en `src/modules/admin/admin-orders/`
+- [x] **NUEVO:** Crear `AdminOrdersRepository` (extiende BaseRepository directamente)
+  - Método `findAllWithFilters(filters)` - todos los usuarios con paginación y resumen
+  - Método `findByIdForAdmin(id)` y `findByOrderNumberForAdmin(orderNumber)`
+  - Método `updateStatus(id, newStatus, orderNumber, items?)` - con `$transaction` en cancelación
+- [x] **NUEVO:** Crear domain services admin de pedidos
   - `OrderStatusValidationService` - validar transiciones de estado
     - Método `validateStatusTransition(currentStatus, newStatus)`
   - `OrderSummaryService` - calcular estadísticas
-    - Método `calculateRevenue(orders)`
-    - Método `calculateAverageOrderValue(orders)`
-- [ ] **NUEVO:** Crear eventos de cambio de estado
-  - Evento `OrderStatusChangedEvent`
-  - Listener `StockReturnListener` - devolver stock si se cancela
-- [ ] Crear servicio `AdminOrdersService`
-  - Inyectar repository, domain services, EventEmitter
-- [ ] Crear controlador `AdminOrdersController`
-- [ ] Crear módulo `AdminStockModule` en `src/modules/admin/admin-stock/`
-- [ ] **NUEVO:** Crear `StockHistoryRepository`
-  - Método `findAll(filters)`
-  - Método `findByProductId(productId, filters)`
-- [ ] Crear servicio `AdminStockService`
-- [ ] Crear controlador `AdminStockController`
+    - Método `buildSummary(totalOrders, totalRevenue, ordersByStatus)`
+- [x] ~~Crear eventos de cambio de estado~~ **Descartado**: la devolución de stock se hace atómicamente en `$transaction`. No se usó EventEmitter para evitar código zombie sin listener.
+- [x] Crear servicio `AdminOrdersService` (inyecta repository, domain services)
+- [x] Crear controlador `AdminOrdersController`
+- [x] Crear módulo `AdminStockModule` en `src/modules/admin/admin-stock/`
+- [x] **NUEVO:** Crear `AdminStockRepository` (extiende BaseRepository)
+  - Método `findAllHistory(filters)` - renombrado para no colisionar con `BaseRepository.findAll`
+  - Método `findByProductId(productId, filters)` - verifica existencia del producto
+- [x] Crear servicio `AdminStockService`
+- [x] Crear controlador `AdminStockController`
 
 #### 7.2 Endpoints Admin - Pedidos
 
-- [ ] **GET /api/admin/orders**
+- [x] **GET /api/admin/orders**
   - Proteger con admin guard
   - Listar todos los pedidos de todos los usuarios
-  - Implementar filtros:
-    - `status` (estado del pedido)
-    - `userId` (filtrar por usuario específico)
-    - `search` (buscar por orderNumber, email, nombre)
-    - `dateFrom`, `dateTo` (rango de fechas)
-    - `minTotal`, `maxTotal` (rango de totales)
-    - `paymentMethod`
-  - Implementar paginación
-  - Implementar ordenamiento:
-    - `newest`, `oldest`
-    - `total-asc`, `total-desc`
-  - Incluir información del usuario (email, nombre)
-  - Incluir items con productos
-  - Calcular y retornar resumen estadístico:
-    - `totalOrders`
-    - `totalRevenue`
-    - `averageOrderValue`
-    - `ordersByStatus` (contador por cada estado)
-  - Retornar pedidos con metadata y resumen
-- [ ] **GET /api/admin/orders/:id**
-  - Proteger con admin guard
-  - Obtener pedido por ID (de cualquier usuario)
-  - Incluir todas las relaciones
-  - Incluir información del usuario
-  - Retornar pedido completo
-- [ ] **GET /api/admin/orders/number/:orderNumber**
-  - Proteger con admin guard
-  - Buscar pedido por número de orden (de cualquier usuario)
-  - Incluir todas las relaciones e información del usuario
-  - Retornar pedido completo
-- [ ] **PUT /api/admin/orders/:id/status**
-  - Proteger con admin guard
-  - Validar nuevo estado en request
-  - Validar transición de estado válida (`OrderStatusValidationService`):
-    - No se puede pasar de `shipped` o `delivered` a `cancelled`
-    - No se puede retroceder desde `delivered`
-  - Si se cambia a `cancelled` → **devolver stock obligatoriamente** (no opcional):
-    - Usar `prisma.$transaction()` para actualizar estado + incrementar stock + registrar en StockHistory
-  - Emitir `OrderStatusChangedEvent` post-commit
-  - Retornar pedido actualizado
+  - Implementar filtros: `status`, `userId`, `search`, `dateFrom`, `dateTo`, `minTotal`, `maxTotal`, `paymentMethod`
+  - Implementar paginación y ordenamiento: `newest`, `oldest`, `total-asc`, `total-desc`
+  - Incluir información del usuario (email, nombre) e items con productos
+  - Resumen estadístico via `Promise.all` de 4 queries paralelas: findMany + count + aggregate + groupBy
+- [x] **GET /api/admin/orders/:id**
+- [x] **GET /api/admin/orders/number/:orderNumber**
+- [x] **PUT /api/admin/orders/:id/status**
+  - Valida transición con `OrderStatusValidationService`
+  - Si `cancelled`: `$transaction` atómico (status + stock + StockHistory por item)
+  - ~~Emitir evento post-commit~~ **Descartado** (sin listener, código zombie)
 
 #### 7.3 Lógica de Estados de Pedidos
 
-- [ ] Implementar función de validación de flujo de estados
-  - Estados válidos: pending → confirmed → processing → shipped → delivered
-  - Cancelación permitida solo antes de shipped
-- [ ] Implementar función de devolución de stock (opcional)
-  - Si se cancela un pedido, devolver stock a productos
-  - Registrar en StockHistory con reason "Pedido cancelado"
+- [x] Implementar FSM de transiciones en `OrderStatusValidationService`
+  - `pending → confirmed | cancelled`
+  - `confirmed → processing | cancelled`
+  - `processing → shipped | cancelled`
+  - `shipped → delivered` (no cancelled)
+  - `delivered | cancelled` → terminal
+- [x] Devolución de stock en cancelación dentro de `$transaction` (atómico, obligatorio)
 
 #### 7.4 DTOs Admin - Pedidos
 
-- [ ] Crear `UpdateOrderStatusDto`
-- [ ] Crear `AdminOrderQueryDto` con todos los filtros
-- [ ] Crear `OrderSummaryDto` para resumen estadístico
+- [x] Crear `UpdateOrderStatusDto`
+- [x] Crear `AdminOrderQueryDto` con todos los filtros
+- [x] `OrderSummaryDto` implementado como interfaz `AdminOrderSummary` (no DTO de request)
 
 #### 7.5 Endpoints Admin - Stock
 
-- [ ] **GET /api/admin/stock/history**
-  - Proteger con admin guard
-  - Listar historial de cambios de stock de todos los productos
-  - Implementar filtros:
-    - `productId` (filtrar por producto específico)
-    - `dateFrom`, `dateTo` (rango de fechas)
-  - Implementar paginación
-  - Implementar ordenamiento (newest/oldest)
-  - Retornar historial con metadata
-- [ ] **GET /api/admin/stock/history/:productId**
-  - Proteger con admin guard
-  - Listar historial de cambios de un producto específico
-  - Implementar filtros de fecha
-  - Implementar paginación
-  - Retornar historial con metadata
-- [ ] **PUT /api/admin/stock/threshold** (opcional)
-  - Proteger con admin guard
-  - Configurar umbral global de stock bajo
-  - Validar threshold >= 0
-  - Guardar en variable de entorno o tabla de configuración
-  - Retornar threshold actualizado
+- [x] **GET /api/admin/stock/history** (filtros: productId, dateFrom, dateTo, sort, page, limit)
+- [x] **GET /api/admin/stock/history/:productId** (verifica existencia del producto)
 
 #### 7.6 DTOs Admin - Stock
 
-- [ ] Crear `StockHistoryQueryDto` para filtros
-- [ ] Crear `UpdateStockThresholdDto` (opcional)
+- [x] Crear `StockHistoryQueryDto` para filtros
 
 #### 7.7 Validaciones y Errores Admin
 
-- [ ] Error `INVALID_STATUS_TRANSITION` con detalles de estado actual y solicitado
-- [ ] Error `ORDER_NOT_FOUND`
-- [ ] Error `PRODUCT_NOT_FOUND` para historial de stock
+- [x] Error `INVALID_STATUS_TRANSITION` con `currentStatus`, `requestedStatus`, `allowedTransitions`
+- [x] Error `ORDER_NOT_FOUND`
+- [x] Error `PRODUCT_NOT_FOUND` (agregado a `error-codes.ts`)
 
 ### Hitos de la Fase 7
 
-**Hito 7.1**: Admin puede listar todos los pedidos con filtros
-**Hito 7.2**: Admin puede buscar pedidos por texto
-**Hito 7.3**: Admin puede filtrar pedidos por fecha, estado, total
-**Hito 7.4**: Admin puede ver resumen estadístico (OrderSummaryService)
-**Hito 7.5**: Admin puede ver detalle completo de cualquier pedido
-**Hito 7.6**: Admin puede buscar pedido por número de orden (`GET /api/admin/orders/number/:orderNumber`)
-**Hito 7.7**: Admin puede actualizar estado de un pedido
-**Hito 7.8**: Sistema valida transiciones de estado (OrderStatusValidationService)
-**Hito 7.9**: Cancelación devuelve stock obligatoriamente (dentro de `$transaction`)
-**Hito 7.10**: Admin puede ver historial de stock general
-**Hito 7.11**: Admin puede ver historial de stock de un producto
-**Hito 7.12**: Historial muestra cambios de stock con razón y fechas
-**Hito 7.13**: Solo usuarios admin pueden acceder a estos endpoints
-**Hito 7.14**: AdminOrdersRepository y StockHistoryRepository implementados
-**Hito 7.15**: Domain services admin de pedidos funcionando correctamente
+**Hito 7.1** ✅: Admin puede listar todos los pedidos con filtros
+**Hito 7.2** ✅: Admin puede buscar pedidos por texto
+**Hito 7.3** ✅: Admin puede filtrar pedidos por fecha, estado, total
+**Hito 7.4** ✅: Admin puede ver resumen estadístico (OrderSummaryService)
+**Hito 7.5** ✅: Admin puede ver detalle completo de cualquier pedido
+**Hito 7.6** ✅: Admin puede buscar pedido por número de orden (`GET /api/admin/orders/number/:orderNumber`)
+**Hito 7.7** ✅: Admin puede actualizar estado de un pedido
+**Hito 7.8** ✅: Sistema valida transiciones de estado (OrderStatusValidationService)
+**Hito 7.9** ✅: Cancelación devuelve stock obligatoriamente (dentro de `$transaction`)
+**Hito 7.10** ✅: Admin puede ver historial de stock general
+**Hito 7.11** ✅: Admin puede ver historial de stock de un producto
+**Hito 7.12** ✅: Historial muestra cambios de stock con razón y fechas
+**Hito 7.13** ✅: Solo usuarios admin pueden acceder a estos endpoints
+**Hito 7.14** ✅: AdminOrdersRepository y AdminStockRepository implementados
+**Hito 7.15** ✅: Domain services admin de pedidos funcionando correctamente
 
-**Criterio de Finalización**: Panel admin con Repository pattern, Domain Services y eventos, filtros avanzados funcionando.
+**Criterio de Finalización** ✅: Panel admin con Repository pattern, Domain Services, filtros avanzados y devolución de stock atómica funcionando.
 
 ---
 
@@ -1429,7 +1376,6 @@
   - Comandos de build y producción
   - Acceso a Swagger
   - Estructura del proyecto
-- [ ] Crear CONTRIBUTING.md (opcional)
 - [ ] Crear CHANGELOG.md
 
 ### Hitos de la Fase 8

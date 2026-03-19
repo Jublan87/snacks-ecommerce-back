@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CartItem, Product } from '@prisma/client';
 import { PrismaService } from '../../../database/prisma.service';
 import { ERROR_CODES } from '../../../common/constants/error-codes';

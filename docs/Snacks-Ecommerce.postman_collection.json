@@ -1033,6 +1033,84 @@
       ]
     },
     {
+      "name": "Admin - Upload",
+      "item": [
+        {
+          "name": "Subir imagen",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "Imagen a subir (jpg, jpeg, png, webp, gif — máx 5 MB)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "http://localhost:4000/api/admin/upload",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "upload"
+              ]
+            },
+            "description": "Sube una imagen al servidor y retorna la URL pública.\n\nRequiere autenticación con rol admin.\n\nVariables a configurar:\n- {{token}}: JWT del admin (copiar accessToken del response de Login)\n\nFormato: multipart/form-data con campo 'file'\nTipos permitidos: jpg, jpeg, png, webp, gif\nTamaño máximo: 5 MB\n\nRespuesta: { url: string }\n\nErrores:\n- 400: tipo o tamaño de archivo inválido\n- 401: no autenticado\n- 403: sin permisos de admin"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Dashboard",
+      "item": [
+        {
+          "name": "Estadísticas del dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "http://localhost:4000/api/admin/dashboard/stats",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "4000",
+              "path": [
+                "api",
+                "admin",
+                "dashboard",
+                "stats"
+              ]
+            },
+            "description": "Retorna las estadísticas principales del panel de administración.\n\nRequiere autenticación con rol admin.\n\nVariables a configurar:\n- {{token}}: JWT del admin (copiar accessToken del response de Login)\n\nRespuesta: { totalProducts, monthlyOrders, monthlyRevenue, totalCustomers }\n\nErrores:\n- 401: no autenticado\n- 403: sin permisos de admin"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Health",
       "request": {
         "method": "GET",

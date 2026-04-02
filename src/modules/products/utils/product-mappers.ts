@@ -63,6 +63,7 @@ export function toProductListItem(row: ProductListRow): ProductListItem {
     id: row.id,
     name: row.name,
     slug: row.slug,
+    sku: row.sku,
     shortDescription: row.shortDescription,
     price: row.price.toNumber(),
     discountPrice: toNumber(row.discountPrice),

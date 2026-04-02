@@ -9,6 +9,7 @@ export interface ProductListItem {
   id: string;
   name: string;
   slug: string;
+  sku: string;
   shortDescription: string | null;
   price: number;
   discountPrice: number | null;

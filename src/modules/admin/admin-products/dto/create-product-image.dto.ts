@@ -1,12 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform, Type } from 'class-transformer';
-import { IsBoolean, IsInt, IsString, IsUrl, Min } from 'class-validator';
+import { IsBoolean, IsInt, IsOptional, IsString, IsUrl, Min } from 'class-validator';
 
 export class CreateProductImageDto {
   @ApiProperty({ description: 'URL de la imagen' })
   @IsString({ message: 'La URL de la imagen debe ser un texto' })
   @IsUrl({}, { message: 'La URL de la imagen no es válida' })
   url: string;
+
+  @ApiProperty({
+    required: false,
+    description: 'Clave de almacenamiento del proveedor (retornada por el endpoint de upload)',
+    example: 'snacks-ecommerce/products/abc123',
+  })
+  @IsOptional()
+  @IsString({ message: 'El storageKey debe ser un texto' })
+  storageKey?: string;
 
   @ApiProperty({ description: 'Texto alternativo de la imagen' })
   @IsString({ message: 'El texto alternativo debe ser un texto' })

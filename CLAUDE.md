@@ -101,6 +101,14 @@ Centralized at `src/common/constants/error-codes.ts`. Use these when throwing `B
 Required: `DATABASE_URL`, `JWT_SECRET` (min 32 chars), `COOKIE_SECRET` (min 32 chars)
 Optional: `PORT` (default 4000), `JWT_EXPIRES_IN` (default 7d), `CORS_ORIGIN` (default http://localhost:3000), `FREE_SHIPPING_THRESHOLD`, `SHIPPING_COST`
 
+### Cloudinary (image upload)
+Required when using `CloudinaryImageAdapter` (production):
+- `CLOUDINARY_CLOUD_NAME` — Cloud name from your Cloudinary dashboard
+- `CLOUDINARY_API_KEY` — API key from your Cloudinary dashboard
+- `CLOUDINARY_API_SECRET` — API secret from your Cloudinary dashboard
+
+For local development without Cloudinary credentials, swap `CloudinaryImageAdapter` for `PlaceholderImageAdapter` in `admin-upload.module.ts`.
+
 ## Prisma Schema Key Models
 - **User** — role: `customer | admin`
 - **Category** — self-referencing hierarchy (parentId), `isActive`, `order`

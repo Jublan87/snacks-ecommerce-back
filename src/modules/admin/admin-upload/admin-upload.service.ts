@@ -19,7 +19,7 @@ export class AdminUploadService {
    * Valida y sube un archivo de imagen usando el adaptador configurado.
    * La validación de tipo y tamaño ocurre aquí para que aplique a cualquier adaptador.
    */
-  async uploadImage(file: Express.Multer.File): Promise<{ url: string }> {
+  async uploadImage(file: Express.Multer.File): Promise<{ url: string; storageKey: string }> {
     this.validateFile(file);
     return this.storageAdapter.upload(file);
   }

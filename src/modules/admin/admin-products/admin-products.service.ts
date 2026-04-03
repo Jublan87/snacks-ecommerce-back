@@ -1,7 +1,9 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import type { Prisma } from '@prisma/client';
@@ -9,6 +11,10 @@ import { PrismaService } from '../../../database/prisma.service';
 import { ProductWithRelations } from '../../products/interfaces/product-with-relations.interface';
 import { ERROR_CODES } from '../../../common/constants/error-codes';
 import { SlugService } from '../shared/slug.service';
+import {
+  IMAGE_STORAGE_ADAPTER,
+  ImageStorageAdapter,
+} from '../admin-upload/interfaces/image-storage.interface';
 import { AdminProductsRepository } from './admin-products.repository';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -18,10 +24,14 @@ import { UpdateStockDto } from './dto/update-stock.dto';
 
 @Injectable()
 export class AdminProductsService {
+  private readonly logger = new Logger(AdminProductsService.name);
+
   constructor(
     private readonly repo: AdminProductsRepository,
     private readonly prisma: PrismaService,
     private readonly slugService: SlugService,
+    @Inject(IMAGE_STORAGE_ADAPTER)
+    private readonly storageAdapter: ImageStorageAdapter,
   ) {}
 
   /**
@@ -71,6 +81,7 @@ export class AdminProductsService {
         images: {
           create: dto.images.map((img, index) => ({
             url: img.url,
+            storageKey: img.storageKey ?? null,
             alt: img.alt,
             isPrimary: index === 0,
             order: img.order ?? index,
@@ -183,6 +194,16 @@ export class AdminProductsService {
       });
     }
 
+    // Delete from storage before the DB transaction — if this fails, the DB row is preserved
+    this.logger.log(`deleteImage() → imageId=${imageId}, storageKey=${image.storageKey ?? 'NULL'}`);
+    if (image.storageKey) {
+      this.logger.log(`Calling storageAdapter.delete() for key: ${image.storageKey}`);
+      await this.storageAdapter.delete(image.storageKey);
+      this.logger.log(`storageAdapter.delete() completed for key: ${image.storageKey}`);
+    } else {
+      this.logger.warn(`Skipping storageAdapter.delete() — storageKey is null/undefined for imageId=${imageId}`);
+    }
+
     await this.prisma.$transaction(async (tx) => {
       await tx.productImage.delete({ where: { id: imageId } });
       if (image.isPrimary) {
@@ -276,12 +297,29 @@ export class AdminProductsService {
     productId: string,
     images: UpdateProductImageDto[],
   ): Promise<void> {
+    // Fetch existing images to retrieve their storageKeys before deleting
+    const existing = await tx.productImage.findMany({
+      where: { productId },
+      select: { storageKey: true },
+    });
+
     await tx.productImage.deleteMany({ where: { productId } });
+
+    // Delete from storage after the DB deleteMany — runs outside the transaction boundary
+    // because adapter.delete() is async I/O, not a Prisma operation.
+    // We fire-and-forget failures here to avoid blocking the product update;
+    // keys without a value are skipped silently.
+    const storageDeletes = existing
+      .filter((img) => img.storageKey)
+      .map((img) => this.storageAdapter.delete(img.storageKey!).catch(() => undefined));
+    await Promise.all(storageDeletes);
+
     if (images.length > 0) {
       await tx.productImage.createMany({
         data: images.map((img, index) => ({
           productId,
           url: img.url,
+          storageKey: img.storageKey ?? null,
           alt: img.alt,
           isPrimary: index === 0,
           order: img.order ?? index,

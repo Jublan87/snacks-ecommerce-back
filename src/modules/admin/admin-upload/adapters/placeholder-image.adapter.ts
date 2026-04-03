@@ -8,10 +8,14 @@ import { ImageStorageAdapter } from '../interfaces/image-storage.interface';
  */
 @Injectable()
 export class PlaceholderImageAdapter implements ImageStorageAdapter {
-  async upload(file: Express.Multer.File): Promise<{ url: string }> {
+  async upload(file: Express.Multer.File): Promise<{ url: string; storageKey: string }> {
     const text = this.cleanFilename(file.originalname);
     const url = `https://placehold.co/600x600/EEE/31343C/png?text=${text}`;
-    return { url };
+    return { url, storageKey: '' };
+  }
+
+  async delete(_storageKey: string): Promise<void> {
+    // No-op: placeholder URLs are not stored in any external provider
   }
 
   /**

@@ -14,6 +14,10 @@ import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Restaurar comportamiento de Express 4 para query params anidados/array (Express 5 lo cambió)
+  app.getHttpAdapter().getInstance().set('query parser', 'extended');
+
   const configService = app.get(ConfigService);
 
   // Seguridad: headers HTTP (debe ir antes de cualquier otro middleware)

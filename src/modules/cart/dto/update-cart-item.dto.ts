@@ -6,5 +6,5 @@ export class UpdateCartItemDto {
   @IsNotEmpty({ message: 'La cantidad es requerida' })
   @IsInt({ message: 'La cantidad debe ser un número entero' })
   @Min(1, { message: 'La cantidad debe ser al menos 1' })
-  quantity: number;
+  quantity!: number;
 }

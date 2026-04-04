@@ -5,7 +5,7 @@ import { IsInt, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 export class CreateVariantOptionDto {
   @ApiProperty({ description: 'Valor de la opción (ej: "250g", "Rojo")' })
   @IsString({ message: 'El valor de la opción debe ser un texto' })
-  value: string;
+  value!: string;
 
   @ApiProperty({ required: false, nullable: true, description: 'Modificador de precio (+/-)' })
   @IsOptional()

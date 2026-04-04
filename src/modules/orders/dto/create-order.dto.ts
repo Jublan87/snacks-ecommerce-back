@@ -18,16 +18,16 @@ export class CreateOrderDto {
   @ArrayMinSize(1, { message: 'La orden debe tener al menos un item' })
   @ValidateNested({ each: true })
   @Type(() => CreateOrderItemDto)
-  items: CreateOrderItemDto[];
+  items!: CreateOrderItemDto[];
 
   @ApiProperty({ type: OrderShippingAddressDto })
   @ValidateNested()
   @Type(() => OrderShippingAddressDto)
-  shippingAddress: OrderShippingAddressDto;
+  shippingAddress!: OrderShippingAddressDto;
 
   @ApiProperty({ enum: PaymentMethod, example: PaymentMethod.credit_card })
   @IsEnum(PaymentMethod, { message: 'El método de pago debe ser uno de los valores permitidos' })
-  paymentMethod: PaymentMethod;
+  paymentMethod!: PaymentMethod;
 
   @ApiProperty({ example: 'Sin gluten por favor', required: false })
   @IsOptional()

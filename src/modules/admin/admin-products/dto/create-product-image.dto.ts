@@ -6,7 +6,7 @@ export class CreateProductImageDto {
   @ApiProperty({ description: 'URL de la imagen' })
   @IsString({ message: 'La URL de la imagen debe ser un texto' })
   @IsUrl({}, { message: 'La URL de la imagen no es válida' })
-  url: string;
+  url!: string;
 
   @ApiProperty({
     required: false,
@@ -19,7 +19,7 @@ export class CreateProductImageDto {
 
   @ApiProperty({ description: 'Texto alternativo de la imagen' })
   @IsString({ message: 'El texto alternativo debe ser un texto' })
-  alt: string;
+  alt!: string;
 
   @ApiProperty({ default: false, description: 'Indica si es la imagen principal del producto' })
   @IsBoolean({ message: 'El campo isPrimary debe ser un valor booleano' })

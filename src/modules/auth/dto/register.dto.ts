@@ -9,7 +9,7 @@ const PASSWORD_PATTERN = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
 export class RegisterDto {
   @ApiProperty({ example: 'usuario@ejemplo.com' })
   @IsEmail({}, { message: 'El email no es válido' })
-  email: string;
+  email!: string;
 
   @ApiProperty({
     example: 'MiPassword123',
@@ -21,19 +21,19 @@ export class RegisterDto {
   @Matches(PASSWORD_PATTERN, {
     message: 'La contraseña debe contener al menos una mayúscula, una minúscula y un número',
   })
-  password: string;
+  password!: string;
 
   @ApiProperty({ example: 'Juan' })
   @IsString()
   @MinLength(1, { message: 'El nombre es requerido' })
   @MaxLength(100)
-  firstName: string;
+  firstName!: string;
 
   @ApiProperty({ example: 'Pérez' })
   @IsString()
   @MinLength(1, { message: 'El apellido es requerido' })
   @MaxLength(100)
-  lastName: string;
+  lastName!: string;
 
   @ApiProperty({ example: '+56912345678', required: false })
   @IsOptional()

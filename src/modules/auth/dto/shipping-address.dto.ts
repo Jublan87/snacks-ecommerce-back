@@ -9,25 +9,25 @@ export class ShippingAddressDto {
   @IsString()
   @MinLength(1, { message: 'La dirección es requerida' })
   @MaxLength(500)
-  address: string;
+  address!: string;
 
   @ApiProperty({ example: 'Santiago' })
   @IsString()
   @MinLength(1, { message: 'La ciudad es requerida' })
   @MaxLength(100)
-  city: string;
+  city!: string;
 
   @ApiProperty({ example: 'Región Metropolitana' })
   @IsString()
   @MinLength(1, { message: 'La provincia/región es requerida' })
   @MaxLength(100)
-  province: string;
+  province!: string;
 
   @ApiProperty({ example: '8320000' })
   @IsString()
   @MinLength(1, { message: 'El código postal es requerido' })
   @MaxLength(20)
-  postalCode: string;
+  postalCode!: string;
 
   @ApiProperty({ example: 'Dejar con conserje', required: false })
   @IsOptional()

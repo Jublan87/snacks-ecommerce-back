@@ -5,7 +5,7 @@ export class AddToCartDto {
   @ApiProperty({ description: 'ID del producto a agregar', format: 'uuid' })
   @IsNotEmpty({ message: 'El producto es requerido' })
   @IsUUID('4', { message: 'El ID del producto debe ser un UUID válido' })
-  productId: string;
+  productId!: string;
 
   @ApiPropertyOptional({ description: 'Cantidad a agregar (default: 1)', minimum: 1, default: 1 })
   @IsOptional()

@@ -13,7 +13,7 @@ export class ChangePasswordDto {
   })
   @IsString()
   @MinLength(1, { message: 'La contraseña actual es requerida' })
-  currentPassword: string;
+  currentPassword!: string;
 
   @ApiProperty({
     example: 'NuevaPassword456',
@@ -25,5 +25,5 @@ export class ChangePasswordDto {
   @Matches(PASSWORD_PATTERN, {
     message: 'La nueva contraseña debe contener al menos una mayúscula, una minúscula y un número',
   })
-  newPassword: string;
+  newPassword!: string;
 }

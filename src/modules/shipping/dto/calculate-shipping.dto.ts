@@ -5,7 +5,7 @@ export class CalculateShippingDto {
   @ApiProperty({ example: 5000, description: 'Subtotal del pedido' })
   @IsNumber({}, { message: 'El subtotal debe ser un número' })
   @Min(0, { message: 'El subtotal no puede ser negativo' })
-  subtotal: number;
+  subtotal!: number;
 
   @ApiProperty({
     example: '8320000',

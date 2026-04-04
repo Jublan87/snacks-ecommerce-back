@@ -7,7 +7,7 @@ export class UpdateStockDto {
   @IsInt({ message: 'El stock debe ser un número entero' })
   @Min(0, { message: 'El stock no puede ser negativo' })
   @Type(() => Number)
-  newStock: number;
+  newStock!: number;
 
   @ApiProperty({ required: false, maxLength: 500, description: 'Razón del cambio de stock' })
   @IsOptional()

@@ -6,5 +6,5 @@ export class UpdateOrderStatusDto {
   @ApiProperty({ enum: OrderStatus, description: 'Nuevo estado de la orden' })
   @IsNotEmpty({ message: 'El estado de la orden es requerido' })
   @IsEnum(OrderStatus, { message: 'El estado de la orden no es válido' })
-  status: OrderStatus;
+  status!: OrderStatus;
 }

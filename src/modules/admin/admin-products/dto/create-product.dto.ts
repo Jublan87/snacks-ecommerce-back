@@ -23,12 +23,12 @@ export class CreateProductDto {
   @IsString({ message: 'El nombre del producto debe ser un texto' })
   @MinLength(2, { message: 'El nombre del producto debe tener al menos 2 caracteres' })
   @MaxLength(200, { message: 'El nombre del producto no debe superar los 200 caracteres' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ description: 'Descripción completa del producto' })
   @IsString({ message: 'La descripción debe ser un texto' })
   @MinLength(10, { message: 'La descripción debe tener al menos 10 caracteres' })
-  description: string;
+  description!: string;
 
   @ApiProperty({ required: false, nullable: true, description: 'Descripción corta' })
   @IsOptional()
@@ -39,13 +39,13 @@ export class CreateProductDto {
   @IsString({ message: 'El SKU debe ser un texto' })
   @MinLength(2, { message: 'El SKU debe tener al menos 2 caracteres' })
   @MaxLength(100, { message: 'El SKU no debe superar los 100 caracteres' })
-  sku: string;
+  sku!: string;
 
   @ApiProperty({ minimum: 0, description: 'Precio regular del producto' })
   @IsNumber({}, { message: 'El precio debe ser un número' })
   @Min(0, { message: 'El precio no puede ser negativo' })
   @Type(() => Number)
-  price: number;
+  price!: number;
 
   @ApiProperty({
     required: false,
@@ -69,7 +69,7 @@ export class CreateProductDto {
 
   @ApiProperty({ description: 'UUID de la categoría' })
   @IsUUID('all', { message: 'El ID de categoría debe ser un UUID válido' })
-  categoryId: string;
+  categoryId!: string;
 
   @ApiProperty({ required: false, description: 'Especificaciones técnicas (clave: valor)' })
   @IsOptional()
@@ -116,7 +116,7 @@ export class CreateProductDto {
   @ArrayMinSize(1, { message: 'Debe incluir al menos una imagen' })
   @ValidateNested({ each: true })
   @Type(() => CreateProductImageDto)
-  images: CreateProductImageDto[];
+  images!: CreateProductImageDto[];
 
   @ApiProperty({
     required: false,

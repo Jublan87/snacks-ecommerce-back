@@ -106,6 +106,16 @@ export class AdminProductsService {
       select: { id: true },
     });
 
+    // Producto creado OK → confirmar imágenes (limpiar PendingUpload)
+    const storageKeys =
+      dto.images?.map((img) => img.storageKey).filter((key): key is string => !!key) ?? [];
+
+    if (storageKeys.length > 0) {
+      await this.prisma.pendingUpload.deleteMany({
+        where: { storageKey: { in: storageKeys } },
+      });
+    }
+
     return this.fetchProduct(created.id);
   }
 
@@ -147,9 +157,12 @@ export class AdminProductsService {
     const newDiscountPct = dto.discountPercentage ?? existing.discountPercentage;
     const discountPrice = this.calcDiscountPrice(newPrice, newDiscountPct);
 
-    await this.prisma.$transaction(async (tx) => {
+    // Transacción: reemplaza imágenes/variantes en DB y devuelve los storageKeys viejos.
+    // NO borra de Cloudinary adentro — si la tx falla, no quedan assets borrados sin referencia.
+    const oldStorageKeys = await this.prisma.$transaction(async (tx) => {
+      let keys: string[] = [];
       if (dto.images !== undefined) {
-        await this.replaceImages(tx, id, dto.images);
+        keys = await this.replaceImages(tx, id, dto.images);
       }
       if (dto.variants !== undefined) {
         await this.replaceVariants(tx, id, dto.variants);
@@ -158,7 +171,26 @@ export class AdminProductsService {
         where: { id },
         data: this.buildScalarUpdateData(dto, slug, discountPrice),
       });
+      return keys;
     });
+
+    // Confirmar imágenes nuevas (limpiar PendingUpload)
+    const newStorageKeys =
+      dto.images?.map((img) => img.storageKey).filter((key): key is string => !!key) ?? [];
+
+    // Post-commit: borrar de Cloudinary solo las imágenes que NO se reusan en las nuevas
+    const keysToDelete = oldStorageKeys.filter((key) => !newStorageKeys.includes(key));
+    if (keysToDelete.length > 0) {
+      await Promise.all(
+        keysToDelete.map((key) => this.storageAdapter.delete(key).catch(() => undefined)),
+      );
+    }
+
+    if (newStorageKeys.length > 0) {
+      await this.prisma.pendingUpload.deleteMany({
+        where: { storageKey: { in: newStorageKeys } },
+      });
+    }
 
     return this.fetchProduct(id);
   }
@@ -194,16 +226,7 @@ export class AdminProductsService {
       });
     }
 
-    // Delete from storage before the DB transaction — if this fails, the DB row is preserved
-    this.logger.log(`deleteImage() → imageId=${imageId}, storageKey=${image.storageKey ?? 'NULL'}`);
-    if (image.storageKey) {
-      this.logger.log(`Calling storageAdapter.delete() for key: ${image.storageKey}`);
-      await this.storageAdapter.delete(image.storageKey);
-      this.logger.log(`storageAdapter.delete() completed for key: ${image.storageKey}`);
-    } else {
-      this.logger.warn(`Skipping storageAdapter.delete() — storageKey is null/undefined for imageId=${imageId}`);
-    }
-
+    // DB primero — si falla, Cloudinary no se toca y queda consistente
     await this.prisma.$transaction(async (tx) => {
       await tx.productImage.delete({ where: { id: imageId } });
       if (image.isPrimary) {
@@ -213,6 +236,11 @@ export class AdminProductsService {
         }
       }
     });
+
+    // Post-commit: borrar de Cloudinary (fire-and-forget)
+    if (image.storageKey) {
+      this.storageAdapter.delete(image.storageKey).catch(() => undefined);
+    }
   }
 
   /**
@@ -292,27 +320,19 @@ export class AdminProductsService {
     };
   }
 
+  // Solo opera en DB (dentro de transacción). Devuelve los storageKeys viejos
+  // para que el caller los borre de Cloudinary DESPUÉS del commit.
   private async replaceImages(
     tx: Prisma.TransactionClient,
     productId: string,
     images: UpdateProductImageDto[],
-  ): Promise<void> {
-    // Fetch existing images to retrieve their storageKeys before deleting
+  ): Promise<string[]> {
     const existing = await tx.productImage.findMany({
       where: { productId },
       select: { storageKey: true },
     });
 
     await tx.productImage.deleteMany({ where: { productId } });
-
-    // Delete from storage after the DB deleteMany — runs outside the transaction boundary
-    // because adapter.delete() is async I/O, not a Prisma operation.
-    // We fire-and-forget failures here to avoid blocking the product update;
-    // keys without a value are skipped silently.
-    const storageDeletes = existing
-      .filter((img) => img.storageKey)
-      .map((img) => this.storageAdapter.delete(img.storageKey!).catch(() => undefined));
-    await Promise.all(storageDeletes);
 
     if (images.length > 0) {
       await tx.productImage.createMany({
@@ -326,6 +346,8 @@ export class AdminProductsService {
         })),
       });
     }
+
+    return existing.filter((img) => img.storageKey).map((img) => img.storageKey!);
   }
 
   private async replaceVariants(

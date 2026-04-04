@@ -58,9 +58,15 @@ export class AdminOrderQueryDto {
   @IsEnum(PaymentMethod, { message: 'El método de pago no es válido' })
   paymentMethod?: PaymentMethod;
 
-  @ApiProperty({ enum: ['newest', 'oldest', 'total-asc', 'total-desc'], required: false, default: 'newest' })
+  @ApiProperty({
+    enum: ['newest', 'oldest', 'total-asc', 'total-desc'],
+    required: false,
+    default: 'newest',
+  })
   @IsOptional()
-  @IsIn(['newest', 'oldest', 'total-asc', 'total-desc'], { message: 'El criterio de ordenamiento debe ser: newest, oldest, total-asc o total-desc' })
+  @IsIn(['newest', 'oldest', 'total-asc', 'total-desc'], {
+    message: 'El criterio de ordenamiento debe ser: newest, oldest, total-asc o total-desc',
+  })
   sort?: 'newest' | 'oldest' | 'total-asc' | 'total-desc' = 'newest';
 
   @ApiProperty({ example: 1, required: false, default: 1 })

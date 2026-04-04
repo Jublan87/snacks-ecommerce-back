@@ -22,6 +22,7 @@ export function toProductImage(image: {
   alt: string;
   isPrimary: boolean;
   order: number;
+  storageKey?: string | null;
 }): ProductImageItem {
   return {
     id: image.id,
@@ -29,6 +30,7 @@ export function toProductImage(image: {
     alt: image.alt,
     isPrimary: image.isPrimary,
     order: image.order,
+    storageKey: image.storageKey ?? null,
   };
 }
 

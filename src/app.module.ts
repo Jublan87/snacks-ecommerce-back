@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { TerminusModule } from '@nestjs/terminus';
 import { AppController } from './app.controller';
@@ -40,6 +41,7 @@ import { AdminDashboardModule } from './modules/admin/admin-dashboard/admin-dash
       wildcard: true,
       delimiter: '.',
     }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot(THROTTLE_MODULE_LIMITS),
     TerminusModule,
     LoggerModule,

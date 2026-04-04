@@ -19,7 +19,11 @@ export class AdminDashboardController {
 
   @Get('stats')
   @ApiOperation({ summary: 'Obtener estadísticas del dashboard' })
-  @ApiResponse({ status: 200, description: 'Estadísticas retornadas exitosamente', type: DashboardStatsDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Estadísticas retornadas exitosamente',
+    type: DashboardStatsDto,
+  })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos de admin' })
   getStats(): Promise<DashboardStatsDto> {

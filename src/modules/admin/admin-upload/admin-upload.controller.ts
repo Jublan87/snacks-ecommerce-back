@@ -23,6 +23,7 @@ import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../auth/guards/roles.guard';
 import { AdminUploadService } from './admin-upload.service';
 import { UploadResponseDto } from './dto/upload-response.dto';
+import { PendingUploadCleanupService } from './pending-upload-cleanup.service';
 
 @ApiTags('admin-upload')
 @ApiBearerAuth()
@@ -31,7 +32,10 @@ import { UploadResponseDto } from './dto/upload-response.dto';
 @Throttle({ admin: THROTTLE_OPTIONS.admin })
 @Controller('admin/upload')
 export class AdminUploadController {
-  constructor(private readonly adminUploadService: AdminUploadService) {}
+  constructor(
+    private readonly adminUploadService: AdminUploadService,
+    private readonly cleanupService: PendingUploadCleanupService,
+  ) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
@@ -57,5 +61,15 @@ export class AdminUploadController {
   @ApiResponse({ status: 403, description: 'Sin permisos de admin' })
   upload(@UploadedFile() file: Express.Multer.File): Promise<UploadResponseDto> {
     return this.adminUploadService.uploadImage(file);
+  }
+
+  @Post('cleanup')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Eliminar uploads huérfanos (más de 60 min sin confirmar)' })
+  @ApiResponse({ status: 200, description: 'Limpieza completada' })
+  @ApiResponse({ status: 401, description: 'No autenticado' })
+  @ApiResponse({ status: 403, description: 'Sin permisos de admin' })
+  cleanupPending(): Promise<{ deleted: number; failed: number }> {
+    return this.cleanupService.cleanup();
   }
 }

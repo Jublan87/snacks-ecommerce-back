@@ -8,7 +8,8 @@ export class UploadResponseDto {
   url: string;
 
   @ApiProperty({
-    description: 'Clave de almacenamiento del proveedor (public_id en Cloudinary, vacío para placeholder)',
+    description:
+      'Clave de almacenamiento del proveedor (public_id en Cloudinary, vacío para placeholder)',
     example: 'snacks-ecommerce/products/abc123',
   })
   storageKey: string;

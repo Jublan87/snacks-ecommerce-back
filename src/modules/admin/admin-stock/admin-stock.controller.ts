@@ -29,7 +29,10 @@ export class AdminStockController {
   @Get('history/:productId')
   @ApiOperation({ summary: 'Obtener historial de stock de un producto' })
   @ApiParam({ name: 'productId', description: 'ID del producto', format: 'uuid' })
-  @ApiResponse({ status: 200, description: 'Historial de stock del producto obtenido exitosamente' })
+  @ApiResponse({
+    status: 200,
+    description: 'Historial de stock del producto obtenido exitosamente',
+  })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos de admin' })
   @ApiResponse({ status: 404, description: 'Producto no encontrado' })

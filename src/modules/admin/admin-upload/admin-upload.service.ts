@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ERROR_CODES } from '../../../common/constants/error-codes';
+import { PrismaService } from '../../../database/prisma.service';
 import { IMAGE_STORAGE_ADAPTER, ImageStorageAdapter } from './interfaces/image-storage.interface';
 
 /** Tipos MIME permitidos para subida de imágenes */
@@ -13,6 +14,7 @@ export class AdminUploadService {
   constructor(
     @Inject(IMAGE_STORAGE_ADAPTER)
     private readonly storageAdapter: ImageStorageAdapter,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -21,7 +23,16 @@ export class AdminUploadService {
    */
   async uploadImage(file: Express.Multer.File): Promise<{ url: string; storageKey: string }> {
     this.validateFile(file);
-    return this.storageAdapter.upload(file);
+    const result = await this.storageAdapter.upload(file);
+
+    await this.prisma.pendingUpload.create({
+      data: {
+        storageKey: result.storageKey,
+        url: result.url,
+      },
+    });
+
+    return result;
   }
 
   // ─── Validaciones ─────────────────────────────────────────────────────────────

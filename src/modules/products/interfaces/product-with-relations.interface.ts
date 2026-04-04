@@ -7,6 +7,7 @@ export interface ProductImageItem {
   alt: string;
   isPrimary: boolean;
   order: number;
+  storageKey: string | null;
 }
 
 /**

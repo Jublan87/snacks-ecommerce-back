@@ -37,7 +37,8 @@ export class AdminDashboardService {
 
     // El agregado devuelve Decimal | null — lo convertimos a number (0 si es null)
     const rawRevenue = revenueResult._sum.total;
-    const monthlyRevenue = rawRevenue !== null ? (rawRevenue as { toNumber(): number }).toNumber() : 0;
+    const monthlyRevenue =
+      rawRevenue !== null ? (rawRevenue as { toNumber(): number }).toNumber() : 0;
 
     return { totalProducts, monthlyOrders, monthlyRevenue, totalCustomers };
   }

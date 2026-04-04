@@ -21,4 +21,19 @@ export const validationSchema = Joi.object({
 
   // CORS
   CORS_ORIGIN: Joi.string().default('http://localhost:3000'),
+
+  // Cloudinary
+  CLOUDINARY_CLOUD_NAME: Joi.string().required(),
+  CLOUDINARY_API_KEY: Joi.string().required(),
+  CLOUDINARY_API_SECRET: Joi.string().required(),
+
+  // Rate limiting — TTL en segundos, limit en cantidad de requests por TTL
+  THROTTLE_DEFAULT_TTL: Joi.number().integer().positive().default(60),
+  THROTTLE_DEFAULT_LIMIT: Joi.number().integer().positive().default(1000),
+  THROTTLE_LOGIN_TTL: Joi.number().integer().positive().default(60),
+  THROTTLE_LOGIN_LIMIT: Joi.number().integer().positive().default(50),
+  THROTTLE_REGISTER_TTL: Joi.number().integer().positive().default(60),
+  THROTTLE_REGISTER_LIMIT: Joi.number().integer().positive().default(30),
+  THROTTLE_ADMIN_TTL: Joi.number().integer().positive().default(60),
+  THROTTLE_ADMIN_LIMIT: Joi.number().integer().positive().default(500),
 });

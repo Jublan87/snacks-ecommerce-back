@@ -56,7 +56,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
     if (statusCode >= 500) {
       this.logger.error(
         `${request.method} ${request.url} ${statusCode} - ${message}`,
-        exception instanceof Error ? exception.stack : String(exception),
+        exception instanceof Error
+          ? (exception.stack ?? exception.message)
+          : JSON.stringify(exception),
       );
     }
 
@@ -71,39 +73,50 @@ export class AllExceptionsFilter implements ExceptionFilter {
   } {
     if (exception instanceof HttpException) {
       const status = exception.getStatus();
-      const exceptionResponse = exception.getResponse();
-      const code = this.httpStatusToErrorCode(status);
-      let message: string;
-      let details: unknown;
-
-      if (typeof exceptionResponse === 'object' && exceptionResponse !== null) {
-        const body = exceptionResponse as Record<string, unknown>;
-        message = (body.message as string) ?? exception.message;
-        if (Array.isArray(body.message)) {
-          message = body.message.join('; ');
-          details = body.message;
-        } else if (body.message && typeof body.message === 'string') {
-          message = body.message;
-        }
-        if (body.details !== undefined) details = body.details;
-        if (body.error !== undefined && details === undefined) details = body.error;
-      } else {
-        message = typeof exceptionResponse === 'string' ? exceptionResponse : exception.message;
-      }
-
-      return { statusCode: status, code, message, details };
+      const { message, details } = this.parseExceptionResponse(exception);
+      return { statusCode: status, code: this.httpStatusToErrorCode(status), message, details };
     }
 
     // Errores no HTTP (errores de servidor)
-    const statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
-    const code = ERROR_CODES.INTERNAL_ERROR;
+    const devMessage =
+      exception instanceof Error ? exception.message : 'Error interno del servidor';
     const message = this.isProduction
       ? 'Ha ocurrido un error interno. Por favor, intente más tarde.'
-      : exception instanceof Error
-        ? exception.message
-        : 'Error interno del servidor';
+      : devMessage;
 
-    return { statusCode, code, message };
+    return {
+      statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+      code: ERROR_CODES.INTERNAL_ERROR,
+      message,
+    };
+  }
+
+  private parseExceptionResponse(exception: HttpException): { message: string; details?: unknown } {
+    const exceptionResponse = exception.getResponse();
+
+    if (typeof exceptionResponse !== 'object' || exceptionResponse === null) {
+      const message = typeof exceptionResponse === 'string' ? exceptionResponse : exception.message;
+      return { message };
+    }
+
+    const body = exceptionResponse as Record<string, unknown>;
+    const { message, details: msgDetails } = this.parseBodyMessage(exception, body);
+    const details = body.details ?? msgDetails ?? body.error;
+
+    return { message, details };
+  }
+
+  private parseBodyMessage(
+    exception: HttpException,
+    body: Record<string, unknown>,
+  ): { message: string; details?: unknown } {
+    if (Array.isArray(body.message)) {
+      return { message: (body.message as string[]).join('; '), details: body.message };
+    }
+    if (typeof body.message === 'string') {
+      return { message: body.message };
+    }
+    return { message: exception.message };
   }
 
   private httpStatusToErrorCode(status: number): ErrorCode {

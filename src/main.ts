@@ -1,8 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as compression from 'compression';
-import * as cookieParser from 'cookie-parser';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import helmet from 'helmet';
+import compression from 'compression';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
@@ -13,6 +15,9 @@ import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
+
+  // Seguridad: headers HTTP (debe ir antes de cualquier otro middleware)
+  app.use(helmet());
 
   // Configurar CORS
   const corsOrigin = configService.get<string>('cors.origin');
@@ -56,11 +61,33 @@ async function bootstrap() {
   const isProduction = configService.get<string>('app.nodeEnv') === 'production';
   app.useGlobalFilters(new AllExceptionsFilter(isProduction), new PrismaExceptionFilter());
 
+  // Swagger (ruta por defecto recomendada por NestJS: 'api')
+  const config = new DocumentBuilder()
+    .setTitle('Snacks E-commerce API')
+    .setDescription(
+      'API REST para el backend del e-commerce de snacks. Autenticación por JWT (cookie o Bearer).',
+    )
+    .setVersion('1.0')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'header',
+        name: 'Authorization',
+      },
+      'JWT',
+    )
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/swagger', app, document);
+
   const port = configService.get<number>('app.port') || 4000;
   const nodeEnv = configService.get<string>('app.nodeEnv');
 
   await app.listen(port);
   console.log(`🚀 Aplicación corriendo en: http://localhost:${port}/api`);
+  console.log(`📚 Swagger UI: http://localhost:${port}/api/swagger`);
   console.log(`📦 Entorno: ${nodeEnv}`);
   console.log(`🌐 CORS habilitado para: ${corsOrigin}`);
 }

@@ -92,6 +92,6 @@ export class PrismaExceptionFilter implements ExceptionFilter {
     if (!exception.meta || typeof exception.meta !== 'object') {
       return undefined;
     }
-    return exception.meta as Record<string, unknown>;
+    return exception.meta;
   }
 }

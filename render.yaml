@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: snacks-ecommerce-back
+    runtime: node
+    region: virginia
+    plan: free
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: COOKIE_SECRET
+        sync: false
+      - key: CORS_ORIGIN
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: FREE_SHIPPING_THRESHOLD
+        value: "10000"
+      - key: SHIPPING_COST
+        value: "1500"

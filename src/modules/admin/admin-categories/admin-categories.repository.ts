@@ -55,7 +55,7 @@ export class AdminCategoriesRepository extends BaseRepository<
 
       visited.add(currentId);
 
-      const row = await this.prisma.category.findUnique({
+      const row: { parentId: string | null } | null = await this.prisma.category.findUnique({
         where: { id: currentId },
         select: { parentId: true },
       });

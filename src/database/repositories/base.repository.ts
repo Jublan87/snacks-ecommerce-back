@@ -3,6 +3,17 @@ import { PrismaService } from '../prisma.service';
 import { IBaseRepository } from './interfaces/base-repository.interface';
 import { ERROR_CODES } from '../../common/constants/error-codes';
 
+/** Minimal shape shared by every Prisma model delegate used in BaseRepository. */
+interface PrismaModelDelegate {
+  findUnique(args: unknown): Promise<unknown>;
+  findMany(args?: unknown): Promise<unknown[]>;
+  findFirst(args?: unknown): Promise<unknown>;
+  create(args: unknown): Promise<unknown>;
+  update(args: unknown): Promise<unknown>;
+  delete(args: unknown): Promise<unknown>;
+  count(args?: unknown): Promise<number>;
+}
+
 /**
  * Clase abstracta base para repositorios que implementa operaciones CRUD comunes.
  *
@@ -46,35 +57,40 @@ export abstract class BaseRepository<
     protected readonly modelName: string,
   ) {}
 
+  /** Returns the Prisma delegate for `modelName` with a single, contained type cast. */
+  private get delegate(): PrismaModelDelegate {
+    return (this.prisma as unknown as Record<string, PrismaModelDelegate>)[this.modelName];
+  }
+
   /**
    * Busca un registro por su ID.
    * Los errores de Prisma se propagan y son manejados por PrismaExceptionFilter.
    */
   async findById(id: string, select?: Select): Promise<T | null> {
-    return (this.prisma[this.modelName] as any).findUnique({
+    return this.delegate.findUnique({
       where: { id },
       ...(select && { select }),
-    });
+    }) as Promise<T | null>;
   }
 
   /**
    * Busca todos los registros que cumplan con los criterios.
    */
   async findAll(where?: WhereInput, select?: Select): Promise<T[]> {
-    return (this.prisma[this.modelName] as any).findMany({
+    return this.delegate.findMany({
       ...(where && { where }),
       ...(select && { select }),
-    });
+    }) as Promise<T[]>;
   }
 
   /**
    * Busca un único registro que cumpla con los criterios.
    */
   async findOne(where: WhereInput, select?: Select): Promise<T | null> {
-    return (this.prisma[this.modelName] as any).findFirst({
+    return this.delegate.findFirst({
       where,
       ...(select && { select }),
-    });
+    }) as Promise<T | null>;
   }
 
   /**
@@ -82,10 +98,10 @@ export abstract class BaseRepository<
    * Errores de Prisma (ej. P2002 unique constraint) son manejados por PrismaExceptionFilter.
    */
   async create(data: CreateInput, select?: Select): Promise<T> {
-    return (this.prisma[this.modelName] as any).create({
+    return this.delegate.create({
       data,
       ...(select && { select }),
-    });
+    }) as Promise<T>;
   }
 
   /**
@@ -101,11 +117,11 @@ export abstract class BaseRepository<
         message: `${this.modelName} con id ${id} no encontrado`,
       });
     }
-    return (this.prisma[this.modelName] as any).update({
+    return this.delegate.update({
       where: { id },
       data,
       ...(select && { select }),
-    });
+    }) as Promise<T>;
   }
 
   /**
@@ -120,16 +136,16 @@ export abstract class BaseRepository<
         message: `${this.modelName} con id ${id} no encontrado`,
       });
     }
-    return (this.prisma[this.modelName] as any).delete({
+    return this.delegate.delete({
       where: { id },
-    });
+    }) as Promise<T>;
   }
 
   /**
    * Cuenta el número de registros que cumplen con los criterios.
    */
   async count(where?: WhereInput): Promise<number> {
-    return (this.prisma[this.modelName] as any).count({
+    return this.delegate.count({
       ...(where && { where }),
     });
   }
@@ -138,7 +154,7 @@ export abstract class BaseRepository<
    * Verifica si existe un registro con el ID dado.
    */
   async exists(id: string): Promise<boolean> {
-    const count = await (this.prisma[this.modelName] as any).count({
+    const count = await this.delegate.count({
       where: { id },
     });
     return count > 0;

@@ -182,7 +182,9 @@ export class AdminProductsService {
     const keysToDelete = oldStorageKeys.filter((key) => !newStorageKeys.includes(key));
     if (keysToDelete.length > 0) {
       await Promise.all(
-        keysToDelete.map((key) => this.storageAdapter.delete(key).catch(() => undefined)),
+        keysToDelete.map((key) =>
+          this.storageAdapter.delete(key).catch((): undefined => undefined),
+        ),
       );
     }
 
@@ -239,7 +241,7 @@ export class AdminProductsService {
 
     // Post-commit: borrar de Cloudinary (fire-and-forget)
     if (image.storageKey) {
-      this.storageAdapter.delete(image.storageKey).catch(() => undefined);
+      this.storageAdapter.delete(image.storageKey).catch((): undefined => undefined);
     }
   }
 

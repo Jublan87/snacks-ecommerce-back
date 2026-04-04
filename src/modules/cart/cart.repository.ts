@@ -113,7 +113,7 @@ export class CartRepository extends BaseRepository<
       order: img.order,
     }));
 
-    const price = this.toNumber(product.price);
+    const price = this.toNumber(product.price) ?? 0;
     const discountPrice = this.toNumber(product.discountPrice);
 
     return {

@@ -1,6 +1,6 @@
 export default () => ({
   app: {
-    port: parseInt(process.env.PORT, 10) || 4000,
+    port: parseInt(process.env.PORT ?? '', 10) || 4000,
     nodeEnv: process.env.NODE_ENV || 'development',
   },
   database: {
@@ -14,8 +14,8 @@ export default () => ({
     secret: process.env.COOKIE_SECRET,
   },
   shipping: {
-    freeShippingThreshold: parseInt(process.env.FREE_SHIPPING_THRESHOLD, 10) || 10000,
-    shippingCost: parseInt(process.env.SHIPPING_COST, 10) || 1500,
+    freeShippingThreshold: parseInt(process.env.FREE_SHIPPING_THRESHOLD ?? '', 10) || 10000,
+    shippingCost: parseInt(process.env.SHIPPING_COST ?? '', 10) || 1500,
   },
   cors: {
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',

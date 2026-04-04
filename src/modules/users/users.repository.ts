@@ -55,7 +55,7 @@ export class UsersRepository extends BaseRepository<
   /**
    * Crea un usuario a partir de datos de dominio y retorna el registro sin password.
    */
-  async createAndReturnWithoutPassword(data: CreateUserInput): Promise<UserWithoutPassword | null> {
+  async createAndReturnWithoutPassword(data: CreateUserInput): Promise<UserWithoutPassword> {
     const prismaData: Prisma.UserCreateInput = {
       email: data.email,
       password: data.password,
@@ -68,7 +68,7 @@ export class UsersRepository extends BaseRepository<
       data: prismaData,
       select: USER_SELECT_NO_PASSWORD,
     });
-    return this.toUserWithoutPassword(user);
+    return user as UserWithoutPassword;
   }
 
   /**
@@ -77,7 +77,7 @@ export class UsersRepository extends BaseRepository<
   async updateAndReturnWithoutPassword(
     id: string,
     data: UpdateUserInput,
-  ): Promise<UserWithoutPassword | null> {
+  ): Promise<UserWithoutPassword> {
     const prismaData: Prisma.UserUpdateInput = {};
     if (data.firstName !== undefined) prismaData.firstName = data.firstName;
     if (data.lastName !== undefined) prismaData.lastName = data.lastName;
@@ -91,7 +91,7 @@ export class UsersRepository extends BaseRepository<
       data: prismaData,
       select: USER_SELECT_NO_PASSWORD,
     });
-    return this.toUserWithoutPassword(user);
+    return user as UserWithoutPassword;
   }
 
   /**

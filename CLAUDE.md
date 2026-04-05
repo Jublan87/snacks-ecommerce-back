@@ -109,6 +109,18 @@ Required when using `CloudinaryImageAdapter` (production):
 
 For local development without Cloudinary credentials, swap `CloudinaryImageAdapter` for `PlaceholderImageAdapter` in `admin-upload.module.ts`.
 
+## Postman Collection
+
+File: `docs/Snacks-Ecommerce.postman_collection.json`
+
+**MANDATORY**: When creating, modifying, or deleting an endpoint (controller route), you MUST update the Postman collection accordingly:
+- Each module folder has two subfolders: **Local** (`http://localhost:4000`) and **Render** (`https://ecommerce-snacks-back.onrender.com`)
+- New endpoints must be added to BOTH Local and Render subfolders
+- Deleted endpoints must be removed from BOTH subfolders
+- Modified paths must be updated in BOTH subfolders
+- Include proper method, headers (Bearer auth if protected), body (if POST/PUT), and description
+- Keep the collection JSON valid (Postman v2.1.0 schema)
+
 ## Prisma Schema Key Models
 - **User** — role: `customer | admin`
 - **Category** — self-referencing hierarchy (parentId), `isActive`, `order`

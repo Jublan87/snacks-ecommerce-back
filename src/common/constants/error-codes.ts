@@ -85,6 +85,10 @@ export const ERROR_CODES = {
 
   /** El parentId generaría un ciclo en la jerarquía */
   INVALID_PARENT_CATEGORY: 'INVALID_PARENT_CATEGORY',
+
+  // Admin - Usuarios
+  /** Intento de cambiar el propio rol */
+  CANNOT_CHANGE_OWN_ROLE: 'CANNOT_CHANGE_OWN_ROLE',
 } as const;
 
 export type ErrorCode = (typeof ERROR_CODES)[keyof typeof ERROR_CODES];

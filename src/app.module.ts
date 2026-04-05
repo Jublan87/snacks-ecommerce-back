@@ -24,6 +24,7 @@ import { AdminOrdersModule } from './modules/admin/admin-orders/admin-orders.mod
 import { AdminStockModule } from './modules/admin/admin-stock/admin-stock.module';
 import { AdminUploadModule } from './modules/admin/admin-upload/admin-upload.module';
 import { AdminDashboardModule } from './modules/admin/admin-dashboard/admin-dashboard.module';
+import { AdminUsersModule } from './modules/admin/admin-users/admin-users.module';
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { AdminDashboardModule } from './modules/admin/admin-dashboard/admin-dash
     AdminStockModule,
     AdminUploadModule,
     AdminDashboardModule,
+    AdminUsersModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

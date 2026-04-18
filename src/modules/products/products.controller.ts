@@ -1,7 +1,8 @@
-import { Controller, Get, Param, ParseUUIDPipe, Query, Req } from '@nestjs/common';
+import { Controller, Get, Param, ParseUUIDPipe, Query, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { Public } from '../../common/decorators/public.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { UserWithoutPassword } from '../users/interfaces/user-without-password.interface';
 import { ProductsService } from './products.service';
 import { ProductSearchService } from './services/product-search.service';
@@ -9,6 +10,7 @@ import { ProductQueryDto } from './dto/product-query.dto';
 
 @ApiTags('products')
 @Public()
+@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductsController {
   constructor(
@@ -29,20 +31,23 @@ export class ProductsController {
     const isAdmin = user?.role === 'admin';
     const categoryIds = this.productSearchService.parseCategoryParam(query.category);
 
-    return this.productsService.findAll({
-      search: query.search,
-      categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
-      minPrice: query.minPrice,
-      maxPrice: query.maxPrice,
-      inStock: query.inStock,
-      isFeatured: query.isFeatured,
-      hasDiscount: query.hasDiscount,
-      // isActive solo es efectivo para admins; público siempre ve solo activos
-      isActive: isAdmin && query.isActive !== undefined ? query.isActive : undefined,
-      sortBy: query.sortBy,
-      page: query.page,
-      limit: query.limit,
-    });
+    return this.productsService.findAll(
+      {
+        search: query.search,
+        categoryIds: categoryIds.length > 0 ? categoryIds : undefined,
+        minPrice: query.minPrice,
+        maxPrice: query.maxPrice,
+        inStock: query.inStock,
+        isFeatured: query.isFeatured,
+        hasDiscount: query.hasDiscount,
+        // isActive solo es efectivo para admins; público siempre ve solo activos
+        isActive: isAdmin && query.isActive !== undefined ? query.isActive : undefined,
+        sortBy: query.sortBy,
+        page: query.page,
+        limit: query.limit,
+      },
+      isAdmin,
+    );
   }
 
   // IMPORTANTE: este método debe estar ANTES de /:id para que NestJS lo resuelva primero

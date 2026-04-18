@@ -41,11 +41,17 @@ export class CreateProductDto {
   @MaxLength(100, { message: 'El SKU no debe superar los 100 caracteres' })
   sku!: string;
 
-  @ApiProperty({ minimum: 0, description: 'Precio regular del producto' })
-  @IsNumber({}, { message: 'El precio debe ser un número' })
-  @Min(0, { message: 'El precio no puede ser negativo' })
+  @ApiProperty({ minimum: 0, description: 'Precio de venta del producto' })
+  @IsNumber({}, { message: 'El precio de venta debe ser un número' })
+  @Min(0, { message: 'El precio de venta no puede ser negativo' })
   @Type(() => Number)
-  price!: number;
+  salePrice!: number;
+
+  @ApiProperty({ minimum: 0, description: 'Precio de costo del producto (solo admin)' })
+  @IsNumber({}, { message: 'El precio de costo debe ser un número' })
+  @Min(0, { message: 'El precio de costo no puede ser negativo' })
+  @Type(() => Number)
+  costPrice!: number;
 
   @ApiProperty({
     required: false,

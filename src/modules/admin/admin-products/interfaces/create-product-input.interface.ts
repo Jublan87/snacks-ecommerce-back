@@ -23,7 +23,8 @@ export interface CreateProductInput {
   description: string;
   shortDescription?: string | null;
   sku: string;
-  price: number;
+  salePrice: number;
+  costPrice: number;
   discountPercentage?: number | null;
   stock: number;
   categoryId: string;

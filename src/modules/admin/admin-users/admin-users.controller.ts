@@ -10,13 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { THROTTLE_OPTIONS } from '../../../common/constants/throttler.constants';
 import { CurrentUser } from '../../../common/decorators/current-user.decorator';
@@ -43,7 +37,12 @@ export class AdminUsersController {
   @ApiQuery({ name: 'page', required: false, type: Number, example: 1 })
   @ApiQuery({ name: 'limit', required: false, type: Number, example: 10 })
   @ApiQuery({ name: 'role', required: false, enum: ['customer', 'admin'] })
-  @ApiQuery({ name: 'search', required: false, type: String, description: 'Buscar por email, nombre o apellido' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    type: String,
+    description: 'Buscar por email, nombre o apellido',
+  })
   @ApiResponse({ status: 200, description: 'Lista paginada de usuarios' })
   @ApiResponse({ status: 401, description: 'No autenticado' })
   @ApiResponse({ status: 403, description: 'Sin permisos de admin' })

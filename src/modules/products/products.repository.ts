@@ -27,6 +27,7 @@ export class ProductsRepository extends BaseRepository<
     orderBy: Prisma.ProductOrderByWithRelationInput[],
     page: number,
     limit: number,
+    isAdmin = false,
   ): Promise<{ items: ProductListItem[]; total: number }> {
     const skip = (page - 1) * limit;
 
@@ -42,7 +43,7 @@ export class ProductsRepository extends BaseRepository<
     ]);
 
     return {
-      items: rows.map(toProductListItem),
+      items: rows.map((row) => toProductListItem(row, { excludeCostPrice: !isAdmin })),
       total,
     };
   }
@@ -50,27 +51,27 @@ export class ProductsRepository extends BaseRepository<
   /**
    * Producto completo por ID con todas las relaciones.
    */
-  async findByIdWithRelations(id: string): Promise<ProductWithRelations | null> {
+  async findByIdWithRelations(id: string, isAdmin = false): Promise<ProductWithRelations | null> {
     const row = await this.prisma.product.findUnique({
       where: { id },
       include: PRODUCT_DETAIL_INCLUDE,
     });
 
     if (!row) return null;
-    return toProductWithRelations(row);
+    return toProductWithRelations(row, { excludeCostPrice: !isAdmin });
   }
 
   /**
    * Producto completo por slug con todas las relaciones.
    */
-  async findBySlug(slug: string): Promise<ProductWithRelations | null> {
+  async findBySlug(slug: string, isAdmin = false): Promise<ProductWithRelations | null> {
     const row = await this.prisma.product.findUnique({
       where: { slug },
       include: PRODUCT_DETAIL_INCLUDE,
     });
 
     if (!row) return null;
-    return toProductWithRelations(row);
+    return toProductWithRelations(row, { excludeCostPrice: !isAdmin });
   }
 
   /**
@@ -84,7 +85,7 @@ export class ProductsRepository extends BaseRepository<
       take: limit,
     });
 
-    return rows.map(toProductListItem);
+    return rows.map((row) => toProductListItem(row, { excludeCostPrice: true }));
   }
 
   /**
@@ -97,6 +98,6 @@ export class ProductsRepository extends BaseRepository<
       orderBy: { createdAt: 'desc' },
     });
 
-    return rows.map(toProductListItem);
+    return rows.map((row) => toProductListItem(row, { excludeCostPrice: true }));
   }
 }

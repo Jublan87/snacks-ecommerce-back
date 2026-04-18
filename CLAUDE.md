@@ -124,7 +124,7 @@ File: `docs/Snacks-Ecommerce.postman_collection.json`
 ## Prisma Schema Key Models
 - **User** — role: `customer | admin`
 - **Category** — self-referencing hierarchy (parentId), `isActive`, `order`
-- **Product** — `price`/`discountPrice` as `Decimal`, `isActive`, `isFeatured`, `stock`
+- **Product** — `salePrice`/`costPrice`/`discountPrice` as `Decimal`, `isActive`, `isFeatured`, `stock`
 - **ProductImage** — `isPrimary` flag, ordered by `order`
 - **ProductVariant** + **VariantOption** — variants with `priceModifier` as `Decimal`
 - **Cart** + **CartItem** — unique constraint on `(cartId, productId)`

@@ -20,7 +20,7 @@ export class ProductsService {
   /**
    * Listado paginado de productos con filtros y ordenamiento.
    */
-  async findAll(filters: ProductFilters): Promise<PaginatedProducts> {
+  async findAll(filters: ProductFilters, isAdmin = false): Promise<PaginatedProducts> {
     const page = filters.page ?? 1;
     const limit = filters.limit ?? 12;
 
@@ -32,6 +32,7 @@ export class ProductsService {
       orderBy,
       page,
       limit,
+      isAdmin,
     );
 
     const meta = calculatePaginationMeta(total, page, limit);
@@ -43,7 +44,7 @@ export class ProductsService {
    * Lanza NotFoundException si no existe o está inactivo (a menos que sea admin).
    */
   async findById(id: string, isAdmin = false): Promise<ProductWithRelations> {
-    const product = await this.productsRepository.findByIdWithRelations(id);
+    const product = await this.productsRepository.findByIdWithRelations(id, isAdmin);
     if (!product || (!product.isActive && !isAdmin)) {
       throw new NotFoundException({
         code: ERROR_CODES.NOT_FOUND,
@@ -58,7 +59,7 @@ export class ProductsService {
    * Lanza NotFoundException si no existe o está inactivo (a menos que sea admin).
    */
   async findBySlug(slug: string, isAdmin = false): Promise<ProductWithRelations> {
-    const product = await this.productsRepository.findBySlug(slug);
+    const product = await this.productsRepository.findBySlug(slug, isAdmin);
     if (!product || (!product.isActive && !isAdmin)) {
       throw new NotFoundException({
         code: ERROR_CODES.NOT_FOUND,

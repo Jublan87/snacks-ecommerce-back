@@ -51,7 +51,8 @@ export interface ProductWithRelations {
   description: string;
   shortDescription: string | null;
   sku: string;
-  price: number;
+  salePrice: number;
+  costPrice?: number;
   discountPrice: number | null;
   discountPercentage: number | null;
   stock: number;

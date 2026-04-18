@@ -1280,7 +1280,7 @@
                     "orders"
                   ]
                 },
-                "description": "Crea un nuevo pedido.\n\nRequiere autenticación. Los ítems se especifican en el body (productId + quantity).\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar de GET /api/products -> data.items[n].id)\n\nPaymentMethod válidos: credit_card | debit_card | cash_on_delivery | bank_transfer\n\nLógica:\n1. Valida stock y estado activo de cada producto\n2. Captura el precio al momento de la compra (discountPrice si existe, sino price)\n3. Calcula subtotal, shipping y total\n4. Genera orderNumber con formato ORD-YYYY-MMDD-HHMMSS-XXX\n5. Crea pedido en transacción atómica (order + orderItems + descuento de stock + StockHistory)\n6. Vacía el carrito del usuario automáticamente (vía evento)\n\nErrores:\n- 400 NOT_FOUND: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.productId, details.available, details.requested)\n- 401: no autenticado"
+                "description": "Crea un nuevo pedido.\n\nRequiere autenticación. Los ítems se especifican en el body (productId + quantity).\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar de GET /api/products -> data.items[n].id)\n\nPaymentMethod válidos: credit_card | debit_card | cash_on_delivery | bank_transfer\n\nLógica:\n1. Valida stock y estado activo de cada producto\n2. Captura el precio al momento de la compra (discountPrice si existe, sino salePrice) y el costPrice como costPriceSnapshot\n3. Calcula subtotal, shipping y total\n4. Genera orderNumber con formato ORD-YYYY-MMDD-HHMMSS-XXX\n5. Crea pedido en transacción atómica (order + orderItems + descuento de stock + StockHistory)\n6. Vacía el carrito del usuario automáticamente (vía evento)\n\nErrores:\n- 400 NOT_FOUND: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.productId, details.available, details.requested)\n- 401: no autenticado"
               },
               "response": []
             },
@@ -1428,7 +1428,7 @@
                     "orders"
                   ]
                 },
-                "description": "Crea un nuevo pedido.\n\nRequiere autenticación. Los ítems se especifican en el body (productId + quantity).\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar de GET /api/products -> data.items[n].id)\n\nPaymentMethod válidos: credit_card | debit_card | cash_on_delivery | bank_transfer\n\nLógica:\n1. Valida stock y estado activo de cada producto\n2. Captura el precio al momento de la compra (discountPrice si existe, sino price)\n3. Calcula subtotal, shipping y total\n4. Genera orderNumber con formato ORD-YYYY-MMDD-HHMMSS-XXX\n5. Crea pedido en transacción atómica (order + orderItems + descuento de stock + StockHistory)\n6. Vacía el carrito del usuario automáticamente (vía evento)\n\nErrores:\n- 400 NOT_FOUND: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.productId, details.available, details.requested)\n- 401: no autenticado"
+                "description": "Crea un nuevo pedido.\n\nRequiere autenticación. Los ítems se especifican en el body (productId + quantity).\n\nVariables a configurar:\n- {{token}}: JWT del usuario (copiar accessToken del response de Login)\n- {{productId}}: UUID del producto (copiar de GET /api/products -> data.items[n].id)\n\nPaymentMethod válidos: credit_card | debit_card | cash_on_delivery | bank_transfer\n\nLógica:\n1. Valida stock y estado activo de cada producto\n2. Captura el precio al momento de la compra (discountPrice si existe, sino salePrice) y el costPrice como costPriceSnapshot\n3. Calcula subtotal, shipping y total\n4. Genera orderNumber con formato ORD-YYYY-MMDD-HHMMSS-XXX\n5. Crea pedido en transacción atómica (order + orderItems + descuento de stock + StockHistory)\n6. Vacía el carrito del usuario automáticamente (vía evento)\n\nErrores:\n- 400 NOT_FOUND: producto no encontrado\n- 400 PRODUCT_INACTIVE: producto inactivo\n- 400 INSUFFICIENT_STOCK: stock insuficiente (response incluye details.productId, details.available, details.requested)\n- 401: no autenticado"
               },
               "response": []
             },
@@ -1564,7 +1564,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales\",\n  \"description\": \"Deliciosas papas fritas artesanales con sal marina y hierbas.\",\n  \"sku\": \"PFA-001\",\n  \"price\": 3500,\n  \"discountPercentage\": 10,\n  \"stock\": 100,\n  \"categoryId\": \"cfae521c-8562-4fc2-b48a-2892a3e6e6b7\",\n  \"isActive\": true,\n  \"isFeatured\": false,\n  \"tags\": [\n    \"snacks\",\n    \"papas\"\n  ],\n  \"images\": [\n    {\n      \"url\": \"https://placehold.co/600x600/FFDA91/000000/png?text=Papas%20artesanales\",\n      \"alt\": \"Papas fritas\",\n      \"isPrimary\": true,\n      \"order\": 0\n    }\n  ],\n  \"variants\": [\n    {\n      \"name\": \"Tamaño\",\n      \"options\": [\n        {\n          \"value\": \"Pequeño\",\n          \"stock\": 50,\n          \"priceModifier\": 0,\n          \"sku\": \"PFA-001-S\"\n        },\n        {\n          \"value\": \"Grande\",\n          \"stock\": 50,\n          \"priceModifier\": 500,\n          \"sku\": \"PFA-001-L\"\n        }\n      ]\n    }\n  ]\n}",
+                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales\",\n  \"description\": \"Deliciosas papas fritas artesanales con sal marina y hierbas.\",\n  \"sku\": \"PFA-001\",\n  \"salePrice\": 3500,\n  \"costPrice\": 2000,\n  \"discountPercentage\": 10,\n  \"stock\": 100,\n  \"categoryId\": \"cfae521c-8562-4fc2-b48a-2892a3e6e6b7\",\n  \"isActive\": true,\n  \"isFeatured\": false,\n  \"tags\": [\n    \"snacks\",\n    \"papas\"\n  ],\n  \"images\": [\n    {\n      \"url\": \"https://placehold.co/600x600/FFDA91/000000/png?text=Papas%20artesanales\",\n      \"alt\": \"Papas fritas\",\n      \"isPrimary\": true,\n      \"order\": 0\n    }\n  ],\n  \"variants\": [\n    {\n      \"name\": \"Tamaño\",\n      \"options\": [\n        {\n          \"value\": \"Pequeño\",\n          \"stock\": 50,\n          \"priceModifier\": 0,\n          \"sku\": \"PFA-001-S\"\n        },\n        {\n          \"value\": \"Grande\",\n          \"stock\": 50,\n          \"priceModifier\": 500,\n          \"sku\": \"PFA-001-L\"\n        }\n      ]\n    }\n  ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1600,7 +1600,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales Premium\",\n  \"price\": 3900,\n  \"discountPercentage\": 15,\n  \"isFeatured\": true,\n  \"isActive\": true\n}",
+                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales Premium\",\n  \"salePrice\": 3900,\n  \"costPrice\": 2200,\n  \"discountPercentage\": 15,\n  \"isFeatured\": true,\n  \"isActive\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1768,7 +1768,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales\",\n  \"description\": \"Deliciosas papas fritas artesanales con sal marina y hierbas.\",\n  \"sku\": \"PFA-001\",\n  \"price\": 3500,\n  \"discountPercentage\": 10,\n  \"stock\": 100,\n  \"categoryId\": \"cfae521c-8562-4fc2-b48a-2892a3e6e6b7\",\n  \"isActive\": true,\n  \"isFeatured\": false,\n  \"tags\": [\n    \"snacks\",\n    \"papas\"\n  ],\n  \"images\": [\n    {\n      \"url\": \"https://placehold.co/600x600/FFDA91/000000/png?text=Papas%20artesanales\",\n      \"alt\": \"Papas fritas\",\n      \"isPrimary\": true,\n      \"order\": 0\n    }\n  ],\n  \"variants\": [\n    {\n      \"name\": \"Tamaño\",\n      \"options\": [\n        {\n          \"value\": \"Pequeño\",\n          \"stock\": 50,\n          \"priceModifier\": 0,\n          \"sku\": \"PFA-001-S\"\n        },\n        {\n          \"value\": \"Grande\",\n          \"stock\": 50,\n          \"priceModifier\": 500,\n          \"sku\": \"PFA-001-L\"\n        }\n      ]\n    }\n  ]\n}",
+                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales\",\n  \"description\": \"Deliciosas papas fritas artesanales con sal marina y hierbas.\",\n  \"sku\": \"PFA-001\",\n  \"salePrice\": 3500,\n  \"costPrice\": 2000,\n  \"discountPercentage\": 10,\n  \"stock\": 100,\n  \"categoryId\": \"cfae521c-8562-4fc2-b48a-2892a3e6e6b7\",\n  \"isActive\": true,\n  \"isFeatured\": false,\n  \"tags\": [\n    \"snacks\",\n    \"papas\"\n  ],\n  \"images\": [\n    {\n      \"url\": \"https://placehold.co/600x600/FFDA91/000000/png?text=Papas%20artesanales\",\n      \"alt\": \"Papas fritas\",\n      \"isPrimary\": true,\n      \"order\": 0\n    }\n  ],\n  \"variants\": [\n    {\n      \"name\": \"Tamaño\",\n      \"options\": [\n        {\n          \"value\": \"Pequeño\",\n          \"stock\": 50,\n          \"priceModifier\": 0,\n          \"sku\": \"PFA-001-S\"\n        },\n        {\n          \"value\": \"Grande\",\n          \"stock\": 50,\n          \"priceModifier\": 500,\n          \"sku\": \"PFA-001-L\"\n        }\n      ]\n    }\n  ]\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -1805,7 +1805,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales Premium\",\n  \"price\": 3900,\n  \"discountPercentage\": 15,\n  \"isFeatured\": true,\n  \"isActive\": true\n}",
+                  "raw": "{\n  \"name\": \"Papas Fritas Artesanales Premium\",\n  \"salePrice\": 3900,\n  \"costPrice\": 2200,\n  \"discountPercentage\": 15,\n  \"isFeatured\": true,\n  \"isActive\": true\n}",
                   "options": {
                     "raw": {
                       "language": "json"

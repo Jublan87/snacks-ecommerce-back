@@ -113,7 +113,7 @@ export class CartRepository extends BaseRepository<
       order: img.order,
     }));
 
-    const price = this.toNumber(product.price) ?? 0;
+    const price = this.toNumber(product.salePrice) ?? 0;
     const discountPrice = this.toNumber(product.discountPrice);
 
     return {
@@ -126,7 +126,7 @@ export class CartRepository extends BaseRepository<
         id: product.id,
         name: product.name,
         slug: product.slug,
-        price,
+        salePrice: price,
         discountPrice,
         stock: product.stock,
         isActive: product.isActive,

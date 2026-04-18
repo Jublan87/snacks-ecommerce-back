@@ -45,13 +45,16 @@ export class OrderValidationService {
       const price =
         product.discountPrice !== null
           ? (product.discountPrice as unknown as { toNumber(): number }).toNumber()
-          : (product.price as unknown as { toNumber(): number }).toNumber();
+          : (product.salePrice as unknown as { toNumber(): number }).toNumber();
+
+      const costPrice = (product.costPrice as unknown as { toNumber(): number }).toNumber();
 
       pricedItems.push({
         productId: product.id,
         productName: product.name,
         quantity: item.quantity,
         price,
+        costPrice,
         previousStock: product.stock,
       });
     }

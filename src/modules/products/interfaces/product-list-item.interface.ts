@@ -11,7 +11,8 @@ export interface ProductListItem {
   slug: string;
   sku: string;
   shortDescription: string | null;
-  price: number;
+  salePrice: number;
+  costPrice?: number;
   discountPrice: number | null;
   discountPercentage: number | null;
   stock: number;

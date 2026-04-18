@@ -58,7 +58,7 @@ export class AdminProductsService {
     }
 
     const slug = await this.slugService.generateUniqueProductSlug(dto.name);
-    const discountPrice = this.calcDiscountPrice(dto.price, dto.discountPercentage);
+    const discountPrice = this.calcDiscountPrice(dto.salePrice, dto.discountPercentage);
 
     const created = await this.prisma.product.create({
       data: {
@@ -67,7 +67,8 @@ export class AdminProductsService {
         description: dto.description,
         shortDescription: dto.shortDescription ?? null,
         sku: dto.sku,
-        price: dto.price,
+        salePrice: dto.salePrice,
+        costPrice: dto.costPrice,
         discountPrice,
         discountPercentage: dto.discountPercentage ?? null,
         stock: dto.stock ?? 0,
@@ -153,9 +154,9 @@ export class AdminProductsService {
       slug = await this.slugService.generateUniqueProductSlug(dto.name, id);
     }
 
-    const newPrice = dto.price ?? existing.price;
+    const newSalePrice = dto.salePrice ?? existing.salePrice;
     const newDiscountPct = dto.discountPercentage ?? existing.discountPercentage;
-    const discountPrice = this.calcDiscountPrice(newPrice, newDiscountPct);
+    const discountPrice = this.calcDiscountPrice(newSalePrice, newDiscountPct);
 
     // Transacción: reemplaza imágenes/variantes en DB y devuelve los storageKeys viejos.
     // NO borra de Cloudinary adentro — si la tx falla, no quedan assets borrados sin referencia.
@@ -306,7 +307,8 @@ export class AdminProductsService {
       ...(dto.description !== undefined && { description: dto.description }),
       ...(dto.shortDescription !== undefined && { shortDescription: dto.shortDescription }),
       ...(dto.sku !== undefined && { sku: dto.sku }),
-      ...(dto.price !== undefined && { price: dto.price }),
+      ...(dto.salePrice !== undefined && { salePrice: dto.salePrice }),
+      ...(dto.costPrice !== undefined && { costPrice: dto.costPrice }),
       discountPrice,
       ...(dto.discountPercentage !== undefined && { discountPercentage: dto.discountPercentage }),
       ...(dto.stock !== undefined && { stock: dto.stock }),

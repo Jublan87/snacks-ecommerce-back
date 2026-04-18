@@ -27,12 +27,12 @@ export class ProductSearchService {
     }
 
     if (filters.minPrice !== undefined || filters.maxPrice !== undefined) {
-      where.price = {};
+      where.salePrice = {};
       if (filters.minPrice !== undefined) {
-        (where.price as Prisma.DecimalFilter).gte = filters.minPrice;
+        (where.salePrice as Prisma.DecimalFilter).gte = filters.minPrice;
       }
       if (filters.maxPrice !== undefined) {
-        (where.price as Prisma.DecimalFilter).lte = filters.maxPrice;
+        (where.salePrice as Prisma.DecimalFilter).lte = filters.maxPrice;
       }
     }
 
@@ -61,9 +61,9 @@ export class ProductSearchService {
       case 'name-desc':
         return [{ name: 'desc' }];
       case 'price-asc':
-        return [{ price: 'asc' }];
+        return [{ salePrice: 'asc' }];
       case 'price-desc':
-        return [{ price: 'desc' }];
+        return [{ salePrice: 'desc' }];
       case 'oldest':
         return [{ createdAt: 'asc' }];
       case 'newest':

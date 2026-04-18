@@ -82,7 +82,8 @@ model Product {
   description        String
   shortDescription   String?
   sku                String           @unique
-  price              Decimal          @db.Decimal(10, 2)
+  salePrice          Decimal          @db.Decimal(10, 2)
+  costPrice          Decimal          @db.Decimal(10, 2)
   discountPrice      Decimal?         @db.Decimal(10, 2)
   discountPercentage Int?
   stock              Int              @default(0)
@@ -208,9 +209,10 @@ model OrderItem {
   order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
   product   Product  @relation(fields: [productId], references: [id])
-  quantity  Int
-  price     Decimal  @db.Decimal(10, 2)
-  subtotal  Decimal  @db.Decimal(10, 2)
+  quantity          Int
+  price             Decimal  @db.Decimal(10, 2)
+  subtotal          Decimal  @db.Decimal(10, 2)
+  costPriceSnapshot Decimal  @db.Decimal(10, 2) @default(0)
   createdAt DateTime @default(now())
 
   @@index([orderId])

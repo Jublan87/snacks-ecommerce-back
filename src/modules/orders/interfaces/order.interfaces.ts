@@ -75,5 +75,6 @@ export interface PricedItem {
   productName: string;
   quantity: number;
   price: number;
+  costPrice: number;
   previousStock: number;
 }

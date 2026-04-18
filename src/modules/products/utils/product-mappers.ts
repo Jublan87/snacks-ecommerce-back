@@ -60,14 +60,18 @@ export function toProductVariant(variant: {
   };
 }
 
-export function toProductListItem(row: ProductListRow): ProductListItem {
+export function toProductListItem(
+  row: ProductListRow,
+  options?: { excludeCostPrice?: boolean },
+): ProductListItem {
   return {
     id: row.id,
     name: row.name,
     slug: row.slug,
     sku: row.sku,
     shortDescription: row.shortDescription,
-    price: row.price.toNumber(),
+    salePrice: row.salePrice.toNumber(),
+    costPrice: options?.excludeCostPrice ? undefined : row.costPrice.toNumber(),
     discountPrice: toNumber(row.discountPrice),
     discountPercentage: row.discountPercentage,
     stock: row.stock,
@@ -82,7 +86,10 @@ export function toProductListItem(row: ProductListRow): ProductListItem {
   };
 }
 
-export function toProductWithRelations(row: ProductDetailRow): ProductWithRelations {
+export function toProductWithRelations(
+  row: ProductDetailRow,
+  options?: { excludeCostPrice?: boolean },
+): ProductWithRelations {
   return {
     id: row.id,
     name: row.name,
@@ -90,7 +97,8 @@ export function toProductWithRelations(row: ProductDetailRow): ProductWithRelati
     description: row.description,
     shortDescription: row.shortDescription,
     sku: row.sku,
-    price: row.price.toNumber(),
+    salePrice: row.salePrice.toNumber(),
+    costPrice: options?.excludeCostPrice ? undefined : row.costPrice.toNumber(),
     discountPrice: toNumber(row.discountPrice),
     discountPercentage: row.discountPercentage,
     stock: row.stock,

@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { OrderStatus } from '@prisma/client';
+import { EVENT_NAMES } from '../../../common/events/event-types';
+import { OrderConfirmedEvent } from '../../orders/events/order-confirmed.event';
 import { AdminOrdersRepository } from './admin-orders.repository';
 import { OrderStatusValidationService } from './services/order-status-validation.service';
 import { AdminOrderQueryDto } from './dto/admin-order-query.dto';
@@ -11,6 +14,7 @@ export class AdminOrdersService {
   constructor(
     private readonly adminOrdersRepository: AdminOrdersRepository,
     private readonly orderStatusValidationService: OrderStatusValidationService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   findAll(filters: AdminOrderQueryDto): Promise<PaginatedAdminOrders> {
@@ -47,6 +51,13 @@ export class AdminOrdersService {
         id,
         dto.status,
         order.orderNumber,
+      );
+    }
+
+    if (dto.status === OrderStatus.confirmed) {
+      this.eventEmitter.emit(
+        EVENT_NAMES.order.confirmed,
+        new OrderConfirmedEvent(id, updatedOrder.orderNumber, updatedOrder),
       );
     }
 

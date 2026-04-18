@@ -25,6 +25,7 @@ export const EVENT_NAMES = {
   order: {
     created: 'order.created',
     updated: 'order.updated',
+    confirmed: 'order.confirmed',
     cancelled: 'order.cancelled',
   },
   stock: {

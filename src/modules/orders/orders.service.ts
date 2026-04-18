@@ -62,6 +62,7 @@ export class OrdersService {
           quantity: item.quantity,
           price: item.price,
           subtotal: item.price * item.quantity,
+          costPriceSnapshot: item.costPrice,
         })),
       });
 

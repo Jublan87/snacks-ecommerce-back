@@ -10,4 +10,5 @@ export interface CreateUserInput {
   lastName: string;
   phone?: string | null;
   role?: 'customer' | 'admin';
+  shippingAddress?: unknown;
 }

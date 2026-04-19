@@ -63,6 +63,9 @@ export class UsersRepository extends BaseRepository<
       lastName: data.lastName,
       phone: data.phone ?? null,
       role: data.role === 'admin' ? UserRole.admin : UserRole.customer,
+      ...(data.shippingAddress !== undefined && {
+        shippingAddress: data.shippingAddress as Prisma.InputJsonValue,
+      }),
     };
     const user = await this.prisma.user.create({
       data: prismaData,

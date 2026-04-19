@@ -1,5 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MinLength, Matches, MaxLength, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsString,
+  MinLength,
+  Matches,
+  MaxLength,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { ShippingAddressDto } from './shipping-address.dto';
 
 /**
  * Requisitos de contraseña: 8+ caracteres, al menos una mayúscula, una minúscula y un número.
@@ -40,4 +50,14 @@ export class RegisterDto {
   @IsString()
   @MaxLength(20)
   phone?: string;
+
+  @ApiProperty({
+    required: false,
+    type: ShippingAddressDto,
+    description: 'Si se proporciona, address, city, province y postalCode son requeridos',
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ShippingAddressDto)
+  shippingAddress?: ShippingAddressDto;
 }

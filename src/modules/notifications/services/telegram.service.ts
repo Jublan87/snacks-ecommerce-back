@@ -37,7 +37,13 @@ export class TelegramService {
     const caption = this.buildCaption(order);
     // Fix 1: unique filename per order so Telegram cannot cache/reuse by name
     const filename = `remito-${order.orderNumber}.pdf`;
-    const sent = await this.sendDocument(this.adminChatId, pdfBuffer, caption, filename, order.orderNumber);
+    const sent = await this.sendDocument(
+      this.adminChatId,
+      pdfBuffer,
+      caption,
+      filename,
+      order.orderNumber,
+    );
     if (!sent) {
       this.logger.error(
         'Failed to send Telegram notification to admin after retry',
@@ -47,7 +53,13 @@ export class TelegramService {
     }
   }
 
-  private async sendDocument(chatId: string, pdfBuffer: Buffer, caption: string, filename: string, orderNumber: string): Promise<boolean> {
+  private async sendDocument(
+    chatId: string,
+    pdfBuffer: Buffer,
+    caption: string,
+    filename: string,
+    _orderNumber: string,
+  ): Promise<boolean> {
     const attempt = async (): Promise<boolean> => {
       const formData = new FormData();
       formData.append('chat_id', chatId);

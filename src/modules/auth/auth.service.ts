@@ -61,6 +61,7 @@ export class AuthService {
       lastName: dto.lastName.trim(),
       phone: dto.phone?.trim() || null,
       role: 'customer',
+      shippingAddress: dto.shippingAddress,
     });
 
     const accessToken = generateToken(this.jwtService, user.id, user.email, user.role);

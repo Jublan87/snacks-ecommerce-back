@@ -23,6 +23,9 @@ import { AuthCookieOptions } from './interfaces/auth-cookie-options.interface';
 import { UpdateUserInput } from '../users/interfaces/update-user-input.interface';
 import { UserWithoutPassword } from '../users/interfaces/user-without-password.interface';
 import { UsersService } from '../users/users.service';
+import { PrismaService } from '../../database/prisma.service';
+import { USER_SELECT_NO_PASSWORD } from '../users/users.repository';
+import { UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -30,11 +33,20 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
    * Registra un nuevo usuario (role: customer).
    * Valida email no existente y formato de contraseña.
+   *
+   * Transaction strategy: raw prisma.$transaction (interactive tx).
+   * Rationale: AddressesService.create uses `this.prisma` internally and cannot
+   * accept a tx client — calling it inside a transaction would bypass the tx.
+   * Using raw tx.user.create + tx.address.create keeps the atomicity guarantee
+   * (user + optional first address either both succeed or both fail).
+   * UsersService.create is NOT called here to avoid creating a partial user
+   * outside the transaction and then failing on the address step.
    */
   async register(dto: RegisterDto): Promise<AuthResult> {
     const emailExists = await this.usersService.existsByEmail(dto.email);
@@ -54,14 +66,38 @@ export class AuthService {
     }
 
     const hashedPassword = await hashPassword(dto.password);
-    const user = await this.usersService.create({
-      email: dto.email.toLowerCase().trim(),
-      password: hashedPassword,
-      firstName: dto.firstName.trim(),
-      lastName: dto.lastName.trim(),
-      phone: dto.phone?.trim() || null,
-      role: 'customer',
-      shippingAddress: dto.shippingAddress,
+
+    const user = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.user.create({
+        data: {
+          email: dto.email.toLowerCase().trim(),
+          password: hashedPassword,
+          firstName: dto.firstName.trim(),
+          lastName: dto.lastName.trim(),
+          phone: dto.phone?.trim() || null,
+          role: UserRole.customer,
+        },
+      });
+
+      if (dto.shippingAddress) {
+        await tx.address.create({
+          data: {
+            userId: created.id,
+            address: dto.shippingAddress.address,
+            city: dto.shippingAddress.city,
+            province: dto.shippingAddress.province,
+            postalCode: dto.shippingAddress.postalCode,
+            notes: dto.shippingAddress.notes ?? null,
+            isDefault: true,
+          },
+        });
+      }
+
+      // Refetch with full select so response includes addresses[]
+      return tx.user.findUniqueOrThrow({
+        where: { id: created.id },
+        select: USER_SELECT_NO_PASSWORD,
+      });
     });
 
     const accessToken = generateToken(this.jwtService, user.id, user.email, user.role);
@@ -105,15 +141,15 @@ export class AuthService {
   }
 
   /**
-   * Actualiza el perfil del usuario. Solo permite firstName, lastName, phone y shippingAddress.
-   * No permite cambiar email ni role.
+   * Actualiza el perfil del usuario. Solo permite firstName, lastName y phone.
+   * No permite cambiar email, role ni address — las direcciones se gestionan
+   * exclusivamente a través de los endpoints /addresses.
    */
   async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserWithoutPassword> {
     const data: UpdateUserInput = {};
     if (dto.firstName !== undefined) data.firstName = dto.firstName;
     if (dto.lastName !== undefined) data.lastName = dto.lastName;
     if (dto.phone !== undefined) data.phone = dto.phone;
-    if (dto.shippingAddress !== undefined) data.shippingAddress = dto.shippingAddress;
     return this.usersService.update(userId, data);
   }
 

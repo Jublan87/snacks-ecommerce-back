@@ -14,7 +14,7 @@ export const USER_SELECT_NO_PASSWORD = {
   lastName: true,
   phone: true,
   role: true,
-  shippingAddress: true,
+  addresses: { orderBy: { createdAt: 'asc' as const } },
   createdAt: true,
   updatedAt: true,
 } as const;
@@ -63,9 +63,6 @@ export class UsersRepository extends BaseRepository<
       lastName: data.lastName,
       phone: data.phone ?? null,
       role: data.role === 'admin' ? UserRole.admin : UserRole.customer,
-      ...(data.shippingAddress !== undefined && {
-        shippingAddress: data.shippingAddress as Prisma.InputJsonValue,
-      }),
     };
     const user = await this.prisma.user.create({
       data: prismaData,
@@ -85,8 +82,6 @@ export class UsersRepository extends BaseRepository<
     if (data.firstName !== undefined) prismaData.firstName = data.firstName;
     if (data.lastName !== undefined) prismaData.lastName = data.lastName;
     if (data.phone !== undefined) prismaData.phone = data.phone;
-    if (data.shippingAddress !== undefined)
-      prismaData.shippingAddress = data.shippingAddress as Prisma.InputJsonValue;
     if (data.password !== undefined) prismaData.password = data.password;
 
     const user = await this.prisma.user.update({

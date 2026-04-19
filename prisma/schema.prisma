@@ -36,22 +36,40 @@ enum OrderStatus {
 // ============================================
 
 model User {
-  id              String   @id @default(uuid())
-  email           String   @unique
-  password        String
-  firstName       String
-  lastName        String
-  phone           String?
-  role            UserRole @default(customer)
-  shippingAddress Json?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  phone     String?
+  role      UserRole @default(customer)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  orders Order[]
-  cart   Cart?
+  orders    Order[]
+  cart      Cart?
+  addresses Address[]
 
   @@index([email])
   @@index([role])
+}
+
+model Address {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address    String   @db.VarChar(500)
+  city       String   @db.VarChar(100)
+  province   String   @db.VarChar(100)
+  postalCode String   @db.VarChar(20)
+  notes      String?  @db.VarChar(500)
+  label      String?  @db.VarChar(100)
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+  @@index([userId, isDefault])
 }
 
 model Category {

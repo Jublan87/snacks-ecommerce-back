@@ -26,6 +26,7 @@ import { AdminUploadModule } from './modules/admin/admin-upload/admin-upload.mod
 import { AdminDashboardModule } from './modules/admin/admin-dashboard/admin-dashboard.module';
 import { AdminUsersModule } from './modules/admin/admin-users/admin-users.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AddressesModule } from './modules/addresses/addresses.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     AdminDashboardModule,
     AdminUsersModule,
     NotificationsModule,
+    AddressesModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],

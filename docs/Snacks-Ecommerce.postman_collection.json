@@ -3247,6 +3247,338 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Direcciones",
+      "item": [
+        {
+          "name": "Local",
+          "item": [
+            {
+              "name": "Listar direcciones",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:4000/api/addresses",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "4000",
+                  "path": [
+                    "api",
+                    "addresses"
+                  ]
+                },
+                "description": "Lista las direcciones del usuario autenticado.\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Crear dirección",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"address\": \"Av. Corrientes 1234, Piso 3\",\n  \"city\": \"Buenos Aires\",\n  \"province\": \"Buenos Aires\",\n  \"postalCode\": \"1043\",\n  \"notes\": \"Timbre 3B\",\n  \"label\": \"Casa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:4000/api/addresses",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "4000",
+                  "path": [
+                    "api",
+                    "addresses"
+                  ]
+                },
+                "description": "Crea una nueva dirección. Si es la primera del usuario, se establece como predeterminada automáticamente.\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Establecer dirección predeterminada",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "http://localhost:4000/api/addresses/{{addressId}}/default",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "4000",
+                  "path": [
+                    "api",
+                    "addresses",
+                    "%7B%7BaddressId%7D%7D",
+                    "default"
+                  ]
+                },
+                "description": "Establece la dirección indicada como predeterminada. Desmarca la anterior de forma atómica.\n\nVariables:\n- {{addressId}}: UUID de la dirección\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Actualizar dirección",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"address\": \"Av. Santa Fe 567\",\n  \"city\": \"Buenos Aires\",\n  \"province\": \"Buenos Aires\",\n  \"postalCode\": \"1059\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:4000/api/addresses/{{addressId}}",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "4000",
+                  "path": [
+                    "api",
+                    "addresses",
+                    "%7B%7BaddressId%7D%7D"
+                  ]
+                },
+                "description": "Actualiza los campos de una dirección. Solo se modifican los campos enviados.\n\nVariables:\n- {{addressId}}: UUID de la dirección\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Eliminar dirección",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "http://localhost:4000/api/addresses/{{addressId}}",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "4000",
+                  "path": [
+                    "api",
+                    "addresses",
+                    "%7B%7BaddressId%7D%7D"
+                  ]
+                },
+                "description": "Elimina una dirección. Si era la predeterminada y hay otras, se promueve automáticamente la más reciente.\n\nVariables:\n- {{addressId}}: UUID de la dirección\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Render",
+          "item": [
+            {
+              "name": "Listar direcciones",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses",
+                  "protocol": "https",
+                  "host": [
+                    "ecommerce-snacks-back",
+                    "onrender",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "addresses"
+                  ]
+                },
+                "description": "Lista las direcciones del usuario autenticado.\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Crear dirección",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"address\": \"Av. Corrientes 1234, Piso 3\",\n  \"city\": \"Buenos Aires\",\n  \"province\": \"Buenos Aires\",\n  \"postalCode\": \"1043\",\n  \"notes\": \"Timbre 3B\",\n  \"label\": \"Casa\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses",
+                  "protocol": "https",
+                  "host": [
+                    "ecommerce-snacks-back",
+                    "onrender",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "addresses"
+                  ]
+                },
+                "description": "Crea una nueva dirección. Si es la primera del usuario, se establece como predeterminada automáticamente.\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Establecer dirección predeterminada",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": ""
+                },
+                "url": {
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses/{{addressId}}/default",
+                  "protocol": "https",
+                  "host": [
+                    "ecommerce-snacks-back",
+                    "onrender",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "addresses",
+                    "%7B%7BaddressId%7D%7D",
+                    "default"
+                  ]
+                },
+                "description": "Establece la dirección indicada como predeterminada. Desmarca la anterior de forma atómica.\n\nVariables:\n- {{addressId}}: UUID de la dirección\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Actualizar dirección",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"address\": \"Av. Santa Fe 567\",\n  \"city\": \"Buenos Aires\",\n  \"province\": \"Buenos Aires\",\n  \"postalCode\": \"1059\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses/{{addressId}}",
+                  "protocol": "https",
+                  "host": [
+                    "ecommerce-snacks-back",
+                    "onrender",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "addresses",
+                    "%7B%7BaddressId%7D%7D"
+                  ]
+                },
+                "description": "Actualiza los campos de una dirección. Solo se modifican los campos enviados.\n\nVariables:\n- {{addressId}}: UUID de la dirección\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            },
+            {
+              "name": "Eliminar dirección",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses/{{addressId}}",
+                  "protocol": "https",
+                  "host": [
+                    "ecommerce-snacks-back",
+                    "onrender",
+                    "com"
+                  ],
+                  "path": [
+                    "api",
+                    "addresses",
+                    "%7B%7BaddressId%7D%7D"
+                  ]
+                },
+                "description": "Elimina una dirección. Si era la predeterminada y hay otras, se promueve automáticamente la más reciente.\n\nVariables:\n- {{addressId}}: UUID de la dirección\n\nRequiere: Authorization: Bearer {{token}}"
+              }
+            }
+          ]
+        }
+      ]
     }
   ],
   "variable": [

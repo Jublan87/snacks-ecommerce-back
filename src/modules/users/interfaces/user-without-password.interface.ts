@@ -1,3 +1,5 @@
+import { AddressView } from '../../addresses/interfaces/address-view.interface';
+
 /**
  * Usuario sin el campo password (respuesta de dominio).
  * Sin dependencias de Prisma.
@@ -9,7 +11,7 @@ export interface UserWithoutPassword {
   lastName: string;
   phone: string | null;
   role: string;
-  shippingAddress: unknown;
+  addresses: AddressView[];
   createdAt: Date;
   updatedAt: Date;
 }

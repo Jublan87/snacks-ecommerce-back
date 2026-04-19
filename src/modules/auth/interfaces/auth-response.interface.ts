@@ -11,7 +11,7 @@ export interface AuthResponse {
 
 /**
  * Respuesta de GET /api/auth/me.
- * Usuario completo sin password (id, email, firstName, lastName, phone, role, shippingAddress, createdAt, updatedAt).
+ * Usuario completo sin password (id, email, firstName, lastName, phone, role, addresses[], createdAt, updatedAt).
  */
 export interface MeResponse {
   user: UserWithoutPassword;

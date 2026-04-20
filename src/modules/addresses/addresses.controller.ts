@@ -22,7 +22,7 @@ import { UpdateAddressDto } from './dto/update-address.dto';
 @ApiTags('Addresses')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller('addresses')
+@Controller('users/me/addresses')
 export class AddressesController {
   constructor(private readonly addressesService: AddressesService) {}
 

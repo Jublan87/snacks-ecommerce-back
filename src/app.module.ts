@@ -13,6 +13,7 @@ import { LoggerModule } from './shared/logger/logger.module';
 import { validationSchema } from './config/validation.schema';
 import configuration from './config/configuration';
 import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
 import { CartModule } from './modules/cart/cart.module';
@@ -50,6 +51,7 @@ import { AddressesModule } from './modules/addresses/addresses.module';
     LoggerModule,
     PrismaModule,
     AuthModule,
+    UsersModule,
     CategoriesModule,
     ProductsModule,
     CartModule,

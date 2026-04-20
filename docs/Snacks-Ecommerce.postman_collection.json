@@ -204,7 +204,7 @@
             {
               "name": "Perfil",
               "request": {
-                "method": "PUT",
+                "method": "PATCH",
                 "header": [],
                 "body": {
                   "mode": "raw",
@@ -216,7 +216,7 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:4000/api/auth/profile",
+                  "raw": "http://localhost:4000/api/users/me",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -224,8 +224,8 @@
                   "port": "4000",
                   "path": [
                     "api",
-                    "auth",
-                    "profile"
+                    "users",
+                    "me"
                   ]
                 }
               },
@@ -406,7 +406,7 @@
             {
               "name": "Perfil",
               "request": {
-                "method": "PUT",
+                "method": "PATCH",
                 "header": [],
                 "body": {
                   "mode": "raw",
@@ -418,7 +418,7 @@
                   }
                 },
                 "url": {
-                  "raw": "https://ecommerce-snacks-back.onrender.com/api/auth/profile",
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/users/me",
                   "protocol": "https",
                   "host": [
                     "ecommerce-snacks-back",
@@ -427,8 +427,8 @@
                   ],
                   "path": [
                     "api",
-                    "auth",
-                    "profile"
+                    "users",
+                    "me"
                   ]
                 }
               },
@@ -3266,7 +3266,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "http://localhost:4000/api/addresses",
+                  "raw": "http://localhost:4000/api/users/me/addresses",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -3274,6 +3274,8 @@
                   "port": "4000",
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses"
                   ]
                 },
@@ -3301,7 +3303,7 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:4000/api/addresses",
+                  "raw": "http://localhost:4000/api/users/me/addresses",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -3309,6 +3311,8 @@
                   "port": "4000",
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses"
                   ]
                 },
@@ -3331,7 +3335,7 @@
                   "raw": ""
                 },
                 "url": {
-                  "raw": "http://localhost:4000/api/addresses/{{addressId}}/default",
+                  "raw": "http://localhost:4000/api/users/me/addresses/{{addressId}}/default",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -3339,6 +3343,8 @@
                   "port": "4000",
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses",
                     "%7B%7BaddressId%7D%7D",
                     "default"
@@ -3368,7 +3374,7 @@
                   }
                 },
                 "url": {
-                  "raw": "http://localhost:4000/api/addresses/{{addressId}}",
+                  "raw": "http://localhost:4000/api/users/me/addresses/{{addressId}}",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -3376,6 +3382,8 @@
                   "port": "4000",
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses",
                     "%7B%7BaddressId%7D%7D"
                   ]
@@ -3395,7 +3403,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "http://localhost:4000/api/addresses/{{addressId}}",
+                  "raw": "http://localhost:4000/api/users/me/addresses/{{addressId}}",
                   "protocol": "http",
                   "host": [
                     "localhost"
@@ -3403,6 +3411,8 @@
                   "port": "4000",
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses",
                     "%7B%7BaddressId%7D%7D"
                   ]
@@ -3427,7 +3437,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses",
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/users/me/addresses",
                   "protocol": "https",
                   "host": [
                     "ecommerce-snacks-back",
@@ -3436,6 +3446,8 @@
                   ],
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses"
                   ]
                 },
@@ -3463,7 +3475,7 @@
                   }
                 },
                 "url": {
-                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses",
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/users/me/addresses",
                   "protocol": "https",
                   "host": [
                     "ecommerce-snacks-back",
@@ -3472,6 +3484,8 @@
                   ],
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses"
                   ]
                 },
@@ -3494,7 +3508,7 @@
                   "raw": ""
                 },
                 "url": {
-                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses/{{addressId}}/default",
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/users/me/addresses/{{addressId}}/default",
                   "protocol": "https",
                   "host": [
                     "ecommerce-snacks-back",
@@ -3503,6 +3517,8 @@
                   ],
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses",
                     "%7B%7BaddressId%7D%7D",
                     "default"
@@ -3532,7 +3548,7 @@
                   }
                 },
                 "url": {
-                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses/{{addressId}}",
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/users/me/addresses/{{addressId}}",
                   "protocol": "https",
                   "host": [
                     "ecommerce-snacks-back",
@@ -3541,6 +3557,8 @@
                   ],
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses",
                     "%7B%7BaddressId%7D%7D"
                   ]
@@ -3560,7 +3578,7 @@
                   }
                 ],
                 "url": {
-                  "raw": "https://ecommerce-snacks-back.onrender.com/api/addresses/{{addressId}}",
+                  "raw": "https://ecommerce-snacks-back.onrender.com/api/users/me/addresses/{{addressId}}",
                   "protocol": "https",
                   "host": [
                     "ecommerce-snacks-back",
@@ -3569,6 +3587,8 @@
                   ],
                   "path": [
                     "api",
+                    "users",
+                    "me",
                     "addresses",
                     "%7B%7BaddressId%7D%7D"
                   ]

@@ -15,12 +15,10 @@ import {
 import { generateToken, JWT_COOKIE_NAME } from './utils/jwt.util';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { AuthResult } from './interfaces/auth-response.interface';
 import { SessionUser } from './interfaces/session-user.interface';
 import { AuthCookieOptions } from './interfaces/auth-cookie-options.interface';
-import { UpdateUserInput } from '../users/interfaces/update-user-input.interface';
 import { UserWithoutPassword } from '../users/interfaces/user-without-password.interface';
 import { UsersService } from '../users/users.service';
 import { PrismaService } from '../../database/prisma.service';
@@ -138,19 +136,6 @@ export class AuthService {
       user: this.toSessionUser(userWithPassword),
       accessToken,
     };
-  }
-
-  /**
-   * Actualiza el perfil del usuario. Solo permite firstName, lastName y phone.
-   * No permite cambiar email, role ni address — las direcciones se gestionan
-   * exclusivamente a través de los endpoints /addresses.
-   */
-  async updateProfile(userId: string, dto: UpdateProfileDto): Promise<UserWithoutPassword> {
-    const data: UpdateUserInput = {};
-    if (dto.firstName !== undefined) data.firstName = dto.firstName;
-    if (dto.lastName !== undefined) data.lastName = dto.lastName;
-    if (dto.phone !== undefined) data.phone = dto.phone;
-    return this.usersService.update(userId, data);
   }
 
   /**

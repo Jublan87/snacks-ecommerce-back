@@ -11,7 +11,6 @@ import { AuthService } from './auth.service';
 import { AuthResponse, MeResponse, VerifyResponse } from './interfaces/auth-response.interface';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 
 @ApiTags('auth')
@@ -93,21 +92,6 @@ export class AuthController {
         role: currentUser.role,
       },
     };
-  }
-
-  @Put('profile')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT')
-  @ApiOperation({ summary: 'Actualizar perfil del usuario autenticado' })
-  @ApiResponse({ status: 200, description: 'Perfil actualizado correctamente' })
-  @ApiResponse({ status: 400, description: 'Datos de validación inválidos' })
-  @ApiResponse({ status: 401, description: 'Token inválido o no enviado' })
-  async updateProfile(
-    @CurrentUser() currentUser: UserWithoutPassword,
-    @Body() dto: UpdateProfileDto,
-  ): Promise<MeResponse> {
-    const user = await this.authService.updateProfile(currentUser.id, dto);
-    return { user };
   }
 
   @Put('password')
